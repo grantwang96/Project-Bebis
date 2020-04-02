@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c583a770c7cc244aff21f7a7c38ace, type: 3}
+  m_Name: TestTorso
+  m_EditorClassIdentifier: 
+  _equipmentType: 2
+  _stats:
+    Strength: 1
+    Agility: 1
+    Fortitude: 3
+    Intelligence: 1
+    Wisdom: 1
+    Charm: 1
+  _modifiers:
+    Strength: 1
+    Agility: 1
+    Fortitude: 1
+    Intelligence: 1
+    Wisdom: 1
+    Charm: 1

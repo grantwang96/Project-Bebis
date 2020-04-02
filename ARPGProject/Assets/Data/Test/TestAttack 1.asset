@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5df74b3a2dcc63144a01fc8157befdee, type: 3}
+  m_Name: TestAttack 1
+  m_EditorClassIdentifier: 
+  _permissions: 4
+  _animationData:
+    _animationName: 
+    _triggers:
+    - NormalAttack
+    _intValues: []
+    _floatValues: []
+    _boolValues: []
+  _cancelable: 0
+  _hitBoxModifierData:
+  - _id: HitBox_2
+    _hitboxModifierInfo:
+      _basePower: 1
+      _powerRange:
+        _min: 0
+        _max: 0
+      _knockbackDirection: {x: 0, y: 0, z: 0}
+      _knockbackForce: 0
+  _applyDash: 0
+  _dashDirection: 0
+  _force: 0
+  _overrideForce: 0
