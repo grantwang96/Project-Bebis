@@ -78,12 +78,20 @@ namespace Bebis {
         // update the hitboxes on the weapon
         private void SetHitboxInfos() {
             for(int i = 0; i < _data.HitboxModifierData.Count; i++) {
+                HitboxModifierInfo modifierInfo = _data.HitboxModifierData[i].HitboxModifierInfo;
                 HitboxInfo info = new HitboxInfo(
-                    _data.HitboxModifierData[i].HitboxModifierInfo.BasePower,
+                    GeneratePower(_character.CharacterStatManager, modifierInfo.BasePower, modifierInfo.PowerRange),
                     _data.HitboxModifierData[i].HitboxModifierInfo.KnockbackDirection,
                     _data.HitboxModifierData[i].HitboxModifierInfo.KnockbackForce);
                 _character.HitboxController.SetHitboxInfo(_data.HitboxModifierData[i].Id, info);
             }
+        }
+
+        private int GeneratePower(ICharacterStatManager characterStatManager, int basePower, MinMax_Int range) {
+            int attackPower = characterStatManager.Attack;
+            attackPower += basePower;
+            attackPower += Random.Range(range.Min, range.Max);
+            return attackPower;
         }
 
         // unsubscribe to character events

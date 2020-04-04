@@ -4,16 +4,18 @@ using UnityEngine;
 
 namespace Bebis {
     public class PlayerAnimationController : PlayerCharacterComponent, IAnimationController {
-        
+
+        private EquipmentManager _equipmentManager;
         private Animator _animator;
         private AnimatorOverrideController _overrideController;
         private AnimationClipOverrides _overrides;
         private bool _enabled = true;
 
-        public PlayerAnimationController(PlayerCharacter character, Animator animator) : base(character) {
+        public PlayerAnimationController(PlayerCharacter character, Animator animator, EquipmentManager equipmentManager) : base(character) {
             _animator = animator;
             _character.OnUpdate += OnUpdate;
-            _character.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
+            _equipmentManager = equipmentManager;
+            _equipmentManager.OnEquipmentUpdated += OnEquipmentUpdated;
             SetupOverrideController();
         }
 
@@ -42,15 +44,16 @@ namespace Bebis {
             }
         }
 
-        public void OverrideAnimationController(List<AnimationClipOverride> overrideClips) {
+        private void OnEquipmentUpdated(IEquipment equipment) {
+            IReadOnlyList<AnimationClipOverride> overrideClips = equipment?.AnimationOverrides ?? new List<AnimationClipOverride>();
+            OverrideAnimationController(equipment.AnimationOverrides);
+        }
+
+        public void OverrideAnimationController(IReadOnlyList<AnimationClipOverride> overrideClips) {
             for(int i = 0; i < overrideClips.Count; i++) {
                 _overrides[overrideClips[i].Id] = overrideClips[i].AnimationClip;
             }
             _overrideController.ApplyOverrides(_overrides);
-        }
-
-        private void OnActionStatusUpdated(ActionStatus status) {
-
         }
 
         private void OnUpdate() {

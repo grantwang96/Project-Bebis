@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Bebis {
 
-    [CreateAssetMenu (menuName = "Equipment/Armor")]
-    public class Armor : ScriptableObject, IEquipment {
+    [CreateAssetMenu(menuName = "Equipment/Weapon")]
+    public class Weapon : ScriptableObject, IEquipment {
 
         [SerializeField] private int _attack;
         public int Attack => _attack;
@@ -21,15 +21,14 @@ namespace Bebis {
 
         [SerializeField] private List<AnimationClipOverride> _animationOverrides = new List<AnimationClipOverride>();
         public IReadOnlyList<AnimationClipOverride> AnimationOverrides => _animationOverrides;
-        // [SerializeField] private List<AnimationClipOverride> _runOverrides = new List<AnimationClipOverride>();
-        // add new clip overrides as necessary
 
         public CharacterStats ApplyStats(CharacterStats stats) {
-            return stats + _stats;
+            return _stats + stats;
         }
 
         public CharacterStatModifiers ApplyModifiers(CharacterStatModifiers modifiers) {
-            return modifiers + _modifiers;
+            return _modifiers + modifiers;
         }
+
     }
 }

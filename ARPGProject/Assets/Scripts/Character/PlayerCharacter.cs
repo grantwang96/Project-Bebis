@@ -37,6 +37,7 @@ namespace Bebis {
 
         // temp
         public HackPlayerConfig HackConfig;
+        [SerializeField] private ActionStatus _status;
 
         private void Awake() {
             InitializeConfig();
@@ -57,7 +58,7 @@ namespace Bebis {
             _playerDamageable = new PlayerDamageable(this);
             _playerMoveController = new PlayerMoveController(this, _rigidbody);
             _playerActionController = new PlayerActionController(this);
-            _playerAnimationController = new PlayerAnimationController(this, _animator);
+            _playerAnimationController = new PlayerAnimationController(this, _animator, _equipmentManager);
             _playerCharacterStatManager = new PlayerCharacterStatManager(this, _equipmentManager);
         }
 
@@ -76,6 +77,7 @@ namespace Bebis {
         }
 
         private void UpdateActionStatus(ActionStatus status) {
+            _status = status;
             OnActionStatusUpdated?.Invoke(status);
         }
     }

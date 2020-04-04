@@ -27,7 +27,7 @@ MonoBehaviour:
       _basePower: 5
       _powerRange:
         _min: 0
-        _max: 0
+        _max: 5
       _knockbackDirection: {x: 0, y: 1, z: 0}
       _knockbackForce: 20
   _applyDash: 0

@@ -6,7 +6,7 @@ namespace Bebis {
     public interface IAnimationController {
 
         void UpdateAnimationState(AnimationData data);
-        void OverrideAnimationController(List<AnimationClipOverride> overrideClips);
+        void OverrideAnimationController(IReadOnlyList<AnimationClipOverride> overrideClips);
     }
 
     [System.Serializable]

@@ -9,6 +9,9 @@ namespace Bebis {
         public CharacterStats BaseStats { get; private set; }
         public CharacterStats FinalStats { get; private set; }
 
+        public int Attack { get; private set; }
+        public int Defense { get; private set; }
+
         public event Action<CharacterStats> OnBaseStatsUpdated;
         public event Action<CharacterStats> OnFinalStatsUpdated;
 
@@ -21,21 +24,33 @@ namespace Bebis {
             _equipmentManager = equipmentManager;
 
             _equipmentManager.OnEquipmentUpdated += OnEquipmentUpdated;
+            OnEquipmentUpdated(null);
         }
 
-        private void OnEquipmentUpdated() {
+        private void OnEquipmentUpdated(IEquipment equipment) {
             FinalStats = BaseStats;
-            FinalStats += _equipmentManager.HelmetSlot?.Stats ?? new CharacterStats();
-            FinalStats += _equipmentManager.TorsoSlot?.Stats ?? new CharacterStats();
-            FinalStats += _equipmentManager.LeggingsSlot?.Stats ?? new CharacterStats();
 
-            _modifiers = CharacterStatModifiers.Standard;
-            _modifiers += _equipmentManager.HelmetSlot?.Modifiers ?? new CharacterStatModifiers();
-            _modifiers += _equipmentManager.TorsoSlot?.Modifiers ?? new CharacterStatModifiers();
-            _modifiers += _equipmentManager.LeggingsSlot?.Modifiers ?? new CharacterStatModifiers();
+            // TODO: update attack/defense power based on equipment
+            // temp hack for now
+            Attack = FinalStats.Strength;
+            Defense = FinalStats.Fortitude;
+
+            ApplyEquipmentStats(equipment);
+            ApplyEquipmentModifiers(equipment);
 
             FinalStats = CharacterStats.ApplyModifiers(FinalStats, _modifiers);
+
             OnFinalStatsUpdated?.Invoke(FinalStats);
+        }
+
+        private void ApplyEquipmentStats(IEquipment equipment) {
+            FinalStats = equipment?.ApplyStats(FinalStats) ?? FinalStats;
+            Attack += equipment?.Attack ?? 0;
+            Defense += equipment?.Defense ?? 0;
+        }
+
+        private void ApplyEquipmentModifiers(IEquipment equipment) {
+            _modifiers = equipment?.ApplyModifiers(_modifiers) ?? _modifiers;
         }
     }
 }

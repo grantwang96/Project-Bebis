@@ -8,6 +8,9 @@ namespace Bebis {
         CharacterStats BaseStats { get; } // updated rarely (ex. level up). Used to build FinalStats
         CharacterStats FinalStats { get; } // updated frequently (ex. equipment change)
 
+        int Attack { get; }
+        int Defense { get; }
+
         event Action<CharacterStats> OnBaseStatsUpdated;
         event Action<CharacterStats> OnFinalStatsUpdated;
     }
