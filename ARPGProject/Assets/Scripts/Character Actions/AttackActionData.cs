@@ -6,13 +6,13 @@ namespace Bebis {
     [CreateAssetMenu(menuName = "Character Actions/Attack")]
     public class AttackActionData : CharacterActionData {
 
-        [SerializeField] private List<HitboxModifierEntry> _hitBoxModifierData = new List<HitboxModifierEntry>();
+        [SerializeField] private List<CombatHitboxDataEntry> _combatHitBoxDatas = new List<CombatHitboxDataEntry>();
         [SerializeField] private bool _applyDash;
         [SerializeField] private float _dashAngle;
         [SerializeField] private float _force;
         [SerializeField] private bool _overrideForce;
 
-        public IReadOnlyList<HitboxModifierEntry> HitboxModifierData => _hitBoxModifierData;
+        public IReadOnlyList<CombatHitboxDataEntry> CombatHitboxDatas => _combatHitBoxDatas;
         public bool ApplyDash => _applyDash;
         public float DashAngle => _dashAngle;
         public float DashForce => _force;
@@ -37,17 +37,18 @@ namespace Bebis {
     }
 
     [System.Serializable]
-    public class HitboxModifierEntry {
+    public class CombatHitboxDataEntry {
         [SerializeField] private string _id;
-        [SerializeField] private HitboxModifierInfo _hitboxModifierInfo;
+        [SerializeField] private CombatHitBoxData _combatHitboxData;
 
         public string Id => _id;
-        public HitboxModifierInfo HitboxModifierInfo => _hitboxModifierInfo;
+        public CombatHitBoxData CombatHitboxData => _combatHitboxData;
     }
 
     public class AttackActionState : CharacterActionState {
         
         private AttackActionData _data;
+        private Dictionary<string, CombatHitBoxData> _combatHitBoxData = new Dictionary<string, CombatHitBoxData>();
 
         public AttackActionState(AttackActionData data, ICharacter character) : base(data, character) {
             // initialize data
@@ -60,14 +61,23 @@ namespace Bebis {
 
         // update the hitboxes on the weapon
         private void SetHitboxInfos() {
-            for(int i = 0; i < _data.HitboxModifierData.Count; i++) {
-                HitboxModifierInfo modifierInfo = _data.HitboxModifierData[i].HitboxModifierInfo;
-                HitboxInfo info = new HitboxInfo(
-                    GeneratePower(_character.CharacterStatManager, modifierInfo.BasePower, modifierInfo.PowerRange),
-                    _data.HitboxModifierData[i].HitboxModifierInfo.KnockbackAngle,
-                    _data.HitboxModifierData[i].HitboxModifierInfo.KnockbackForce);
-                _character.HitboxController.SetHitboxInfo(_data.HitboxModifierData[i].Id, info);
+            for(int i = 0; i < _data.CombatHitboxDatas.Count; i++) {
+                CombatHitBoxData modifierInfo = _data.CombatHitboxDatas[i].CombatHitboxData;
+                _combatHitBoxData.Add(_data.CombatHitboxDatas[i].Id, modifierInfo);
+                CombatHitboxInfo newInfo = new CombatHitboxInfo(OnHitboxTriggered);
+                _character.HitboxController.SetHitboxInfo(_data.CombatHitboxDatas[i].Id, newInfo);
             }
+        }
+
+        private void OnHitboxTriggered(Hitbox hitBox, Hurtbox hurtBox) {
+            if(!_combatHitBoxData.TryGetValue(hitBox.name, out CombatHitBoxData hitBoxData)) {
+                CustomLogger.Warn(nameof(AttackActionData), $"Could not retrieve hitbox data for hitbox {hitBox.name}");
+                return;
+            }
+            int power = GeneratePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
+            Vector3 direction = CalculateRelativeDirection(hitBox.transform, hitBoxData.KnockbackAngle);
+            hurtBox.SendHitEvent(
+                new HitEventInfo(hitBox, power, direction, hitBoxData.KnockbackForce));
         }
 
         private int GeneratePower(ICharacterStatManager characterStatManager, int basePower, MinMax_Int range) {
@@ -76,7 +86,11 @@ namespace Bebis {
             attackPower += Random.Range(range.Min, range.Max);
             return attackPower;
         }
-        
+
+        private Vector3 CalculateRelativeDirection(Transform transform, float angle) {
+            return ExtraMath.Rotate(transform.up, angle);
+        }
+
         protected override void OnActionStatusUpdated(ActionStatus status) {
             // do action status update here
             if(status == ActionStatus.InProgress) {
@@ -97,7 +111,6 @@ namespace Bebis {
         // Calculate the general direction that the player will move
         private Vector2 GetRelativeDirection(float angle) {
             return ExtraMath.Rotate(_character.MoveController.Rotation, angle);
-            // Vector3 worldDir = _character.MoveController.Body.TransformDirection(_data.DashDirection);
         }
     }
 }

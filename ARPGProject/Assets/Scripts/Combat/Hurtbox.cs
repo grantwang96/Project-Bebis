@@ -6,16 +6,19 @@ using System;
 namespace Bebis {
     public class Hurtbox : MonoBehaviour {
 
-        private IDamageable _damageable;
+        public ICharacter Character { get; private set; }
 
-        public event Action<HitEventInfo> OnHit;
+        public event Action<string, HitEventInfo> OnHit;
 
-        public void Initialize(IDamageable damageable) {
-            _damageable = damageable;
+        public void Initialize(ICharacter character) {
+            if(character == null) {
+                CustomLogger.Warn(nameof(Hurtbox), $"Initializing with null [{nameof(ICharacter)}]");
+            }
+            Character = character;
         }
 
-        public void Hit(HitEventInfo info) {
-            OnHit?.Invoke(info);
+        public void SendHitEvent(HitEventInfo hitEventInfo) {
+            OnHit?.Invoke(name, hitEventInfo);
         }
     }
 }

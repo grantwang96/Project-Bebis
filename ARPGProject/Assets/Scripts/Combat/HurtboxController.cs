@@ -6,7 +6,7 @@ using System;
 namespace Bebis {
     public class HurtboxController : MonoBehaviour {
 
-        [SerializeField] private GameObject _damageableGO;
+        [SerializeField] private GameObject _characterGO;
         [SerializeField] private List<Hurtbox> _hurtBoxObjs = new List<Hurtbox>();
 
         private readonly Dictionary<string, Hurtbox> _hurtBoxes = new Dictionary<string, Hurtbox>();
@@ -19,10 +19,10 @@ namespace Bebis {
 
         private void Awake() {
             _hurtBoxes.Clear();
-            IDamageable damageable = _damageableGO.GetComponent<IDamageable>();
+            ICharacter character = _characterGO.GetComponent<ICharacter>();
             for(int i = 0; i < _hurtBoxObjs.Count; i++) {
                 _hurtBoxes.Add(_hurtBoxObjs[i].name, _hurtBoxObjs[i]);
-                _hurtBoxObjs[i].Initialize(damageable);
+                _hurtBoxObjs[i].Initialize(character);
                 _hurtBoxObjs[i].OnHit += OnHurtboxHit;
             }
         }
@@ -39,7 +39,8 @@ namespace Bebis {
             }
         }
 
-        private void OnHurtboxHit(HitEventInfo hitInfo) {
+        private void OnHurtboxHit(string hitBoxId, HitEventInfo hitInfo) {
+            // TODO: take into account hitbox state
             _receivedHit = true;
             // TODO: have comparison take into account various hits on the same frame and have one take priority
             _hitEventInfo = hitInfo;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Bebis {
     public class Hitbox : MonoBehaviour {
@@ -18,13 +19,7 @@ namespace Bebis {
             if (hurtBox == null || _hurtboxController.Hurtboxes.ContainsKey(hurtBox.name)) {
                 return;
             }
-            HitEventInfo hitEvent = new HitEventInfo(this, _info.Power, CalculateRelativeDirection(), _info.KnockbackForce);
-            hurtBox.Hit(hitEvent);
-        }
-
-        private Vector3 CalculateRelativeDirection() {
-            return ExtraMath.Rotate(transform.up, _info.KnockbackAngle);
-            // return transform.TransformDirection(_info.KnockbackAngle).normalized;
+            _info.HitboxTriggered(this, hurtBox);
         }
 
         private void OnHit() {
@@ -33,19 +28,20 @@ namespace Bebis {
     }
     
     public class HitboxInfo {
-        public readonly int Power;
-        public readonly float KnockbackAngle;
-        public readonly float KnockbackForce;
 
-        public HitboxInfo(int power, float knockbackAngle, float force) {
-            Power = power;
-            KnockbackAngle = knockbackAngle;
-            KnockbackForce = force;
+        public readonly Action<Hitbox, Hurtbox> OnHitboxTriggered;
+
+        public HitboxInfo(Action<Hitbox, Hurtbox> onHitboxTriggered) {
+            OnHitboxTriggered = onHitboxTriggered;
+        }
+
+        public void HitboxTriggered(Hitbox hitBox, Hurtbox hurtBox) {
+            OnHitboxTriggered?.Invoke(hitBox, hurtBox);
         }
     }
 
     [System.Serializable]
-    public class HitboxModifierInfo {
+    public class CombatHitBoxData {
         [SerializeField] private int _basePower;
         [SerializeField] private MinMax_Int _powerRange;
         [SerializeField] private float _knockbackAngle;

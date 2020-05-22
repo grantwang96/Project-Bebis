@@ -24,6 +24,10 @@ namespace Bebis {
             _hurtboxController.OnHit += OnHurtboxHit;
         }
 
+        private void OnDestroy() {
+            _hurtboxController.OnHit -= OnHurtboxHit;
+        }
+
         private void OnHurtboxHit(HitEventInfo info) {
             CustomLogger.Log(nameof(TestDummyDamageable), $"Got hit for {info.Power} damage!");
             _moveController.AddForce(info.KnockBack, info.Force, true);
