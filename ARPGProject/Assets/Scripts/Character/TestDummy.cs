@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Bebis {
     public class TestDummy : MonoBehaviour {
 
+        [SerializeField] private GameObject _rootObj;
         private IDamageable _damageable;
         private IMoveController _moveController;
 
@@ -12,8 +13,8 @@ namespace Bebis {
         [SerializeField] private Rigidbody2D _rigidbody;
 
         private void Awake() {
-            _moveController = new TestDummyMoveController(_rigidbody);
-            _damageable = new TestDummyDamageable(_hurtBox, _moveController);
+            _damageable = _rootObj.GetComponent<IDamageable>();
+            _moveController = _rootObj.GetComponent<IMoveController>();
         }
     }
 }

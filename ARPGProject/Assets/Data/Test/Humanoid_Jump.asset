@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf0343c75c36e2469de85f0fa2af638, type: 3}
+  m_Name: Humanoid_Jump
+  m_EditorClassIdentifier: 
+  _cancelable: 0
+  _animationData:
+    _animationName: 
+    _triggers:
+    - Jump
+    _intValues: []
+    _floatValues: []
+    _boolValues: []
+  _permissions: -1
+  _jumpForce: 8
+  _jumpDirection: {x: 0, y: 1, z: 0}

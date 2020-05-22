@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Bebis {
     public interface IAnimationController {
+
+        event Action<ActionStatus> OnActionStatusUpdated;
 
         void UpdateAnimationState(AnimationData data);
         void OverrideAnimationController(IReadOnlyList<AnimationClipOverride> overrideClips);

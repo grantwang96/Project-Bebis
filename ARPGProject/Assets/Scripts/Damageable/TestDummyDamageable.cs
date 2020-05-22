@@ -4,22 +4,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    public class TestDummyDamageable : IDamageable {
+    public class TestDummyDamageable : MonoBehaviour, IDamageable {
+
+        [SerializeField] private GameObject _moveControllerGO;
+        [SerializeField] private HurtboxController _hurtboxController;
+        [SerializeField] private int _health;
+        [SerializeField] private int _maxHealth;
 
         private IMoveController _moveController;
 
-        public int Health { get; private set; }
-        public int MaxHealth { get; private set; }
+        public int Health => _health;
+        public int MaxHealth => _maxHealth;
 
         public event Action<HitEventInfo> OnHit;
         public event Action OnDefeated;
 
-        public TestDummyDamageable(Hurtbox hurtBox, IMoveController moveController) {
-            hurtBox.OnHit += Hit;
-            _moveController = moveController;
+        private void Awake() {
+            _moveController = _moveControllerGO.GetComponent<IMoveController>();
+            _hurtboxController.OnHit += OnHurtboxHit;
         }
 
-        private void Hit(HitEventInfo info) {
+        private void OnHurtboxHit(HitEventInfo info) {
             CustomLogger.Log(nameof(TestDummyDamageable), $"Got hit for {info.Power} damage!");
             _moveController.AddForce(info.KnockBack, info.Force, true);
         }

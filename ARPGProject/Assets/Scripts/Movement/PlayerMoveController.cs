@@ -3,76 +3,103 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    public class PlayerMoveController : PlayerCharacterComponent, IMoveController {
+    public class PlayerMoveController : MonoBehaviour, IMoveController {
 
-        private const float InputMoveThreshold = 1f;
+        public Vector3 Move => _move;
+        public Vector3 Rotation => _rotation;
+        public Transform Body => _bodyRoot;
 
-        public int XPos { get; private set; }
-        public int YPos { get; private set; }
+        [SerializeField] private Vector3 _move;
+        [SerializeField] private Vector3 _rotation;
 
-        public Vector3 WorldPos => _rigidbody2D.position;
-        public Vector3 Move { get; private set; }
-        public Vector3 Rotation { get; private set; } = new Vector3(0f, -1f);
+        public bool CanJump => _characterController.isGrounded; // temp
 
-        private Rigidbody2D _rigidbody2D;
+        [SerializeField] private PlayerCharacter _playerCharacter;
 
-        private float _moveSpeed = 5f;
-        private float _acceleration = 5f;
-        private Vector2 _currentMove;
+        [SerializeField] private CharacterController _characterController;
+        [SerializeField] private Transform _bodyRoot;
+        [SerializeField] private Transform _cameraPivotX;
 
-        private bool _canMove = true;
-        private bool _canRotate = true;
+        [SerializeField] private float _moveSpeed = 5f;
+        [SerializeField] private float _turnLerpSpeed = .8f;
+        [SerializeField] private float _linearDrag = 1f;
+        [SerializeField] private Vector3 _forceVector;
+
+        [SerializeField] private bool _canMove = true;
+        [SerializeField] private bool _canRotate = true;
 
         public void AddForce(Vector3 direction, float force, bool overrideForce = false) {
             if (overrideForce) {
-                _rigidbody2D.velocity = Vector2.zero;
+                _forceVector = Vector3.zero;
             }
-            _rigidbody2D.AddForce(direction * force, ForceMode2D.Impulse);
+            _forceVector += direction * force;
         }
 
-        public PlayerMoveController(PlayerCharacter character, Rigidbody2D rigidbody) : base(character) {
-            _rigidbody2D = rigidbody;
-            SubscribeToEvents();
+        private void FixedUpdate() {
+            ProcessExternalForces();
+            ProcessMovementInput(InputController.Instance.MoveInput);
+            ProcessRotationInput();
+            ProcessMovement();
+            ProcessRotation();
         }
 
-        private void SubscribeToEvents() {
-            _character.OnFixedUpdate += OnFixedUpdate;
+        private void ProcessExternalForces() {
+            ProcessGravity();
+            ProcessDrag();
         }
 
-        private void UnsubscribeToEvents() {
-            _character.OnFixedUpdate -= OnFixedUpdate;
+        private void ProcessGravity() {
+            if (_forceVector.y > Physics.gravity.y) {
+                _forceVector.y += Physics.gravity.y * Time.deltaTime;
+            }
         }
 
-        private void OnFixedUpdate() {
-            ProcessMovement(InputController.Instance.MoveInput);
-            ProcessRotation(InputController.Instance.MoveInput);
-        }
-
-        private void ProcessMovement(Vector2 moveInput) {
-            if (!_canMove) {
+        private void ProcessDrag() {
+            if(Mathf.Approximately(_forceVector.x, 0f) && Mathf.Approximately(_forceVector.z, 0f)) {
                 return;
             }
-            if (!_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement)) {
-                return;
-            }
-            Move = moveInput;
-            _currentMove = moveInput * _moveSpeed;
-            if (_rigidbody2D.velocity.magnitude < _moveSpeed) {
-                _rigidbody2D.velocity = (moveInput * _moveSpeed);
+            if (_characterController.isGrounded) {
+                _forceVector.x = ExtraMath.Lerp(_forceVector.x, 0f, _linearDrag * Time.deltaTime);
+                _forceVector.z = ExtraMath.Lerp(_forceVector.z, 0f, _linearDrag * Time.deltaTime);
             }
         }
 
-        private void ProcessRotation(Vector2 moveInput) {
-            if (!_canRotate) {
+        private void ProcessMovementInput(Vector2 moveInput) {
+            if (!_canMove || !_playerCharacter.ActionController.Permissions.HasFlag(ActionPermissions.Movement)) {
+                _move = new Vector3(0f, Move.y, 0f);
                 return;
             }
-            if (!_character.ActionController.Permissions.HasFlag(ActionPermissions.Rotation)) {
+            if (!_characterController.isGrounded) {
                 return;
             }
-            if (Mathf.Approximately(moveInput.x, 0f) && Mathf.Approximately(moveInput.y, 0f)) {
+            _move = new Vector3(0f, _move.y, 0f);
+            _move += _cameraPivotX.right * moveInput.x;
+            _move += _cameraPivotX.forward * moveInput.y;
+        }
+
+        private void ProcessRotationInput() {
+            if (!IsMoving(_move)) {
                 return;
             }
-            Rotation = moveInput;
+            _rotation = _move;
+        }
+
+        private bool IsMoving(Vector2 input) {
+            return !Mathf.Approximately(input.x, 0f) || !Mathf.Approximately(input.y, 0f);
+        }
+
+        private void ProcessMovement() {
+            // move the character controller
+            Vector3 moveVector = Move * _moveSpeed;
+            moveVector += _forceVector;
+            _characterController.Move(moveVector * Time.deltaTime);
+        }
+
+        private void ProcessRotation() {
+            if (_bodyRoot.forward == Rotation) {
+                return;
+            }
+            _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, _move, _turnLerpSpeed * Time.deltaTime, 0f);
         }
     }
 }

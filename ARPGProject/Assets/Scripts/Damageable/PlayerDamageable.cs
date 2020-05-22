@@ -4,21 +4,28 @@ using UnityEngine;
 using System;
 
 namespace Bebis {
-    public class PlayerDamageable : PlayerCharacterComponent, IDamageable
+    public class PlayerDamageable : MonoBehaviour, IDamageable
     {
-        public int Health { get; private set; }
-        public int MaxHealth { get; private set; }
+        [SerializeField] private int _health;
+        [SerializeField] private int _maxHealth;
+        public int Health => _health;
+        public int MaxHealth => _maxHealth;
 
         public event Action<HitEventInfo> OnHit;
         public event Action OnDefeated;
 
-        public PlayerDamageable(PlayerCharacter character) : base(character) {
-            Hurtbox hurtBox = _character.GetComponent<Hurtbox>();
-            hurtBox.OnHit += OnHurtboxHit;
+        [SerializeField] private HurtboxController _hurtBoxController;
+
+        private void Awake() {
+            _hurtBoxController.OnHit += OnHurtboxHit;
+        }
+
+        private void OnDestroy() {
+            _hurtBoxController.OnHit -= OnHurtboxHit;
         }
 
         private void OnHurtboxHit(HitEventInfo info) {
-
+            _health -= info.Power;
         }
     }
 }

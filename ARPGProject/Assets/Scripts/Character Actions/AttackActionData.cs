@@ -6,21 +6,15 @@ namespace Bebis {
     [CreateAssetMenu(menuName = "Character Actions/Attack")]
     public class AttackActionData : CharacterActionData {
 
-        [SerializeField] private AnimationData _animationData;
-        [SerializeField] private bool _cancelable;
-
         [SerializeField] private List<HitboxModifierEntry> _hitBoxModifierData = new List<HitboxModifierEntry>();
         [SerializeField] private bool _applyDash;
-        [SerializeField] [Range(0f, 360f)] private float _dashDirection;
+        [SerializeField] private float _dashAngle;
         [SerializeField] private float _force;
         [SerializeField] private bool _overrideForce;
 
-        public AnimationData AnimationData => _animationData;
-        public bool Cancelable => _cancelable;
-
         public IReadOnlyList<HitboxModifierEntry> HitboxModifierData => _hitBoxModifierData;
         public bool ApplyDash => _applyDash;
-        public float DashDirection => _dashDirection;
+        public float DashAngle => _dashAngle;
         public float DashForce => _force;
         public bool OverrideForce => _overrideForce;
 
@@ -51,25 +45,14 @@ namespace Bebis {
         public HitboxModifierInfo HitboxModifierInfo => _hitboxModifierInfo;
     }
 
-    public class AttackActionState : ICharacterActionState {
-
-        public CharacterActionData Data => _data;
-        public AnimationData AnimationData => _data.AnimationData;
-        public bool Cancelable => _data.Cancelable;
-        public ActionPermissions Permissions => _data.Permissions;
-        public ActionStatus Status { get; set; }
-
-        private ICharacter _character;
+    public class AttackActionState : CharacterActionState {
+        
         private AttackActionData _data;
 
-        public AttackActionState(AttackActionData data, ICharacter character) {
+        public AttackActionState(AttackActionData data, ICharacter character) : base(data, character) {
             // initialize data
             _data = data;
             Status = ActionStatus.Started;
-            
-            // hook into character events
-            _character = character;
-            _character.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
 
             // update hitboxes
             SetHitboxInfos();
@@ -81,7 +64,7 @@ namespace Bebis {
                 HitboxModifierInfo modifierInfo = _data.HitboxModifierData[i].HitboxModifierInfo;
                 HitboxInfo info = new HitboxInfo(
                     GeneratePower(_character.CharacterStatManager, modifierInfo.BasePower, modifierInfo.PowerRange),
-                    _data.HitboxModifierData[i].HitboxModifierInfo.KnockbackDirection,
+                    _data.HitboxModifierData[i].HitboxModifierInfo.KnockbackAngle,
                     _data.HitboxModifierData[i].HitboxModifierInfo.KnockbackForce);
                 _character.HitboxController.SetHitboxInfo(_data.HitboxModifierData[i].Id, info);
             }
@@ -93,20 +76,13 @@ namespace Bebis {
             attackPower += Random.Range(range.Min, range.Max);
             return attackPower;
         }
-
-        // unsubscribe to character events
-        public void Clear() {
-            _character.ActionController.OnActionStatusUpdated -= OnActionStatusUpdated;
-        }
-
-        private void OnActionStatusUpdated(ActionStatus status) {
+        
+        protected override void OnActionStatusUpdated(ActionStatus status) {
             // do action status update here
             if(status == ActionStatus.InProgress) {
                 TryDash();
             }
-            if(status == ActionStatus.Completed) {
-                Clear();
-            }
+            base.OnActionStatusUpdated(status);
         }
 
         // attempt to force the character in a direction
@@ -114,20 +90,14 @@ namespace Bebis {
             if (!_data.ApplyDash) {
                 return;
             }
-            Vector2 direction = GetRelativeDirection().normalized;
+            Vector3 direction = GetRelativeDirection(_data.DashAngle).normalized;
             _character.MoveController.AddForce(direction, _data.DashForce, _data.OverrideForce);
         }
 
         // Calculate the general direction that the player will move
-        private Vector2 GetRelativeDirection() {
-            Vector2 lookDir = _character.MoveController.Rotation;
-            float sin = Mathf.Sin(_data.DashDirection * Mathf.Deg2Rad);
-            float cos = Mathf.Cos(_data.DashDirection * Mathf.Deg2Rad);
-            float tx = lookDir.x;
-            float ty = lookDir.y;
-            lookDir.x = (cos * tx) - (sin * ty);
-            lookDir.y = (sin * tx) + (cos * ty);
-            return lookDir;
+        private Vector2 GetRelativeDirection(float angle) {
+            return ExtraMath.Rotate(_character.MoveController.Rotation, angle);
+            // Vector3 worldDir = _character.MoveController.Body.TransformDirection(_data.DashDirection);
         }
     }
 }

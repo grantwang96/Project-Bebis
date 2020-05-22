@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5df74b3a2dcc63144a01fc8157befdee, type: 3}
   m_Name: TestAttack 2
   m_EditorClassIdentifier: 
-  _permissions: 4
+  _cancelable: 0
   _animationData:
     _animationName: 
     _triggers:
@@ -20,7 +20,7 @@ MonoBehaviour:
     _intValues: []
     _floatValues: []
     _boolValues: []
-  _cancelable: 0
+  _permissions: 4
   _hitBoxModifierData:
   - _id: HitBox_1
     _hitboxModifierInfo:
@@ -28,9 +28,9 @@ MonoBehaviour:
       _powerRange:
         _min: 0
         _max: 5
-      _knockbackDirection: {x: 0, y: 1, z: 0}
-      _knockbackForce: 20
+      _knockbackAngle: 0
+      _knockbackForce: 100
   _applyDash: 0
-  _dashDirection: 0
+  _dashAngle: 0
   _force: 0
   _overrideForce: 0

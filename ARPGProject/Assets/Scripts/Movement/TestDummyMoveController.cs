@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    public class TestDummyMoveController : IMoveController {
+    public class TestDummyMoveController : MonoBehaviour, IMoveController {
 
         public int XPos => throw new System.NotImplementedException();
         public int YPos => throw new System.NotImplementedException();
@@ -11,12 +11,10 @@ namespace Bebis {
         public Vector3 WorldPos => _rigidbody2D.position;
         public Vector3 Move { get; private set; }
         public Vector3 Rotation { get; private set; }
+        public bool CanJump { get; } = false;
+        public Transform Body => _rigidbody2D.transform;
 
-        private Rigidbody2D _rigidbody2D;
-
-        public TestDummyMoveController(Rigidbody2D rigidbody) {
-            _rigidbody2D = rigidbody;
-        }
+        [SerializeField] private Rigidbody2D _rigidbody2D;
 
         public void AddForce(Vector3 direction, float force, bool overrideForce = false) {
             if (overrideForce) {

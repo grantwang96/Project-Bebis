@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 namespace Bebis {
-    public class PlayerCharacterStatManager : PlayerCharacterComponent, ICharacterStatManager {
+    public class PlayerCharacterStatManager : MonoBehaviour, ICharacterStatManager {
 
         public CharacterStats BaseStats { get; private set; }
         public CharacterStats FinalStats { get; private set; }
@@ -15,14 +15,14 @@ namespace Bebis {
         public event Action<CharacterStats> OnBaseStatsUpdated;
         public event Action<CharacterStats> OnFinalStatsUpdated;
 
+        [SerializeField] private PlayerCharacter _playerCharacter;
+        [SerializeField] private EquipmentManager _equipmentManager;
+
         private CharacterStatModifiers _modifiers = CharacterStatModifiers.Standard;
-        private EquipmentManager _equipmentManager;
 
-        public PlayerCharacterStatManager(PlayerCharacter character, EquipmentManager equipmentManager) : base(character) {
-            BaseStats = character.HackConfig.BaseStats;
+        private void Start() {
+            BaseStats = _playerCharacter.HackConfig.BaseStats;
             FinalStats = BaseStats;
-            _equipmentManager = equipmentManager;
-
             _equipmentManager.OnEquipmentUpdated += OnEquipmentUpdated;
             OnEquipmentUpdated(null);
         }

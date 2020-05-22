@@ -1,22 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Bebis {
-    public class PlayerAnimationController : PlayerCharacterComponent, IAnimationController {
+    public class PlayerAnimationController : MonoBehaviour, IAnimationController {
 
-        private EquipmentManager _equipmentManager;
-        private Animator _animator;
+        public event Action<ActionStatus> OnActionStatusUpdated;
+
+        [SerializeField] private EquipmentManager _equipmentManager;
+        [SerializeField] private Animator _animator;
+        [SerializeField] private PlayerCharacter _playerCharacter;
+
         private AnimatorOverrideController _overrideController;
         private AnimationClipOverrides _overrides;
         private bool _enabled = true;
 
-        public PlayerAnimationController(PlayerCharacter character, Animator animator, EquipmentManager equipmentManager) : base(character) {
-            _animator = animator;
-            _character.OnUpdate += OnUpdate;
-            _equipmentManager = equipmentManager;
+        public void UpdateAnimationState(AnimationData data) {
+            if (!string.IsNullOrEmpty(data.AnimationName)) {
+                _animator.Play(data.AnimationName);
+            }
+            for (int i = 0; i < data.Triggers.Length; i++) {
+                _animator.SetTrigger(data.Triggers[i]);
+            }
+            for (int i = 0; i < data.IntValues.Length; i++) {
+                _animator.SetInteger(data.IntValues[i].Key, data.IntValues[i].Value);
+            }
+            for (int i = 0; i < data.FloatValues.Length; i++) {
+                _animator.SetFloat(data.FloatValues[i].Key, data.FloatValues[i].Value);
+            }
+            for (int i = 0; i < data.BoolValues.Length; i++) {
+                _animator.SetBool(data.BoolValues[i].Key, data.BoolValues[i].Value);
+            }
+        }
+
+        private void Start() {
             _equipmentManager.OnEquipmentUpdated += OnEquipmentUpdated;
+
             SetupOverrideController();
+        }
+
+        private void Update() {
+            ProcessMove();
+            _animator.SetBool("Airborne", !_playerCharacter.MoveController.CanJump);
         }
 
         private void SetupOverrideController() {
@@ -26,22 +52,8 @@ namespace Bebis {
             _overrideController.GetOverrides(_overrides);
         }
 
-        public void UpdateAnimationState(AnimationData data) {
-            if (!string.IsNullOrEmpty(data.AnimationName)) {
-                _animator.Play(data.AnimationName);
-            }
-            for(int i = 0; i < data.Triggers.Length; i++) {
-                _animator.SetTrigger(data.Triggers[i]);
-            }
-            for(int i = 0; i < data.IntValues.Length; i++) {
-                _animator.SetInteger(data.IntValues[i].Key, data.IntValues[i].Value);
-            }
-            for(int i = 0; i < data.FloatValues.Length; i++) {
-                _animator.SetFloat(data.FloatValues[i].Key, data.FloatValues[i].Value);
-            }
-            for(int i = 0; i < data.BoolValues.Length; i++) {
-                _animator.SetBool(data.BoolValues[i].Key, data.BoolValues[i].Value);
-            }
+        private void UpdateActionStatus(ActionStatus status) {
+            OnActionStatusUpdated?.Invoke(status);
         }
 
         private void OnEquipmentUpdated(IEquipment equipment) {
@@ -56,43 +68,13 @@ namespace Bebis {
             _overrideController.ApplyOverrides(_overrides);
         }
 
-        private void OnUpdate() {
-            ProcessMove();
-            ProcessLook();
-        }
-
         private void ProcessMove() {
             if (!_enabled) {
                 return;
             }
-            Vector3 moveVector = _character.MoveController.Move;
+            Vector3 moveVector = _playerCharacter.MoveController.Move;
             float moveValue = moveVector.magnitude;
             _animator.SetFloat("Move", moveValue);
-        }
-
-        private void ProcessLook() {
-            if (!_enabled) {
-                return;
-            }
-            int x = GetModifiedAxisInput(_character.MoveController.Move.x);
-            int y = GetModifiedAxisInput(_character.MoveController.Move.y);
-            if(Mathf.Approximately(x, 0f) && Mathf.Approximately(y, 0f)) {
-                return;
-            }
-            Vector3 moveVector = _character.MoveController.Move;
-            _animator.SetFloat("LookX", x);
-            _animator.SetFloat("LookY", y);
-        }
-
-        private int GetModifiedAxisInput(float val) {
-            if(Mathf.Approximately(val, 0f)) {
-                return 0;
-            }
-            int returnVal = 1;
-            if(val < 0f) {
-                returnVal *= -1;
-            }
-            return returnVal;
         }
     }
 }

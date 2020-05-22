@@ -23,8 +23,12 @@ namespace Bebis {
 
     public abstract class CharacterActionData : ScriptableObject {
 
+        [SerializeField] protected bool _cancelable;
+        [SerializeField] protected AnimationData _animationData;
         [SerializeField] protected ActionPermissions _permissions;
 
+        public bool Cancelable => _cancelable;
+        public AnimationData AnimationData => _animationData;
         public ActionPermissions Permissions => _permissions;
 
         public virtual CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
@@ -51,6 +55,37 @@ namespace Bebis {
         ActionPermissions Permissions { get; }
 
         void Clear();
+    }
+
+    public class CharacterActionState : ICharacterActionState {
+
+        public CharacterActionData Data { get; }
+        public AnimationData AnimationData { get; }
+        public bool Cancelable { get; }
+        public ActionStatus Status { get; set; }
+        public ActionPermissions Permissions { get; }
+
+        protected ICharacter _character;
+
+        public CharacterActionState(CharacterActionData data, ICharacter character) {
+            Data = data;
+            AnimationData = data.AnimationData;
+            Cancelable = data.Cancelable;
+            Permissions = data.Permissions;
+
+            _character = character;
+            _character.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
+        }
+
+        public virtual void Clear() {
+            _character.ActionController.OnActionStatusUpdated -= OnActionStatusUpdated;
+        }
+
+        protected virtual void OnActionStatusUpdated(ActionStatus status) {
+            if (status == ActionStatus.Completed) {
+                Clear();
+            }
+        }
     }
 
     public class CharacterActionResponse {

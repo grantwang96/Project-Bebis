@@ -6,7 +6,7 @@ namespace Bebis {
     public class Hitbox : MonoBehaviour {
 
         [SerializeField] private HitboxInfo _info;
-        [SerializeField] private Hurtbox _hurtBox;
+        [SerializeField] private HurtboxController _hurtboxController;
 
         public void SetInfo(HitboxInfo info) {
             _info = info;
@@ -15,7 +15,7 @@ namespace Bebis {
         private void OnTriggerEnter2D(Collider2D collider) {
             OnHit();
             Hurtbox hurtBox = collider.GetComponent<Hurtbox>();
-            if (hurtBox == null || hurtBox == _hurtBox) {
+            if (hurtBox == null || _hurtboxController.Hurtboxes.ContainsKey(hurtBox.name)) {
                 return;
             }
             HitEventInfo hitEvent = new HitEventInfo(this, _info.Power, CalculateRelativeDirection(), _info.KnockbackForce);
@@ -23,7 +23,8 @@ namespace Bebis {
         }
 
         private Vector3 CalculateRelativeDirection() {
-            return transform.TransformDirection(_info.KnockbackDirection).normalized;
+            return ExtraMath.Rotate(transform.up, _info.KnockbackAngle);
+            // return transform.TransformDirection(_info.KnockbackAngle).normalized;
         }
 
         private void OnHit() {
@@ -33,12 +34,12 @@ namespace Bebis {
     
     public class HitboxInfo {
         public readonly int Power;
-        public readonly Vector3 KnockbackDirection;
+        public readonly float KnockbackAngle;
         public readonly float KnockbackForce;
 
-        public HitboxInfo(int power, Vector3 knockbackDirection, float force) {
+        public HitboxInfo(int power, float knockbackAngle, float force) {
             Power = power;
-            KnockbackDirection = knockbackDirection;
+            KnockbackAngle = knockbackAngle;
             KnockbackForce = force;
         }
     }
@@ -47,12 +48,12 @@ namespace Bebis {
     public class HitboxModifierInfo {
         [SerializeField] private int _basePower;
         [SerializeField] private MinMax_Int _powerRange;
-        [SerializeField] private Vector3 _knockbackDirection;
+        [SerializeField] private float _knockbackAngle;
         [SerializeField] private float _knockbackForce;
 
         public int BasePower => _basePower;
         public MinMax_Int PowerRange => _powerRange;
-        public Vector3 KnockbackDirection => _knockbackDirection;
+        public float KnockbackAngle => _knockbackAngle;
         public float KnockbackForce => _knockbackForce;
     }
 

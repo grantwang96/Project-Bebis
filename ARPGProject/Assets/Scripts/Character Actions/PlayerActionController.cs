@@ -4,7 +4,9 @@ using UnityEngine;
 using System;
 
 namespace Bebis {
-    public class PlayerActionController : PlayerCharacterComponent, IActionController {
+    public class PlayerActionController : MonoBehaviour, IActionController {
+
+        [SerializeField] private PlayerCharacter _playerCharacter;
 
         public ActionPermissions Permissions => CurrentState?.Permissions ?? ActionPermissions.All;
         public ICharacterActionState CurrentState { get; private set; }
@@ -16,74 +18,105 @@ namespace Bebis {
         private IPlayerGameplayActionSet _skillMode1GameplaySet;
         private IPlayerGameplayActionSet _currentActionSet;
 
-        public PlayerActionController(PlayerCharacter character) : base(character) {
-            SubscribeToEvents();
-        }
-
-        private void SubscribeToEvents() {
-            _character.OnStart += OnStart;
-            _character.OnActionStatusUpdated += OnCharacterAnimationStatusSent;
-
-            InputController.Instance.OnBtn1Pressed += OnBtn1Pressed;
-            InputController.Instance.OnBtn1Held += OnBtn1Held;
-            InputController.Instance.OnBtn1Released += OnBtn1Released;
-        }
-
-        private void UnsubscribeToEvents() {
-            _character.OnStart -= OnStart;
-            _character.ActionController.OnActionStatusUpdated -= OnCharacterAnimationStatusSent;
-
-            InputController.Instance.OnBtn1Pressed -= OnBtn1Pressed;
-            InputController.Instance.OnBtn1Held -= OnBtn1Held;
-            InputController.Instance.OnBtn1Released -= OnBtn1Released;
-        }
-
-        private void OnStart() {
+        private void Start() {
             SetGameplayActionSets();
+            SubscribeToInputController();
+            SubscribeToAnimationController();
         }
 
         private void SetGameplayActionSets() {
-            _normalGameplaySet = new PlayerGameplayActionSet_NormalMode(_character, _character.HackConfig.NormalAttack, _character.HackConfig.SecondaryAttack);
+            HackPlayerConfig hackConfig = _playerCharacter.HackConfig;
+            _normalGameplaySet = new PlayerGameplayActionSet_NormalMode(
+                _playerCharacter,
+                hackConfig.JumpAction,
+                hackConfig.NormalAttack,
+                hackConfig.SecondaryAttack);
             _currentActionSet = _normalGameplaySet;
         }
 
-        private void OnCharacterAnimationStatusSent(ActionStatus status) {
-            if(CurrentState == null) {
-                return;
-            }
-            CurrentState.Status = status;
-            OnActionStatusUpdated?.Invoke(status);
-            if (CurrentState.Status.HasFlag(ActionStatus.Completed)) {
-                CurrentState.Clear();
-                CurrentState = null;
-            }
+        private void SubscribeToInputController() {
+            InputController.Instance.OnBtn1Pressed += OnBtn1Pressed;
+            InputController.Instance.OnBtn1Held += OnBtn1Held;
+            InputController.Instance.OnBtn1Released += OnBtn1Released;
+
+            InputController.Instance.OnBtn2Pressed += OnBtn2Pressed;
+            InputController.Instance.OnBtn2Held += OnBtn2Held;
+            InputController.Instance.OnBtn2Released += OnBtn2Released;
+        }
+
+        private void SubscribeToAnimationController() {
+            _playerCharacter.AnimationController.OnActionStatusUpdated += OnCharacterAnimationStatusSent;
+        }
+
+        private void UnsubscribeToInputController() {
+            InputController.Instance.OnBtn1Pressed -= OnBtn1Pressed;
+            InputController.Instance.OnBtn1Held -= OnBtn1Held;
+            InputController.Instance.OnBtn1Released -= OnBtn1Released;
+
+            InputController.Instance.OnBtn2Pressed -= OnBtn2Pressed;
+            InputController.Instance.OnBtn2Held -= OnBtn2Held;
+            InputController.Instance.OnBtn2Released -= OnBtn2Released;
+        }
+
+        private void UnsubscribeToAnimationController() {
+            _playerCharacter.AnimationController.OnActionStatusUpdated -= OnCharacterAnimationStatusSent;
         }
 
         private void OnBtn1Pressed() {
-            if(_currentActionSet.A_BtnSkill == null) {
+            if(_currentActionSet.Btn1Skill == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.A_BtnSkill.Initiate(_character, CurrentState, CharacterActionContext.Initiate);
+            CharacterActionResponse response = _currentActionSet.Btn1Skill.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Initiate);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn1Held() {
-            if (_currentActionSet.A_BtnSkill == null) {
+            if (_currentActionSet.Btn1Skill == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.A_BtnSkill.Hold(_character, CurrentState, CharacterActionContext.Hold);
+            CharacterActionResponse response = _currentActionSet.Btn1Skill.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn1Released() {
-            if (_currentActionSet.A_BtnSkill == null) {
+            if (_currentActionSet.Btn1Skill == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.A_BtnSkill.Release(_character, CurrentState, CharacterActionContext.Release);
+            CharacterActionResponse response = _currentActionSet.Btn1Skill.Release(_playerCharacter, CurrentState, CharacterActionContext.Release);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnBtn2Pressed() {
+            if(_currentActionSet.Btn2Skill == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.Btn2Skill.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Initiate);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnBtn2Held() {
+            if (_currentActionSet.Btn2Skill == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.Btn2Skill.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnBtn2Released() {
+            if (_currentActionSet.Btn2Skill == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.Btn2Skill.Release(_playerCharacter, CurrentState, CharacterActionContext.Release);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
@@ -92,8 +125,21 @@ namespace Bebis {
         private void PerformActionSuccess(ICharacterActionState state) {
             CurrentState?.Clear();
             CurrentState = state;
-            _character.AnimationController.UpdateAnimationState(CurrentState.AnimationData);
+            _playerCharacter.AnimationController.UpdateAnimationState(CurrentState.AnimationData);
             OnPerformActionSuccess?.Invoke();
+            OnCharacterAnimationStatusSent(CurrentState.Status);
+        }
+        
+        private void OnCharacterAnimationStatusSent(ActionStatus status) {
+            if (CurrentState == null) {
+                return;
+            }
+            CurrentState.Status = status;
+            OnActionStatusUpdated?.Invoke(status);
+            if (CurrentState.Status.HasFlag(ActionStatus.Completed)) {
+                CurrentState.Clear();
+                CurrentState = null;
+            }
         }
     }
 }
