@@ -31,12 +31,14 @@ namespace Bebis {
             PlayerCharacter character,
             CharacterActionData jumpAction,
             List<AttackActionData> normalAttacks,
-            AttackActionData secondaryAttack
+            AttackActionData secondaryAttack,
+            InteractActionData interactAction
             ) {
             _character = character;
             Btn1Skill = jumpAction;
             _normalAttacks = normalAttacks;
             Btn3Skill = secondaryAttack;
+            Btn4Skill = interactAction;
 
             _character.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
         }

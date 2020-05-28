@@ -30,7 +30,8 @@ namespace Bebis {
                 _playerCharacter,
                 hackConfig.JumpAction,
                 hackConfig.NormalAttack,
-                hackConfig.SecondaryAttack);
+                hackConfig.SecondaryAttack,
+                hackConfig.InteractAction);
             _currentActionSet = _normalGameplaySet;
         }
 
@@ -42,6 +43,14 @@ namespace Bebis {
             InputController.Instance.OnBtn2Pressed += OnBtn2Pressed;
             InputController.Instance.OnBtn2Held += OnBtn2Held;
             InputController.Instance.OnBtn2Released += OnBtn2Released;
+
+            InputController.Instance.OnBtn3Pressed += OnBtn3Pressed;
+            InputController.Instance.OnBtn3Held += OnBtn3Held;
+            InputController.Instance.OnBtn3Released += OnBtn3Released;
+
+            InputController.Instance.OnBtn4Pressed += OnBtn4Pressed;
+            InputController.Instance.OnBtn4Held += OnBtn4Held;
+            InputController.Instance.OnBtn4Released += OnBtn4Released;
         }
 
         private void SubscribeToAnimationController() {
@@ -56,6 +65,14 @@ namespace Bebis {
             InputController.Instance.OnBtn2Pressed -= OnBtn2Pressed;
             InputController.Instance.OnBtn2Held -= OnBtn2Held;
             InputController.Instance.OnBtn2Released -= OnBtn2Released;
+
+            InputController.Instance.OnBtn3Pressed -= OnBtn3Pressed;
+            InputController.Instance.OnBtn3Held -= OnBtn3Held;
+            InputController.Instance.OnBtn3Released -= OnBtn3Released;
+
+            InputController.Instance.OnBtn4Pressed -= OnBtn4Pressed;
+            InputController.Instance.OnBtn4Held -= OnBtn4Held;
+            InputController.Instance.OnBtn4Released -= OnBtn4Released;
         }
 
         private void UnsubscribeToAnimationController() {
@@ -121,13 +138,75 @@ namespace Bebis {
                 PerformActionSuccess(response.State);
             }
         }
-        
+
+        private void OnBtn3Pressed() {
+            if(_currentActionSet.Btn3Skill == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.Btn3Skill.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnBtn3Held() {
+            if (_currentActionSet.Btn3Skill == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.Btn3Skill.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnBtn3Released() {
+            if (_currentActionSet.Btn3Skill == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.Btn3Skill.Release(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnBtn4Pressed() {
+            if (_currentActionSet.Btn4Skill == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.Btn4Skill.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnBtn4Held() {
+            if (_currentActionSet.Btn4Skill == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.Btn4Skill.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnBtn4Released() {
+            if (_currentActionSet.Btn4Skill == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.Btn4Skill.Release(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
         private void PerformActionSuccess(ICharacterActionState state) {
             CurrentState?.Clear();
-            CurrentState = state;
-            _playerCharacter.AnimationController.UpdateAnimationState(CurrentState.AnimationData);
-            OnPerformActionSuccess?.Invoke();
-            OnCharacterAnimationStatusSent(CurrentState.Status);
+            if(state != null) {
+                CurrentState = state;
+                _playerCharacter.AnimationController.UpdateAnimationState(CurrentState?.AnimationData);
+                OnPerformActionSuccess?.Invoke();
+                OnCharacterAnimationStatusSent(CurrentState.Status);
+            }
         }
         
         private void OnCharacterAnimationStatusSent(ActionStatus status) {

@@ -89,6 +89,8 @@ namespace Bebis {
         private void ButtonInputs() {
             Button1Inputs();
             Button2Inputs();
+            Button3Inputs();
+            Button4Inputs();
         }
 
         private void Button1Inputs() {

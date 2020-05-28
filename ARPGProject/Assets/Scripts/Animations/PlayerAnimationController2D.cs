@@ -17,6 +17,9 @@ namespace Bebis {
         private bool _enabled = true;
 
         public void UpdateAnimationState(AnimationData data) {
+            if(data == null) {
+                return;
+            }
             if (!string.IsNullOrEmpty(data.AnimationName)) {
                 _animator.Play(data.AnimationName);
             }

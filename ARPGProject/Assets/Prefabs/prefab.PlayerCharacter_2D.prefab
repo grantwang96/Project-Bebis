@@ -925,6 +925,7 @@ MonoBehaviour:
   _playerAnimationController: {fileID: 4321553168525001516}
   _playerCharacterStatManager: {fileID: 7777178899773012182}
   HackConfig:
+    InteractAction: {fileID: 11400000, guid: caa24efb7bb9b1247a67aae01e34c139, type: 2}
     JumpAction: {fileID: 0}
     NormalAttack:
     - {fileID: 11400000, guid: 5dab2ea0a8e71614eb662286479e03d1, type: 2}
