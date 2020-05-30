@@ -8,23 +8,33 @@ namespace Bebis {
 
         [SerializeField] private GameObject _characterGO;
         [SerializeField] private List<Hurtbox> _hurtBoxObjs = new List<Hurtbox>();
-
+        private ICharacter _character;
         private readonly Dictionary<string, Hurtbox> _hurtBoxes = new Dictionary<string, Hurtbox>();
-        public IReadOnlyDictionary<string, Hurtbox> Hurtboxes => _hurtBoxes;
 
         private bool _receivedHit;
-        private HitEventInfo _hitEventInfo;
+        private Action<ICharacter> _onHitAction;
 
+        public IReadOnlyDictionary<string, Hurtbox> Hurtboxes => _hurtBoxes;
+        public HurtBoxState HitHurtboxState { get; private set; }
         public event Action<HitEventInfo> OnHit;
 
-        private void Awake() {
+        private void OnEnable() {
             _hurtBoxes.Clear();
-            ICharacter character = _characterGO.GetComponent<ICharacter>();
-            for(int i = 0; i < _hurtBoxObjs.Count; i++) {
+            _character = _characterGO.GetComponent<ICharacter>();
+            for (int i = 0; i < _hurtBoxObjs.Count; i++) {
                 _hurtBoxes.Add(_hurtBoxObjs[i].name, _hurtBoxObjs[i]);
-                _hurtBoxObjs[i].Initialize(character);
+                _hurtBoxObjs[i].Initialize(_character);
                 _hurtBoxObjs[i].OnHit += OnHurtboxHit;
+                _hurtBoxObjs[i].OnDefend += OnHurtboxDefend;
             }
+        }
+
+        private void OnDisable() {
+            for (int i = 0; i < _hurtBoxObjs.Count; i++) {
+                _hurtBoxObjs[i].OnHit -= OnHurtboxHit;
+                _hurtBoxObjs[i].OnDefend -= OnHurtboxDefend;
+            }
+            _hurtBoxes.Clear();
         }
 
         private void LateUpdate() {
@@ -39,16 +49,24 @@ namespace Bebis {
             }
         }
 
-        private void OnHurtboxHit(string hitBoxId, HitEventInfo hitInfo) {
+        private void OnHurtboxHit(string hitBoxId, Action<ICharacter> onHitAction) {
             // TODO: take into account hitbox state
             _receivedHit = true;
             // TODO: have comparison take into account various hits on the same frame and have one take priority
-            _hitEventInfo = hitInfo;
+            HitHurtboxState = HurtBoxState.Normal;
+            _onHitAction = onHitAction;
+        }
+
+        private void OnHurtboxDefend(string hitBoxId, Action<ICharacter> onHitAction) {
+            // process defense
+            _receivedHit = true;
+            HitHurtboxState = HurtBoxState.Defending;
+            _onHitAction = onHitAction;
         }
 
         private void ProcessHit() {
             _receivedHit = false;
-            OnHit?.Invoke(_hitEventInfo);
+            _onHitAction?.Invoke(_character);
         }
     }
 }

@@ -50,6 +50,8 @@ namespace Bebis {
         private AttackActionData _data;
         private Dictionary<string, CombatHitBoxData> _combatHitBoxData = new Dictionary<string, CombatHitBoxData>();
 
+        private HitEventInfo _hitEventInfo;
+
         public AttackActionState(AttackActionData data, ICharacter character) : base(data, character) {
             // initialize data
             _data = data;
@@ -69,15 +71,34 @@ namespace Bebis {
             }
         }
 
-        private void OnHitboxTriggered(Hitbox hitBox, Hurtbox hurtBox) {
+        private void OnHitboxTriggered(Hitbox hitBox, Collider2D collider) {
             if(!_combatHitBoxData.TryGetValue(hitBox.name, out CombatHitBoxData hitBoxData)) {
                 CustomLogger.Warn(nameof(AttackActionData), $"Could not retrieve hitbox data for hitbox {hitBox.name}");
                 return;
             }
+            Hurtbox hurtBox = collider.GetComponent<Hurtbox>();
+            if(hurtBox == null) {
+                IDamageable damageable = collider.GetComponent<IDamageable>();
+                if(damageable != null) {
+                    OnDamageableHit(damageable);
+                }
+                return;
+            }
+            if (_character.HurtboxController.Hurtboxes.ContainsKey(hurtBox.name)) {
+                return;
+            }
             int power = GeneratePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
             Vector3 direction = CalculateRelativeDirection(hitBox.transform, hitBoxData.KnockbackAngle);
-            hurtBox.SendHitEvent(
-                new HitEventInfo(hitBox, power, direction, hitBoxData.KnockbackForce));
+            _hitEventInfo = new HitEventInfo(hitBox, power, direction, hitBoxData.KnockbackForce);
+            hurtBox.SendHitEvent(OnCharacterHit);
+        }
+
+        private void OnCharacterHit(ICharacter otherCharacter) {
+            OnDamageableHit(otherCharacter.Damageable);
+        }
+
+        private void OnDamageableHit(IDamageable damageable) {
+            damageable.TakeDamage(_hitEventInfo);
         }
 
         private int GeneratePower(ICharacterStatManager characterStatManager, int basePower, MinMax_Int range) {

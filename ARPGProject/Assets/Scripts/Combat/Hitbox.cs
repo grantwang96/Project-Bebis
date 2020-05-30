@@ -7,7 +7,6 @@ namespace Bebis {
     public class Hitbox : MonoBehaviour {
 
         [SerializeField] private HitboxInfo _info;
-        [SerializeField] private HurtboxController _hurtboxController;
 
         public void SetInfo(HitboxInfo info) {
             _info = info;
@@ -15,11 +14,7 @@ namespace Bebis {
 
         private void OnTriggerEnter2D(Collider2D collider) {
             OnHit();
-            Hurtbox hurtBox = collider.GetComponent<Hurtbox>();
-            if (hurtBox == null || _hurtboxController.Hurtboxes.ContainsKey(hurtBox.name)) {
-                return;
-            }
-            _info.HitboxTriggered(this, hurtBox);
+            _info.HitboxTriggered(this, collider);
         }
 
         private void OnHit() {
@@ -29,14 +24,14 @@ namespace Bebis {
     
     public class HitboxInfo {
 
-        public readonly Action<Hitbox, Hurtbox> OnHitboxTriggered;
+        public readonly Action<Hitbox, Collider2D> OnHitboxTriggered;
 
-        public HitboxInfo(Action<Hitbox, Hurtbox> onHitboxTriggered) {
+        public HitboxInfo(Action<Hitbox, Collider2D> onHitboxTriggered) {
             OnHitboxTriggered = onHitboxTriggered;
         }
 
-        public void HitboxTriggered(Hitbox hitBox, Hurtbox hurtBox) {
-            OnHitboxTriggered?.Invoke(hitBox, hurtBox);
+        public void HitboxTriggered(Hitbox hitBox, Collider2D collider) {
+            OnHitboxTriggered?.Invoke(hitBox, collider);
         }
     }
 

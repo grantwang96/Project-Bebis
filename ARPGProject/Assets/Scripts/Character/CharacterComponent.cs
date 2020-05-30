@@ -4,14 +4,15 @@ using UnityEngine;
 
 namespace Bebis {
 
-    public class PlayerCharacterComponent {
+    public class CharacterComponent : MonoBehaviour {
 
-        protected PlayerCharacter _character;
+        [SerializeField] private GameObject _characterGO;
+        protected ICharacter _character;
 
-        public PlayerCharacterComponent(PlayerCharacter character) {
-            _character = character as PlayerCharacter;
-            if (_character == null) {
-                CustomLogger.Error(nameof(PlayerCharacterComponent), $"Did not receive character of type [{nameof(PlayerCharacter)}]");
+        protected virtual void Awake() {
+            _character = _characterGO.GetComponent<ICharacter>();
+            if(_character == null) {
+                CustomLogger.Error(name, $"Did not receive [{nameof(ICharacter)}] component!");
             }
         }
     }

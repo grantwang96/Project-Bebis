@@ -7,5 +7,6 @@
         ICharacterStatManager CharacterStatManager { get; }
 
         HitboxController HitboxController { get; }
+        HurtboxController HurtboxController { get; }
     }
 }

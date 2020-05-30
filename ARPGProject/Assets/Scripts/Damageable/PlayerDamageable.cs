@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 namespace Bebis {
-    public class PlayerDamageable : MonoBehaviour, IDamageable
+    public class PlayerDamageable : CharacterComponent, IDamageable
     {
         [SerializeField] private int _health;
         [SerializeField] private int _maxHealth;
@@ -15,17 +15,11 @@ namespace Bebis {
         public event Action OnDefeated;
 
         [SerializeField] private HurtboxController _hurtBoxController;
-
-        private void Awake() {
-            _hurtBoxController.OnHit += OnHurtboxHit;
-        }
-
-        private void OnDestroy() {
-            _hurtBoxController.OnHit -= OnHurtboxHit;
-        }
-
-        private void OnHurtboxHit(HitEventInfo info) {
-            _health -= info.Power;
+        
+        public void TakeDamage(HitEventInfo hitEventInfo) {
+            // perform checks based on hurt box controller's state
+            _health -= hitEventInfo.Power;
+            _character.MoveController.AddForce(hitEventInfo.KnockBack, hitEventInfo.Force);
         }
     }
 }

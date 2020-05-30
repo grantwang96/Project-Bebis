@@ -10,6 +10,7 @@ namespace Bebis {
         [SerializeField] private PlayerMoveControllerV2 _playerMoveController;
         [SerializeField] private PlayerActionController _playerActionController;
         [SerializeField] private HitboxController _hitboxController;
+        [SerializeField] private HurtboxController _hurtboxController;
         [SerializeField] private EquipmentManager _equipmentManager;
         [SerializeField] private PlayerAnimationController2D _playerAnimationController;
         [SerializeField] private PlayerCharacterStatManager _playerCharacterStatManager;
@@ -24,6 +25,7 @@ namespace Bebis {
         public CharacterStats FinalStats { get; private set; }
 
         public HitboxController HitboxController => _hitboxController;
+        public HurtboxController HurtboxController => _hurtboxController;
 
         // temp
         public HackPlayerConfig HackConfig;

@@ -21,15 +21,17 @@ namespace Bebis {
 
         private void Awake() {
             _moveController = _moveControllerGO.GetComponent<IMoveController>();
-            _hurtboxController.OnHit += OnHurtboxHit;
         }
 
-        private void OnDestroy() {
-            _hurtboxController.OnHit -= OnHurtboxHit;
-        }
-
-        private void OnHurtboxHit(HitEventInfo info) {
-            CustomLogger.Log(nameof(TestDummyDamageable), $"Got hit for {info.Power} damage!");
+        public void TakeDamage(HitEventInfo info) {
+            switch (_hurtboxController.HitHurtboxState) {
+                case HurtBoxState.Normal:
+                    CustomLogger.Log(nameof(TestDummyDamageable), $"Got hit for {info.Power} damage!");
+                    break;
+                case HurtBoxState.Defending:
+                    CustomLogger.Log(nameof(TestDummyDamageable), $"Defended {info.Power} damage!");
+                    break;
+            }
             _moveController.AddForce(info.KnockBack, info.Force, true);
         }
     }

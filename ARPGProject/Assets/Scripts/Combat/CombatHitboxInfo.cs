@@ -6,7 +6,7 @@ using System;
 namespace Bebis {
     public class CombatHitboxInfo : HitboxInfo
     {
-        public CombatHitboxInfo(Action<Hitbox, Hurtbox> onHitboxTriggered) : base(onHitboxTriggered) {
+        public CombatHitboxInfo(Action<Hitbox, Collider2D> onHitboxTriggered) : base(onHitboxTriggered) {
 
         }
     }

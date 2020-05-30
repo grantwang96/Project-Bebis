@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    public class PlayerMoveControllerV2 : MonoBehaviour, IMoveController {
+    public class PlayerMoveControllerV2 : CharacterComponent, IMoveController {
 
         private const float RotationThreshold = 0.25f;
 
@@ -22,7 +22,6 @@ namespace Bebis {
         [SerializeField] private float _moveSpeed = 5f;
         [SerializeField] private float _turnLerpSpeed = .8f;
         [SerializeField] private float _linearDrag = 1f;
-        [SerializeField] private PlayerCharacter _playerCharacter;
         [SerializeField] private Rigidbody2D _rigidbody2D;
 
         public void AddForce(Vector3 direction, float force, bool overrideForce = false) {
@@ -52,7 +51,7 @@ namespace Bebis {
         }
 
         private void ProcessMovementInput(Vector2 moveInput) {
-            if (!_canMove || !_playerCharacter.ActionController.Permissions.HasFlag(ActionPermissions.Movement)) {
+            if (!_canMove || !_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement)) {
                 _move = new Vector2(0f, 0f);
                 return;
             }

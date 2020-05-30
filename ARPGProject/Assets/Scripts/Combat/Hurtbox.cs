@@ -4,11 +4,19 @@ using UnityEngine;
 using System;
 
 namespace Bebis {
+    public enum HurtBoxState {
+        Normal,
+        Defending,
+        Invulnerable
+    }
     public class Hurtbox : MonoBehaviour {
 
         public ICharacter Character { get; private set; }
+        public event Action<string, Action<ICharacter>> OnHit;
+        public event Action<string, Action<ICharacter>> OnDefend;
 
-        public event Action<string, HitEventInfo> OnHit;
+        [SerializeField] private HurtBoxState _hurtBoxState;
+        public HurtBoxState HurtBoxState => _hurtBoxState;
 
         public void Initialize(ICharacter character) {
             if(character == null) {
@@ -17,8 +25,21 @@ namespace Bebis {
             Character = character;
         }
 
-        public void SendHitEvent(HitEventInfo hitEventInfo) {
-            OnHit?.Invoke(name, hitEventInfo);
+        public bool SendHitEvent(Action<ICharacter> OnHitAction) {
+            if (!enabled) {
+                return false;
+            }
+            switch (_hurtBoxState) {
+                case HurtBoxState.Normal:
+                    OnHit?.Invoke(name, OnHitAction);
+                    return true;
+                case HurtBoxState.Defending:
+                    OnDefend?.Invoke(name, OnHitAction);
+                    return true;
+                default:
+                    // do invulnerable hit fx
+                    return false;
+            }
         }
     }
 }
