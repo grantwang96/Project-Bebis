@@ -30,6 +30,7 @@ namespace Bebis {
             }
             _forceVector += (Vector2)direction * force;
         }
+
         private void FixedUpdate() {
             ProcessExternalForces();
             ProcessMovementInput(InputController.Instance.MoveInput);

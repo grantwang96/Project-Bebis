@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    public class HitboxController : MonoBehaviour {
+    public class HitboxController : CharacterComponent {
 
         [SerializeField] private Transform _hitBoxAnchor;
         [SerializeField] private Hitbox[] _hitBoxObjects;
         private Dictionary<string, Hitbox> _hitBoxes = new Dictionary<string, Hitbox>();
-        private PlayerCharacter _character;
 
-        private void Awake() {
-            _character = GetComponent<PlayerCharacter>();
+        protected override void Awake() {
+            base.Awake();
             InitializeHitboxList();
         }
 
@@ -20,7 +19,7 @@ namespace Bebis {
         }
 
         private void SetAnchorRotation() {
-            if (!_character.ActionController.Permissions.HasFlag(ActionPermissions.Rotation)) {
+            if (!_character.ActionController?.Permissions.HasFlag(ActionPermissions.Rotation) ?? false) {
                 return;
             }
             Vector3 moveVector = _character.MoveController.Rotation;
