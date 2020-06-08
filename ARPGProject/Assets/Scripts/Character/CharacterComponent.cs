@@ -6,7 +6,7 @@ namespace Bebis {
 
     public class CharacterComponent : MonoBehaviour {
 
-        [SerializeField] private GameObject _characterGO;
+        [SerializeField] protected GameObject _characterGO;
         protected ICharacter _character;
 
         protected virtual void Awake() {

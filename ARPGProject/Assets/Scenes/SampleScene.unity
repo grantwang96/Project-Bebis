@@ -875,6 +875,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63fa52b2b780e24bbfcf72d960ec13d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hurtBoxState: 0
 --- !u!1 &1173085327
 GameObject:
   m_ObjectHideFlags: 0
@@ -915,15 +916,15 @@ GameObject:
   m_Component:
   - component: {fileID: 1214758891}
   - component: {fileID: 1214758893}
-  - component: {fileID: 1214758892}
   - component: {fileID: 1214758903}
   - component: {fileID: 1214758897}
   - component: {fileID: 1214758898}
   - component: {fileID: 1214758901}
-  - component: {fileID: 1214758894}
-  - component: {fileID: 1214758900}
   - component: {fileID: 1214758896}
   - component: {fileID: 1214758899}
+  - component: {fileID: 1214758892}
+  - component: {fileID: 1214758894}
+  - component: {fileID: 1214758895}
   m_Layer: 0
   m_Name: prefab.PlayerCharacter
   m_TagString: Untagged
@@ -958,31 +959,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 1214758890}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48e09a6caac35194eaa1e42537df0670, type: 3}
+  m_Script: {fileID: 11500000, guid: a3c767e225aee654f8ee0fa90080af0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hitboxController: {fileID: 1214758894}
+  _hurtboxController: {fileID: 1214758895}
+  HackConfig:
+    InteractAction: {fileID: 11400000, guid: caa24efb7bb9b1247a67aae01e34c139, type: 2}
+    JumpAction: {fileID: 11400000, guid: 3c3eb2f02669fe14ea7ed80e422de32a, type: 2}
+    NormalAttack:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    SecondaryAttack: {fileID: 0}
+    BaseStats:
+      Strength: 0
+      Agility: 0
+      Fortitude: 0
+      Intelligence: 0
+      Wisdom: 0
+      Charm: 0
   _playerDamageable: {fileID: 1214758901}
   _playerMoveController: {fileID: 1214758897}
   _playerActionController: {fileID: 1214758898}
-  _characterController: {fileID: 1214758893}
-  _hitboxController: {fileID: 1214758894}
   _equipmentManager: {fileID: 1214758896}
   _playerAnimationController: {fileID: 477161433}
   _playerCharacterStatManager: {fileID: 1214758903}
-  HackConfig:
-    JumpAction: {fileID: 11400000, guid: 3c3eb2f02669fe14ea7ed80e422de32a, type: 2}
-    NormalAttack:
-    - {fileID: 11400000, guid: 5dab2ea0a8e71614eb662286479e03d1, type: 2}
-    - {fileID: 11400000, guid: 24b8b84baa895244db10c1d91229d39a, type: 2}
-    - {fileID: 11400000, guid: fbeaadfdc08699a4d9adf3fe46be5708, type: 2}
-    SecondaryAttack: {fileID: 0}
-    BaseStats:
-      Strength: 1
-      Agility: 1
-      Fortitude: 1
-      Intelligence: 1
-      Wisdom: 1
-      Charm: 1
 --- !u!143 &1214758893
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1010,11 +1012,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 1214758890}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7dc82112666d2e2418fcf0dde0a07a67, type: 3}
+  m_Script: {fileID: 11500000, guid: a9f717ceb67e62b488115bac8e9e50df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hitBoxAnchor: {fileID: 1173085328}
+  _characterGO: {fileID: 1214758890}
   _hitBoxObjects: []
+--- !u!114 &1214758895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1214758890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa9ffd2eb9eeebf44b8cf4029ae3ea95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _characterGO: {fileID: 1214758890}
+  _hurtBoxObjs: []
 --- !u!114 &1214758896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1043,9 +1059,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfa98c01df35d654dbfb119e0a051446, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _characterGO: {fileID: 1214758890}
   _move: {x: 0, y: 0, z: 0}
   _rotation: {x: 0, y: 0, z: 0}
-  _playerCharacter: {fileID: 1214758892}
   _characterController: {fileID: 1214758893}
   _bodyRoot: {fileID: 767965276}
   _cameraPivotX: {fileID: 1876575267}
@@ -1085,19 +1101,6 @@ MonoBehaviour:
   _cameraXUpperLimit: 75
   _cameraXLowerLimit: 295
   _cameraTurnSpeed: 50
---- !u!114 &1214758900
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1214758890}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f41bad909f66ef46819f8efcfe665ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _hurtBoxObjs: []
 --- !u!114 &1214758901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1110,7 +1113,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0f75eae03925a1419a4795e87ea27a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hurtBoxController: {fileID: 1214758900}
+  _characterGO: {fileID: 1214758890}
+  _health: 100
+  _maxHealth: 100
+  _hurtBoxController: {fileID: 0}
 --- !u!114 &1214758903
 MonoBehaviour:
   m_ObjectHideFlags: 0

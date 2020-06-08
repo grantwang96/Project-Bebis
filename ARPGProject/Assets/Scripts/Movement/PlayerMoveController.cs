@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    public class PlayerMoveController : MonoBehaviour, IMoveController {
+    public class PlayerMoveController : CharacterComponent, IMoveController {
 
         public Vector3 Move => _move;
         public Vector3 Rotation => _rotation;
@@ -13,8 +13,6 @@ namespace Bebis {
         [SerializeField] private Vector3 _rotation;
 
         public bool CanJump => _characterController.isGrounded; // temp
-
-        [SerializeField] private PlayerCharacter _playerCharacter;
 
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private Transform _bodyRoot;
@@ -65,7 +63,7 @@ namespace Bebis {
         }
 
         private void ProcessMovementInput(Vector2 moveInput) {
-            if (!_canMove || !_playerCharacter.ActionController.Permissions.HasFlag(ActionPermissions.Movement)) {
+            if (!_canMove || !_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement)) {
                 _move = new Vector3(0f, Move.y, 0f);
                 return;
             }

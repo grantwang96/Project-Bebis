@@ -3,41 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    [CreateAssetMenu(menuName = "Character Actions/Attack")]
-    public class AttackActionData : CharacterActionData {
+    [CreateAssetMenu(menuName = "Character Actions/3D/Attack3D")]
+    public class AttackActionData3D : CharacterActionData {
 
-        [SerializeField] private List<CombatHitboxDataEntry> _combatHitBoxDatas = new List<CombatHitboxDataEntry>();
+        [SerializeField] private List<CombatHitboxDataEntry3D> _combatHitBoxDatas = new List<CombatHitboxDataEntry3D>();
         [SerializeField] private bool _applyDash;
         [SerializeField] private float _dashAngle;
         [SerializeField] private float _force;
         [SerializeField] private bool _overrideForce;
 
-        public IReadOnlyList<CombatHitboxDataEntry> CombatHitboxDatas => _combatHitBoxDatas;
+        public IReadOnlyList<CombatHitboxDataEntry3D> CombatHitboxDatas => _combatHitBoxDatas;
         public bool ApplyDash => _applyDash;
         public float DashAngle => _dashAngle;
         public float DashForce => _force;
         public bool OverrideForce => _overrideForce;
 
         public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            if(state != null && !state.Status.HasFlag(ActionStatus.CanTransition) && !state.Status.HasFlag(ActionStatus.Completed)) {
+            if (state != null && !state.Status.HasFlag(ActionStatus.CanTransition) && !state.Status.HasFlag(ActionStatus.Completed)) {
                 return new CharacterActionResponse(false, state);
             }
-            AttackActionState newState = new AttackActionState(this, character);
+            AttackActionState3D newState = new AttackActionState3D(this, character);
             return new CharacterActionResponse(true, newState);
         }
     }
 
     [System.Serializable]
-    public class HitboxInfoEntry {
+    public class HitboxInfoEntry3D {
         [SerializeField] private string _id;
-        [SerializeField] private HitboxInfo _hitBoxInfo;
+        [SerializeField] private HitboxInfo2D _hitBoxInfo;
 
         public string Id => _id;
-        public HitboxInfo HitboxInfo => _hitBoxInfo;
+        public HitboxInfo2D HitboxInfo => _hitBoxInfo;
     }
 
     [System.Serializable]
-    public class CombatHitboxDataEntry {
+    public class CombatHitboxDataEntry3D {
         [SerializeField] private string _id;
         [SerializeField] private CombatHitBoxData _combatHitboxData;
 
@@ -45,14 +45,14 @@ namespace Bebis {
         public CombatHitBoxData CombatHitboxData => _combatHitboxData;
     }
 
-    public class AttackActionState : CharacterActionState {
-        
-        private AttackActionData _data;
+    public class AttackActionState3D : CharacterActionState {
+
+        private AttackActionData3D _data;
         private Dictionary<string, CombatHitBoxData> _combatHitBoxData = new Dictionary<string, CombatHitBoxData>();
 
         private HitEventInfo _hitEventInfo;
 
-        public AttackActionState(AttackActionData data, ICharacter character) : base(data, character) {
+        public AttackActionState3D(AttackActionData3D data, ICharacter character) : base(data, character) {
             // initialize data
             _data = data;
             Status = ActionStatus.Started;
@@ -63,23 +63,23 @@ namespace Bebis {
 
         // update the hitboxes on the weapon
         private void SetHitboxInfos() {
-            for(int i = 0; i < _data.CombatHitboxDatas.Count; i++) {
+            for (int i = 0; i < _data.CombatHitboxDatas.Count; i++) {
                 CombatHitBoxData modifierInfo = _data.CombatHitboxDatas[i].CombatHitboxData;
                 _combatHitBoxData.Add(_data.CombatHitboxDatas[i].Id, modifierInfo);
-                CombatHitboxInfo newInfo = new CombatHitboxInfo(OnHitboxTriggered);
+                CombatHitboxInfo3D newInfo = new CombatHitboxInfo3D(OnHitboxTriggered);
                 _character.HitboxController.SetHitboxInfo(_data.CombatHitboxDatas[i].Id, newInfo);
             }
         }
 
-        private void OnHitboxTriggered(Hitbox hitBox, Collider2D collider) {
-            if(!_combatHitBoxData.TryGetValue(hitBox.name, out CombatHitBoxData hitBoxData)) {
-                CustomLogger.Warn(nameof(AttackActionData), $"Could not retrieve hitbox data for hitbox {hitBox.name}");
+        private void OnHitboxTriggered(Hitbox hitBox, Collider collider) {
+            if (!_combatHitBoxData.TryGetValue(hitBox.name, out CombatHitBoxData hitBoxData)) {
+                CustomLogger.Warn(nameof(AttackActionData3D), $"Could not retrieve hitbox data for hitbox {hitBox.name}");
                 return;
             }
-            Hurtbox hurtBox = collider.GetComponent<Hurtbox>();
-            if(hurtBox == null) {
+            Hurtbox3D hurtBox = collider.GetComponent<Hurtbox3D>();
+            if (hurtBox == null) {
                 IDamageable damageable = collider.GetComponent<IDamageable>();
-                if(damageable != null) {
+                if (damageable != null) {
                     OnDamageableHit(damageable);
                 }
                 return;
@@ -89,7 +89,7 @@ namespace Bebis {
             }
             int power = GeneratePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
             Vector3 direction = CalculateRelativeDirection(hitBox.transform, hitBoxData.KnockbackAngle);
-            _hitEventInfo = new HitEventInfo(hitBox, power, direction, hitBoxData.KnockbackForce);
+            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce);
             hurtBox.SendHitEvent(hitBox, OnCharacterHit);
         }
 
@@ -114,7 +114,7 @@ namespace Bebis {
 
         protected override void OnActionStatusUpdated(ActionStatus status) {
             // do action status update here
-            if(status == ActionStatus.InProgress) {
+            if (status == ActionStatus.InProgress) {
                 TryDash();
             }
             base.OnActionStatusUpdated(status);
@@ -135,3 +135,4 @@ namespace Bebis {
         }
     }
 }
+

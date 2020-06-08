@@ -5,10 +5,10 @@ using UnityEngine;
 namespace Bebis {
     [System.Serializable]
     public class HackPlayerConfig {
-        [SerializeField] public InteractActionData InteractAction;
+        [SerializeField] public CharacterActionData InteractAction;
         [SerializeField] public CharacterActionData JumpAction;
-        [SerializeField] public List<AttackActionData> NormalAttack;
-        [SerializeField] public AttackActionData SecondaryAttack;
+        [SerializeField] public List<CharacterActionData> NormalAttack;
+        [SerializeField] public CharacterActionData SecondaryAttack;
         [SerializeField] public CharacterStats BaseStats;
     }
 }

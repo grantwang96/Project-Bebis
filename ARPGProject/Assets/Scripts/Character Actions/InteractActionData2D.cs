@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    [CreateAssetMenu(menuName = "Character Actions/Interact")]
-    public class InteractActionData : CharacterActionData {
+    [CreateAssetMenu(menuName = "Character Actions/Interact2D")]
+    public class InteractActionData2D : CharacterActionData {
 
         public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
             bool canInteract = CanInteract();
@@ -64,9 +64,9 @@ namespace Bebis {
         }
     }
 
-    public class InteractActionState : CharacterActionState {
+    public class InteractActionState2D : CharacterActionState {
 
-        public InteractActionState(CharacterActionData data, ICharacter character) : base(data, character) {
+        public InteractActionState2D(CharacterActionData data, ICharacter character) : base(data, character) {
 
         }
     }

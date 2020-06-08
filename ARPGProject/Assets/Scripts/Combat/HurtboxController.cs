@@ -4,11 +4,8 @@ using UnityEngine;
 using System;
 
 namespace Bebis {
-    public class HurtboxController : MonoBehaviour {
-
-        [SerializeField] private GameObject _characterGO;
+    public class HurtboxController : CharacterComponent {
         [SerializeField] private List<Hurtbox> _hurtBoxObjs = new List<Hurtbox>();
-        private ICharacter _character;
         private readonly Dictionary<string, Hurtbox> _hurtBoxes = new Dictionary<string, Hurtbox>();
 
         private bool _receivedHit;
@@ -21,7 +18,9 @@ namespace Bebis {
 
         private void OnEnable() {
             _hurtBoxes.Clear();
-            _character = _characterGO.GetComponent<ICharacter>();
+            if (_character == null) {
+                _character = _characterGO.GetComponent<ICharacter>();
+            }
             for (int i = 0; i < _hurtBoxObjs.Count; i++) {
                 _hurtBoxes.Add(_hurtBoxObjs[i].name, _hurtBoxObjs[i]);
                 _hurtBoxObjs[i].Initialize(_character);
@@ -45,7 +44,7 @@ namespace Bebis {
         }
 
         private void OnDestroy() {
-            for(int i = 0; i < _hurtBoxObjs.Count; i++) {
+            for (int i = 0; i < _hurtBoxObjs.Count; i++) {
                 _hurtBoxObjs[i].OnHit -= OnHurtboxHit;
             }
         }

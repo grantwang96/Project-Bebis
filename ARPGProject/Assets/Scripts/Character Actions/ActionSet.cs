@@ -20,7 +20,7 @@ namespace Bebis {
         private PlayerCharacter _character;
 
         private int _currentAttackIndex = 0;
-        private List<AttackActionData> _normalAttacks = new List<AttackActionData>();
+        private List<CharacterActionData> _normalAttacks = new List<CharacterActionData>();
         
         public CharacterActionData Btn1Skill { get; private set; }
         public CharacterActionData Btn2Skill => GetNextAttackData();
@@ -30,9 +30,9 @@ namespace Bebis {
         public PlayerGameplayActionSet_NormalMode(
             PlayerCharacter character,
             CharacterActionData jumpAction,
-            List<AttackActionData> normalAttacks,
-            AttackActionData secondaryAttack,
-            InteractActionData interactAction
+            List<CharacterActionData> normalAttacks,
+            CharacterActionData secondaryAttack,
+            CharacterActionData interactAction
             ) {
             _character = character;
             Btn1Skill = jumpAction;
@@ -49,7 +49,7 @@ namespace Bebis {
             }
         }
 
-        private AttackActionData GetNextAttackData() {
+        private CharacterActionData GetNextAttackData() {
             if(_character.ActionController.CurrentState == null) {
                 _currentAttackIndex = 0;
                 if (_normalAttacks.Count == 0) {

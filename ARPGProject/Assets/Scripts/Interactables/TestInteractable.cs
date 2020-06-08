@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    public class TestInteractable : MonoBehaviour, IInteractable {
+    public class TestInteractable2D : MonoBehaviour, IInteractable {
 
         [SerializeField] private IntVector3 _position;
 
@@ -14,15 +14,15 @@ namespace Bebis {
         }
 
         public void OnInteractStart(ICharacter character) {
-            CustomLogger.Log(nameof(TestInteractable), $"Character {character.MoveController.Body.name} has started interacting with {name}");
+            CustomLogger.Log(nameof(TestInteractable2D), $"Character {character.MoveController.Body.name} has started interacting with {name}");
         }
 
         public void OnInteractHold(ICharacter character) {
-            CustomLogger.Log(nameof(TestInteractable), $"Character {character.MoveController.Body.name} continues interacting with {name}");
+            CustomLogger.Log(nameof(TestInteractable2D), $"Character {character.MoveController.Body.name} continues interacting with {name}");
         }
 
         public void OnInteractRelease(ICharacter character) {
-            CustomLogger.Log(nameof(TestInteractable), $"Character {character.MoveController.Body.name} has stopped interacting with {name}");
+            CustomLogger.Log(nameof(TestInteractable2D), $"Character {character.MoveController.Body.name} has stopped interacting with {name}");
         }
     }
 }

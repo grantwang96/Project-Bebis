@@ -9,7 +9,7 @@ namespace Bebis {
         Defending,
         Invulnerable
     }
-    public class Hurtbox : MonoBehaviour {
+    public abstract class Hurtbox : MonoBehaviour {
 
         public ICharacter Character { get; private set; }
         public event Action<Hitbox, Action<ICharacter>> OnHit;
@@ -18,13 +18,13 @@ namespace Bebis {
         [SerializeField] private HurtBoxState _hurtBoxState;
         public HurtBoxState HurtBoxState => _hurtBoxState;
 
-        public void Initialize(ICharacter character) {
-            if(character == null) {
-                CustomLogger.Warn(nameof(Hurtbox), $"Initializing with null [{nameof(ICharacter)}]");
+        public virtual void Initialize(ICharacter character) {
+            if (character == null) {
+                CustomLogger.Warn(nameof(Hurtbox2D), $"Initializing with null [{nameof(ICharacter)}]");
             }
             Character = character;
         }
-
+        
         public bool SendHitEvent(Hitbox hitbox, Action<ICharacter> OnHitAction) {
             if (!enabled) {
                 return false;
