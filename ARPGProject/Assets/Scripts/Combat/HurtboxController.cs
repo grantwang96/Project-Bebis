@@ -12,6 +12,7 @@ namespace Bebis {
         private readonly Dictionary<string, Hurtbox> _hurtBoxes = new Dictionary<string, Hurtbox>();
 
         private bool _receivedHit;
+        private readonly List<Hitbox> _defendedHitboxes = new List<Hitbox>();
         private Action<ICharacter> _onHitAction;
 
         public IReadOnlyDictionary<string, Hurtbox> Hurtboxes => _hurtBoxes;
@@ -49,7 +50,11 @@ namespace Bebis {
             }
         }
 
-        private void OnHurtboxHit(string hitBoxId, Action<ICharacter> onHitAction) {
+        private void OnHurtboxHit(Hitbox hitbox, Action<ICharacter> onHitAction) {
+            // ignore hitbox if it was defended against
+            if (_defendedHitboxes.Contains(hitbox)) {
+                return;
+            }
             // TODO: take into account hitbox state
             _receivedHit = true;
             // TODO: have comparison take into account various hits on the same frame and have one take priority
@@ -57,8 +62,13 @@ namespace Bebis {
             _onHitAction = onHitAction;
         }
 
-        private void OnHurtboxDefend(string hitBoxId, Action<ICharacter> onHitAction) {
-            // process defense
+        private void OnHurtboxDefend(Hitbox hitbox, Action<ICharacter> onHitAction) {
+            // add this hitbox to list that cannot process hit
+            if (!_defendedHitboxes.Contains(hitbox)) {
+                _defendedHitboxes.Add(hitbox);
+                hitbox.OnHitboxInitialized += OnRegisteredHitboxInitialized;
+            }
+            // for now, allow hitbox to process how to handle defending hitbox
             _receivedHit = true;
             HitHurtboxState = HurtBoxState.Defending;
             _onHitAction = onHitAction;
@@ -67,6 +77,11 @@ namespace Bebis {
         private void ProcessHit() {
             _receivedHit = false;
             _onHitAction?.Invoke(_character);
+        }
+
+        private void OnRegisteredHitboxInitialized(Hitbox hitbox) {
+            // remove hitbox when it has been reset
+            _defendedHitboxes.Remove(hitbox);
         }
     }
 }

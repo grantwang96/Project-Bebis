@@ -5,8 +5,11 @@ using UnityEngine;
 namespace Bebis {
     public class TestInteractable : MonoBehaviour, IInteractable {
 
+        [SerializeField] private IntVector3 _position;
+
         private void Start() {
             IntVector3 position = LevelDataManager.GetMapPosition(transform.position);
+            _position = position;
             LevelDataManager.Instance.AddTileInteractable(position.x, position.y, this);
         }
 

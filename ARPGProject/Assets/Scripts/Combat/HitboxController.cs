@@ -15,7 +15,7 @@ namespace Bebis {
         }
 
         private void Update() {
-            SetAnchorRotation();
+            // SetAnchorRotation();
         }
 
         private void SetAnchorRotation() {
@@ -37,7 +37,7 @@ namespace Bebis {
 
         public void SetHitboxInfo(string id, HitboxInfo info) {
             if(_hitBoxes.TryGetValue(id, out Hitbox hitBox)) {
-                hitBox.SetInfo(info);
+                hitBox.Initialize(info);
             }
         }
     }

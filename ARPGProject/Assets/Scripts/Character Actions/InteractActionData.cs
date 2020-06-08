@@ -58,9 +58,8 @@ namespace Bebis {
         }
 
         private static TileInfo GetTileInfo(Vector2 position, Vector2 rotation) {
-            IntVector3 mapPosition = LevelDataManager.GetMapPosition(position);
-            IntVector3 direction = LevelDataManager.GetMapPosition(rotation);
-            TileInfo tileInfo = LevelDataManager.Instance.TileInfos[mapPosition.x + direction.x][mapPosition.y + direction.y];
+            IntVector3 mapPosition = LevelDataManager.GetMapPosition(position + rotation);
+            TileInfo tileInfo = LevelDataManager.Instance.TileInfos[mapPosition.x][mapPosition.y];
             return tileInfo;
         }
     }

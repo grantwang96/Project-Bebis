@@ -29,7 +29,7 @@ MonoBehaviour:
         _min: 1
         _max: 4
       _knockbackAngle: 0
-      _knockbackForce: 120
+      _knockbackForce: 20
   _applyDash: 1
   _dashAngle: 0
   _force: 8

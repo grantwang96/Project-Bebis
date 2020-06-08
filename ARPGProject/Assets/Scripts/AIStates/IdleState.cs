@@ -16,7 +16,6 @@ namespace Bebis {
         public override void Enter() {
             base.Enter();
             _idleTime = Time.time + Random.Range(_idleTimeRange.Min, _idleTimeRange.Max);
-            Debug.Log("Enter idle");
         }
 
         public override void Execute() {
@@ -28,7 +27,6 @@ namespace Bebis {
         }
 
         private void IdleFinished() {
-            Debug.Log("Exit idle");
             Vector2 position = _character.MoveController.Body.transform.position;
             IntVector3 intPosition = new IntVector3(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y), 0);
             List<IntVector3> possiblePositions = MapService.GetPositionsWithinRadius(_wanderRange.Min, intPosition, _wanderRange.Max);

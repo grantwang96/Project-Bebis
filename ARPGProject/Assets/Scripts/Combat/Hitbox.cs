@@ -7,14 +7,16 @@ namespace Bebis {
     public class Hitbox : MonoBehaviour {
 
         [SerializeField] private HitboxInfo _info;
+        public event Action<Hitbox> OnHitboxInitialized;
 
-        public void SetInfo(HitboxInfo info) {
+        public void Initialize(HitboxInfo info) {
             _info = info;
+            OnHitboxInitialized?.Invoke(this);
         }
 
         private void OnTriggerEnter2D(Collider2D collider) {
-            OnHit();
             _info.HitboxTriggered(this, collider);
+            OnHit();
         }
 
         private void OnHit() {

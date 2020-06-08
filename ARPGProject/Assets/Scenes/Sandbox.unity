@@ -926,6 +926,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0aa566e177362464a9719a9a3b0079bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _position:
+    x: 0
+    y: 0
+    z: 0
 --- !u!1001 &1404524443
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1146,11 +1150,6 @@ PrefabInstance:
     - target: {fileID: 297072977521398196, guid: 3c68ae60623adb44bb96ddb286b11199,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7391543103760793313, guid: 3c68ae60623adb44bb96ddb286b11199,
-        type: 3}
-      propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

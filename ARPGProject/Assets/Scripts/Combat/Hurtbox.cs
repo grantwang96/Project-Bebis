@@ -12,8 +12,8 @@ namespace Bebis {
     public class Hurtbox : MonoBehaviour {
 
         public ICharacter Character { get; private set; }
-        public event Action<string, Action<ICharacter>> OnHit;
-        public event Action<string, Action<ICharacter>> OnDefend;
+        public event Action<Hitbox, Action<ICharacter>> OnHit;
+        public event Action<Hitbox, Action<ICharacter>> OnDefend;
 
         [SerializeField] private HurtBoxState _hurtBoxState;
         public HurtBoxState HurtBoxState => _hurtBoxState;
@@ -25,16 +25,16 @@ namespace Bebis {
             Character = character;
         }
 
-        public bool SendHitEvent(Action<ICharacter> OnHitAction) {
+        public bool SendHitEvent(Hitbox hitbox, Action<ICharacter> OnHitAction) {
             if (!enabled) {
                 return false;
             }
             switch (_hurtBoxState) {
                 case HurtBoxState.Normal:
-                    OnHit?.Invoke(name, OnHitAction);
+                    OnHit?.Invoke(hitbox, OnHitAction);
                     return true;
                 case HurtBoxState.Defending:
-                    OnDefend?.Invoke(name, OnHitAction);
+                    OnDefend?.Invoke(hitbox, OnHitAction);
                     return true;
                 default:
                     // do invulnerable hit fx
