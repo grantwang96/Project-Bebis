@@ -7,12 +7,12 @@ namespace Bebis {
     public class CombatHitBoxData {
         [SerializeField] private int _basePower;
         [SerializeField] private MinMax_Int _powerRange;
-        [SerializeField] private float _knockbackAngle;
+        [SerializeField] private Vector3 _knockbackAngle;
         [SerializeField] private float _knockbackForce;
 
         public int BasePower => _basePower;
         public MinMax_Int PowerRange => _powerRange;
-        public float KnockbackAngle => _knockbackAngle;
+        public Vector3 KnockbackAngle => _knockbackAngle;
         public float KnockbackForce => _knockbackForce;
     }
 

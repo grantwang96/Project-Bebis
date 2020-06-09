@@ -6,10 +6,10 @@ using System;
 namespace Bebis {
     public class Hitbox3D : Hitbox {
 
-        [SerializeField] private HitboxInfo3D _info;
+        [SerializeField] private CombatHitboxInfo3D _info;
 
         public override void Initialize(HitboxInfo info) {
-            HitboxInfo3D info3D = info as HitboxInfo3D;
+            CombatHitboxInfo3D info3D = info as CombatHitboxInfo3D;
             if(info3D == null) {
                 CustomLogger.Error(name, $"Hitbox was given wrong type of hitbox info!");
                 return;
@@ -19,7 +19,7 @@ namespace Bebis {
         }
 
         private void OnTriggerEnter(Collider collider) {
-            _info.HitboxTriggered(this, collider);
+            _info?.HitboxTriggered(this, collider);
             OnHit();
         }
 

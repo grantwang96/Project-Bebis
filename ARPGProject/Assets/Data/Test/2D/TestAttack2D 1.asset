@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5df74b3a2dcc63144a01fc8157befdee, type: 3}
-  m_Name: TestAttack 1
+  m_Name: TestAttack2D 1
   m_EditorClassIdentifier: 
   _cancelable: 0
   _animationData:
@@ -28,7 +28,7 @@ MonoBehaviour:
       _powerRange:
         _min: 0
         _max: 4
-      _knockbackAngle: 0
+      _knockbackAngle: {x: 0, y: 0, z: 0}
       _knockbackForce: 5
   _applyDash: 1
   _dashAngle: 0

@@ -8,13 +8,13 @@ namespace Bebis {
 
         [SerializeField] private List<CombatHitboxDataEntry3D> _combatHitBoxDatas = new List<CombatHitboxDataEntry3D>();
         [SerializeField] private bool _applyDash;
-        [SerializeField] private float _dashAngle;
+        [SerializeField] private Vector3 _dashAngle;
         [SerializeField] private float _force;
         [SerializeField] private bool _overrideForce;
 
         public IReadOnlyList<CombatHitboxDataEntry3D> CombatHitboxDatas => _combatHitBoxDatas;
         public bool ApplyDash => _applyDash;
-        public float DashAngle => _dashAngle;
+        public Vector3 DashAngle => _dashAngle;
         public float DashForce => _force;
         public bool OverrideForce => _overrideForce;
 
@@ -108,8 +108,8 @@ namespace Bebis {
             return attackPower;
         }
 
-        private Vector3 CalculateRelativeDirection(Transform transform, float angle) {
-            return ExtraMath.Rotate(transform.up, angle);
+        private Vector3 CalculateRelativeDirection(Transform transform, Vector3 angle) {
+            return transform.TransformDirection(angle);
         }
 
         protected override void OnActionStatusUpdated(ActionStatus status) {
@@ -130,8 +130,8 @@ namespace Bebis {
         }
 
         // Calculate the general direction that the player will move
-        private Vector2 GetRelativeDirection(float angle) {
-            return ExtraMath.Rotate(_character.MoveController.Rotation, angle);
+        private Vector3 GetRelativeDirection(Vector3 angle) {
+            return _character.MoveController.Body.TransformDirection(angle);
         }
     }
 }

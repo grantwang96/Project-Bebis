@@ -305,6 +305,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &411990286 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -9042772588573301732, guid: 2d780636fecb8544595074d0383952d5,
+    type: 3}
+  m_PrefabInstance: {fileID: 767965275}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &450544725
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,15 +440,7 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
-  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
-    are already bound by a Humanoid avatar. These transforms can only be changed by
-    Humanoid clips.\n\tTransform 'Core'\n\tTransform 'RightKnee'\n\tTransform 'HeadBase'\n\tTransform
-    'LeftHand'\n\tTransform 'Stomach'\n\tTransform 'RightShoulder'\n\tTransform 'RightHip'\n\tTransform
-    'LeftKnee'\n\tTransform 'Neck'\n\tTransform 'LeftElbow'\n\tand more ...\n\tFrom
-    animation clip 'TestHuman_Jump'\n\tFrom animation clip 'TestHuman_Fall'\n\tFrom
-    animation clip 'TestHuman_Attack'\n\tFrom animation clip 'TestHuman_Attack2'\n\tFrom
-    animation clip 'TestHuman_Attack'\n\tFrom animation clip 'TestHuman_Attack3'\n\tFrom
-    animation clip 'TestHuman_Idle'\n\tFrom animation clip 'TestHuman_Walk'"
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
@@ -529,6 +527,111 @@ Transform:
   m_Father: {fileID: 768866494}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &593041020
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 593041021}
+  - component: {fileID: 593041024}
+  - component: {fileID: 593041023}
+  - component: {fileID: 593041022}
+  - component: {fileID: 593041025}
+  m_Layer: 0
+  m_Name: Hitbox_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &593041021
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593041020}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.35179, y: 0.35179, z: 0.35179}
+  m_Children: []
+  m_Father: {fileID: 411990286}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &593041022
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593041020}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &593041023
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593041020}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 84a50943eabcdd544b5fc4a69d220bf3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &593041024
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593041020}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &593041025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593041020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a359f04c68817164ba16f73c544f0457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &755212589
 GameObject:
   m_ObjectHideFlags: 0
@@ -646,7 +749,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 2d780636fecb8544595074d0383952d5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 2d780636fecb8544595074d0383952d5,
         type: 3}
@@ -696,7 +799,7 @@ PrefabInstance:
     - target: {fileID: 1794014719067941697, guid: 2d780636fecb8544595074d0383952d5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.85
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -6057140222963153312, guid: 2d780636fecb8544595074d0383952d5, type: 3}
@@ -965,12 +1068,12 @@ MonoBehaviour:
   _hitboxController: {fileID: 1214758894}
   _hurtboxController: {fileID: 1214758895}
   HackConfig:
-    InteractAction: {fileID: 11400000, guid: caa24efb7bb9b1247a67aae01e34c139, type: 2}
+    InteractAction: {fileID: 0}
     JumpAction: {fileID: 11400000, guid: 3c3eb2f02669fe14ea7ed80e422de32a, type: 2}
     NormalAttack:
-    - {fileID: 0}
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 11400000, guid: 2a2f88ebf88e0c34f819da20a07c5348, type: 2}
+    - {fileID: 11400000, guid: 166d68c9d8fd2e445bc74c486f9e5221, type: 2}
+    - {fileID: 11400000, guid: 695395a4bdede0747b91dca0c4d84ec0, type: 2}
     SecondaryAttack: {fileID: 0}
     BaseStats:
       Strength: 0
@@ -1016,7 +1119,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterGO: {fileID: 1214758890}
-  _hitBoxObjects: []
+  _hitBoxObjects:
+  - {fileID: 593041025}
 --- !u!114 &1214758895
 MonoBehaviour:
   m_ObjectHideFlags: 0
