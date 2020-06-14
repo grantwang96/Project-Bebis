@@ -21,5 +21,5 @@ MonoBehaviour:
     _floatValues: []
     _boolValues: []
   _permissions: -1
-  _jumpForce: 8
+  _jumpForce: 12
   _jumpDirection: {x: 0, y: 1, z: 0}

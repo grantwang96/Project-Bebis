@@ -22,5 +22,12 @@ namespace Bebis {
             }
             _rigidbody2D.AddForce(direction * force, ForceMode2D.Impulse);
         }
+
+        public void AddForce(Vector3 totalForce, bool overrideForce = false) {
+            if (overrideForce) {
+                _rigidbody2D.velocity = Vector2.zero;
+            }
+            _rigidbody2D.AddForce(totalForce, ForceMode2D.Impulse);
+        }
     }
 }

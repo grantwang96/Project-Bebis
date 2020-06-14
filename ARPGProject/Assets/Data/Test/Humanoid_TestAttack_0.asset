@@ -30,7 +30,7 @@ MonoBehaviour:
         _max: 5
       _knockbackAngle: {x: 0, y: 0, z: 1}
       _knockbackForce: 0
-  _applyDash: 1
+  _applyDash: 0
   _dashAngle: {x: 0, y: 0, z: 1}
-  _force: 2
+  _force: 8
   _overrideForce: 0

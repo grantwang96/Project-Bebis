@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    public class NPCMoveController : CharacterComponent, IMoveController {
+    public class NPCMoveController2D : CharacterComponent, IMoveController {
 
         private const float RotationThreshold = 0.25f;
 
@@ -30,6 +30,13 @@ namespace Bebis {
             ProcessMovementInput(_npcNavigator.MoveInput);
             ProcessRotationInput(_npcNavigator.RotationInput);
             ProcessMovement();
+        }
+
+        public void AddForce(Vector3 totalForce, bool overrideForce = false) {
+            if (overrideForce) {
+                _forceVector = Vector3.zero;
+            }
+            _forceVector += (Vector2)totalForce;
         }
 
         public void AddForce(Vector3 direction, float force, bool overrideForce = false) {

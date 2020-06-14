@@ -7,8 +7,8 @@ public class MinMax_Int {
     public int Min => _min;
     public int Max => _max;
     
-    public static int GetRandomFromMinMax(MinMax_Int minMax) {
-        return Random.Range(minMax.Min, minMax.Max);
+    public int GetRandomFromMinMax() {
+        return Random.Range(_min, _max);
     }
 }
 
@@ -19,7 +19,7 @@ public class MinMax_Float {
     public float Min => _min;
     public float Max => _max;
 
-    public static float GetCountFromMinMax(MinMax_Float minMax) {
-        return Random.Range(minMax.Min, minMax.Max);
+    public float GetRandomFromMinMax() {
+        return Random.Range(_min, _max);
     }
 }

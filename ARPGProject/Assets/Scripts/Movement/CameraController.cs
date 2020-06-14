@@ -5,6 +5,9 @@ using UnityEngine;
 namespace Bebis {
     public class CameraController : MonoBehaviour {
 
+        public static CameraController Instance { get; private set; }
+
+        [SerializeField] private Transform _playerCharacter;
         [SerializeField] private Transform _cameraPivotX;
         [SerializeField] private Transform _cameraPivotY;
 
@@ -12,8 +15,20 @@ namespace Bebis {
         [SerializeField] private float _cameraXLowerLimit;
         [SerializeField] private float _cameraTurnSpeed;
 
+        private void Awake() {
+            Instance = this;
+        }
+
         private void FixedUpdate() {
             ProcessRotation();
+        }
+
+        private void LateUpdate() {
+            FollowCharacter();
+        }
+
+        private void FollowCharacter() {
+            _cameraPivotX.position = _playerCharacter.position;
         }
 
         private void ProcessRotation() {

@@ -31,6 +31,13 @@ namespace Bebis {
             _forceVector += (Vector2)direction * force;
         }
 
+        public void AddForce(Vector3 totalForce, bool overrideForce = false) {
+            if (overrideForce) {
+                _forceVector = Vector3.zero;
+            }
+            _forceVector += (Vector2)totalForce;
+        }
+
         private void FixedUpdate() {
             ProcessExternalForces();
             ProcessMovementInput(InputController.Instance.MoveInput);

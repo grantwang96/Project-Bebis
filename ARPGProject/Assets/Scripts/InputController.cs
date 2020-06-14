@@ -80,10 +80,10 @@ namespace Bebis {
         }
 
         private void AxisInputs() {
-            _moveInput.x = Input.GetAxisRaw(MoveXAxisId);
-            _moveInput.y = Input.GetAxisRaw(MoveYAxisId);
-            _lookInput.x = Input.GetAxisRaw(LookXAxisId);
-            _lookInput.y = Input.GetAxisRaw(LookYAxisId);
+            _moveInput.x = Input.GetAxis(MoveXAxisId);
+            _moveInput.y = Input.GetAxis(MoveYAxisId);
+            _lookInput.x = Input.GetAxis(LookXAxisId);
+            _lookInput.y = Input.GetAxis(LookYAxisId);
         }
 
         private void ButtonInputs() {

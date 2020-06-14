@@ -28,14 +28,8 @@ namespace Bebis {
 
         private void IdleFinished() {
             Vector2 position = _character.MoveController.Body.transform.position;
-            IntVector3 intPosition = new IntVector3(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y), 0);
-            List<IntVector3> possiblePositions = MapService.GetPositionsWithinRadius(_wanderRange.Min, intPosition, _wanderRange.Max);
-            if(possiblePositions.Count == 0) {
-                CustomLogger.Warn(name, $"No available spaces to wander to!");
-                FireReadyToChangeState(this);
-            }
-            IntVector3 newWanderPosition = possiblePositions[Random.Range(0, possiblePositions.Count)];
-            _npcNavigator.MoveTarget = newWanderPosition;
+            Vector3 nextPosition = _npcNavigator.GetRandomLocationAtDistanceRadius(_wanderRange.GetRandomFromMinMax());
+            _npcNavigator.TargetPosition = nextPosition;
             FireReadyToChangeState(_onIdleFinishState);
         }
     }

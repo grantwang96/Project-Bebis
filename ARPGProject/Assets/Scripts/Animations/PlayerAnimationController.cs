@@ -71,6 +71,14 @@ namespace Bebis {
             _overrideController.ApplyOverrides(_overrides);
         }
 
+        public AnimatorClipInfo[] GetCurrentAnimatorClipInfos() {
+            return _animator.GetCurrentAnimatorClipInfo(0);
+        }
+
+        public Vector3 DeltaPosition() {
+            return _animator.deltaPosition;
+        }
+
         private void ProcessMove() {
             if (!_enabled) {
                 return;

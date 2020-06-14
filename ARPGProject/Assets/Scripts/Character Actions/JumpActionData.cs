@@ -28,7 +28,14 @@ namespace Bebis {
             // TODO: may wanna animation drive this behaviour. temporary immediate complete for now
             Status = ActionStatus.Completed;
 
-            _character.MoveController.AddForce(data.JumpDirection, data.JumpForce, true);
+            // _character.MoveController.AddForce(data.JumpDirection, data.JumpForce, true);
+            _character.MoveController.AddForce(CalculateDirection(data, character), true);
+        }
+
+        private static Vector3 CalculateDirection(JumpActionData data, ICharacter character) {
+            Vector3 jumpForce = data.JumpDirection * data.JumpForce;
+            jumpForce += character.AnimationController.DeltaPosition() / Time.deltaTime;
+            return jumpForce;
         }
     }
 }
