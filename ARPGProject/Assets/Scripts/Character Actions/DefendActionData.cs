@@ -5,22 +5,51 @@ using UnityEngine;
 namespace Bebis {
     [CreateAssetMenu(menuName = "Character Actions/Defend")]
     public class DefendActionData : CharacterActionData {
-        public override CharacterActionResponse Hold(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            if(state != null && state.Data != this) {
-                return new CharacterActionResponse(false, state);
+
+        [SerializeField] private AnimationData _onReleaseAnimationData;
+        public AnimationData OnReleaseAnimationData => _onReleaseAnimationData;
+
+        public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
+            if (state != null && state.Data != this) {
+                return base.Initiate(character, state, context);
             }
-            return base.Hold(character, state, context);
+            DefendActionState defendActionState = new DefendActionState(this, character);
+            CharacterActionResponse response = new CharacterActionResponse(true, defendActionState);
+            return response;
+        }
+
+        public override CharacterActionResponse Hold(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
+            if (state != null && state.Data != this) {
+                return base.Hold(character, state, context);
+            }
+            ICharacterActionState defendState = state;
+            if(state == null) {
+                defendState = new DefendActionState(this, character);
+            }
+            CharacterActionResponse response = new CharacterActionResponse(true, defendState);
+            return response;
+        }
+
+        public override CharacterActionResponse Release(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
+            CharacterActionResponse response = new CharacterActionResponse(true, state);
+            if(state != null && state.Data == this) {
+                state.Status = ActionStatus.Completed;
+            }
+            return response;
         }
     }
 
     public class DefendActionState : CharacterActionState {
 
+        private DefendActionData _data;
+
         public DefendActionState(DefendActionData data, ICharacter character) : base(data, character) {
-            
+            _data = data;
         }
 
-        protected override void OnActionStatusUpdated(ActionStatus status) {
-            base.OnActionStatusUpdated(status);
+        public override void Clear() {
+            base.Clear();
+            _character.AnimationController.UpdateAnimationState(_data.OnReleaseAnimationData);
         }
     }
 }

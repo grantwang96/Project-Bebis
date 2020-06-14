@@ -13,12 +13,19 @@ namespace Bebis {
         public Vector3 JumpDirection => _jumpDirection;
 
         public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            if (!character.MoveController.CanJump) {
+            if (!CanJump(character, state)) {
                 return base.Initiate(character, state, context);
             }
             JumpActionState newState = new JumpActionState(this, character);
             CharacterActionResponse response = new CharacterActionResponse(true, newState);
             return response;
+        }
+
+        private bool CanJump(ICharacter character, ICharacterActionState state) {
+            return character.MoveController.CanJump &&
+                (state == null || state.Data.Priority < Priority ||
+                state.Status.HasFlag(ActionStatus.CanTransition) ||
+                state.Status.HasFlag(ActionStatus.Completed));
         }
     }
 

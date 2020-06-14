@@ -20,6 +20,10 @@ namespace Bebis {
         private const string Button2Id = "Button2";
         private const string Button3Id = "Button3";
         private const string Button4Id = "Button4";
+        private const string LTriggerId = "LTrigger";
+        private const string LBumperId = "LBumper";
+        private const string RTriggerId = "RTrigger";
+        private const string RBumperId = "RBumper";
 
         public static InputController Instance { get; private set; }
 
@@ -45,6 +49,22 @@ namespace Bebis {
         public event Action OnBtn4Pressed;
         public event Action OnBtn4Held;
         public event Action OnBtn4Released;
+
+        public event Action OnLTriggerPressed;
+        public event Action OnLTriggerHeld;
+        public event Action OnLTriggerReleased;
+
+        public event Action OnLBumperPressed;
+        public event Action OnLBumperHeld;
+        public event Action OnLBumpReleased;
+
+        public event Action OnRTriggerPressed;
+        public event Action OnRTriggerHeld;
+        public event Action OnRTriggerReleased;
+
+        public event Action OnRBumperPressed;
+        public event Action OnRBumperHeld;
+        public event Action OnRBumperReleased;
 
         public void EnterControlState(ControlState status) {
             OnControlStatusUpdated?.Invoke(status);
@@ -91,6 +111,8 @@ namespace Bebis {
             Button2Inputs();
             Button3Inputs();
             Button4Inputs();
+            LTriggerInputs();
+            RTriggerInputs();
         }
 
         private void Button1Inputs() {
@@ -130,6 +152,26 @@ namespace Bebis {
                 OnBtn4Held?.Invoke();
             } else if (Input.GetButtonUp(Button4Id)) {
                 OnBtn4Released?.Invoke();
+            }
+        }
+
+        private void LTriggerInputs() {
+            if (Input.GetButtonDown(LTriggerId)) {
+                OnLTriggerPressed?.Invoke();
+            } else if (Input.GetButton(LTriggerId)) {
+                OnLTriggerHeld?.Invoke();
+            } else if (Input.GetButtonUp(LTriggerId)) {
+                OnLTriggerReleased?.Invoke();
+            }
+        }
+
+        private void RTriggerInputs() {
+            if (Input.GetButtonDown(RTriggerId)) {
+                OnRTriggerPressed?.Invoke();
+            } else if (Input.GetButton(RTriggerId)) {
+                OnRTriggerHeld?.Invoke();
+            } else if (Input.GetButtonUp(RTriggerId)) {
+                OnRTriggerReleased?.Invoke();
             }
         }
     }

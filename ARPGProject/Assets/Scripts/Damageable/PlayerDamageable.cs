@@ -20,6 +20,7 @@ namespace Bebis {
             // perform checks based on hurt box controller's state
             _health -= hitEventInfo.Power;
             _character.MoveController.AddForce(hitEventInfo.KnockBack, hitEventInfo.Force);
+            OnHit?.Invoke(hitEventInfo);
         }
     }
 }

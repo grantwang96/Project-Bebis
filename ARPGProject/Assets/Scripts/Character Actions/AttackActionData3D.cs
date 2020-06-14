@@ -25,6 +25,12 @@ namespace Bebis {
             AttackActionState3D newState = new AttackActionState3D(this, character);
             return new CharacterActionResponse(true, newState);
         }
+
+        private bool CanAttack(ICharacter character, ICharacterActionState state) {
+            return state == null ||
+                state.Status.HasFlag(ActionStatus.CanTransition) ||
+                state.Status.HasFlag(ActionStatus.Completed);
+        }
     }
 
     [System.Serializable]

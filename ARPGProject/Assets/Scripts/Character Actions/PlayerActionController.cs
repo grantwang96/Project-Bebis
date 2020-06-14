@@ -26,12 +26,14 @@ namespace Bebis {
 
         private void SetGameplayActionSets() {
             HackPlayerConfig hackConfig = _playerCharacter.HackConfig;
-            _normalGameplaySet = new PlayerGameplayActionSet_NormalMode(
+            _normalGameplaySet = new PlayerGameplayActionSet(
                 _playerCharacter,
                 hackConfig.JumpAction,
                 hackConfig.NormalAttack,
                 hackConfig.SecondaryAttack,
-                hackConfig.InteractAction);
+                hackConfig.InteractAction,
+                hackConfig.SkillMode1,
+                hackConfig.SkillMode2);
             _currentActionSet = _normalGameplaySet;
         }
 
@@ -51,10 +53,22 @@ namespace Bebis {
             InputController.Instance.OnBtn4Pressed += OnBtn4Pressed;
             InputController.Instance.OnBtn4Held += OnBtn4Held;
             InputController.Instance.OnBtn4Released += OnBtn4Released;
+
+            InputController.Instance.OnLTriggerPressed += OnLTriggerPressed;
+            InputController.Instance.OnLTriggerHeld += OnLTriggerHeld;
+            InputController.Instance.OnLTriggerReleased += OnLTriggerReleased;
+
+            InputController.Instance.OnRTriggerPressed += OnRTriggerPressed;
+            InputController.Instance.OnRTriggerHeld += OnRTriggerHeld;
+            InputController.Instance.OnRTriggerReleased += OnRTriggerReleased;
         }
 
         private void SubscribeToAnimationController() {
             _playerCharacter.AnimationController.OnActionStatusUpdated += OnCharacterAnimationStatusSent;
+        }
+
+        private void SubscribeToDamageable() {
+            _playerCharacter.Damageable.OnHit += OnDamageableHit;
         }
 
         private void UnsubscribeToInputController() {
@@ -73,127 +87,199 @@ namespace Bebis {
             InputController.Instance.OnBtn4Pressed -= OnBtn4Pressed;
             InputController.Instance.OnBtn4Held -= OnBtn4Held;
             InputController.Instance.OnBtn4Released -= OnBtn4Released;
+
+            InputController.Instance.OnLTriggerPressed -= OnLTriggerPressed;
+            InputController.Instance.OnLTriggerHeld -= OnLTriggerHeld;
+            InputController.Instance.OnLTriggerReleased += OnLTriggerReleased;
+
+            InputController.Instance.OnRTriggerPressed -= OnRTriggerPressed;
+            InputController.Instance.OnRTriggerHeld -= OnRTriggerHeld;
+            InputController.Instance.OnRTriggerReleased -= OnRTriggerReleased;
         }
 
         private void UnsubscribeToAnimationController() {
             _playerCharacter.AnimationController.OnActionStatusUpdated -= OnCharacterAnimationStatusSent;
         }
 
+        private void UnsubscribeToDamageable() {
+            _playerCharacter.Damageable.OnHit -= OnDamageableHit;
+        }
+
         private void OnBtn1Pressed() {
-            if(_currentActionSet.Btn1Skill == null) {
+            if(_currentActionSet.Btn1Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn1Skill.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Initiate);
+            CharacterActionResponse response = _currentActionSet.Btn1Skill_Normal.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Initiate);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn1Held() {
-            if (_currentActionSet.Btn1Skill == null) {
+            if (_currentActionSet.Btn1Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn1Skill.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            CharacterActionResponse response = _currentActionSet.Btn1Skill_Normal.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn1Released() {
-            if (_currentActionSet.Btn1Skill == null) {
+            if (_currentActionSet.Btn1Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn1Skill.Release(_playerCharacter, CurrentState, CharacterActionContext.Release);
+            CharacterActionResponse response = _currentActionSet.Btn1Skill_Normal.Release(_playerCharacter, CurrentState, CharacterActionContext.Release);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn2Pressed() {
-            if(_currentActionSet.Btn2Skill == null) {
+            if(_currentActionSet.Btn2Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn2Skill.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Initiate);
+            CharacterActionResponse response = _currentActionSet.Btn2Skill_Normal.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Initiate);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn2Held() {
-            if (_currentActionSet.Btn2Skill == null) {
+            if (_currentActionSet.Btn2Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn2Skill.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            CharacterActionResponse response = _currentActionSet.Btn2Skill_Normal.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn2Released() {
-            if (_currentActionSet.Btn2Skill == null) {
+            if (_currentActionSet.Btn2Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn2Skill.Release(_playerCharacter, CurrentState, CharacterActionContext.Release);
+            CharacterActionResponse response = _currentActionSet.Btn2Skill_Normal.Release(_playerCharacter, CurrentState, CharacterActionContext.Release);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn3Pressed() {
-            if(_currentActionSet.Btn3Skill == null) {
+            if(_currentActionSet.Btn3Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn3Skill.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            CharacterActionResponse response = _currentActionSet.Btn3Skill_Normal.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Hold);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn3Held() {
-            if (_currentActionSet.Btn3Skill == null) {
+            if (_currentActionSet.Btn3Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn3Skill.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            CharacterActionResponse response = _currentActionSet.Btn3Skill_Normal.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn3Released() {
-            if (_currentActionSet.Btn3Skill == null) {
+            if (_currentActionSet.Btn3Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn3Skill.Release(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            CharacterActionResponse response = _currentActionSet.Btn3Skill_Normal.Release(_playerCharacter, CurrentState, CharacterActionContext.Hold);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn4Pressed() {
-            if (_currentActionSet.Btn4Skill == null) {
+            if (_currentActionSet.Btn4Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn4Skill.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            CharacterActionResponse response = _currentActionSet.Btn4Skill_Normal.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Hold);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn4Held() {
-            if (_currentActionSet.Btn4Skill == null) {
+            if (_currentActionSet.Btn4Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn4Skill.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            CharacterActionResponse response = _currentActionSet.Btn4Skill_Normal.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
         }
 
         private void OnBtn4Released() {
-            if (_currentActionSet.Btn4Skill == null) {
+            if (_currentActionSet.Btn4Skill_Normal == null) {
                 return;
             }
-            CharacterActionResponse response = _currentActionSet.Btn4Skill.Release(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            CharacterActionResponse response = _currentActionSet.Btn4Skill_Normal.Release(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnLTriggerPressed() {
+            if (_currentActionSet.SkillMode1 == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.SkillMode1.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Initiate);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnLTriggerHeld() {
+            if (_currentActionSet.SkillMode1 == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.SkillMode1.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnLTriggerReleased() {
+            if (_currentActionSet.SkillMode1 == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.SkillMode1.Release(_playerCharacter, CurrentState, CharacterActionContext.Release);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnRTriggerPressed() {
+            if (_currentActionSet.SkillMode2 == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.SkillMode2.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Initiate);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnRTriggerHeld() {
+            if (_currentActionSet.SkillMode2 == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.SkillMode2.Hold(_playerCharacter, CurrentState, CharacterActionContext.Hold);
+            if (response.Success) {
+                PerformActionSuccess(response.State);
+            }
+        }
+
+        private void OnRTriggerReleased() {
+            if (_currentActionSet.SkillMode2 == null) {
+                return;
+            }
+            CharacterActionResponse response = _currentActionSet.SkillMode2.Release(_playerCharacter, CurrentState, CharacterActionContext.Release);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
@@ -219,6 +305,10 @@ namespace Bebis {
                 CurrentState.Clear();
                 CurrentState = null;
             }
+        }
+
+        private void OnDamageableHit(HitEventInfo info) {
+            CurrentState?.Clear();
         }
     }
 }

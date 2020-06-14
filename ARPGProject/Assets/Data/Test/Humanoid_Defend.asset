@@ -9,19 +9,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecf0343c75c36e2469de85f0fa2af638, type: 3}
-  m_Name: Humanoid_Jump
+  m_Script: {fileID: 11500000, guid: f49c709944c2063439a4cbe7b495b971, type: 3}
+  m_Name: Humanoid_Defend
   m_EditorClassIdentifier: 
   _cancelable: 0
   _animationData:
     _animationName: 
-    _triggers:
-    - Jump
+    _triggers: []
     _resetTriggers: []
     _intValues: []
     _floatValues: []
-    _boolValues: []
-  _permissions: -1
-  _priority: 100
-  _jumpForce: 12
-  _jumpDirection: {x: 0, y: 1, z: 0}
+    _boolValues:
+    - Key: Defending
+      Value: 1
+  _permissions: 0
+  _priority: 50
+  _onReleaseAnimationData:
+    _animationName: 
+    _triggers: []
+    _resetTriggers: []
+    _intValues: []
+    _floatValues: []
+    _boolValues:
+    - Key: Defending
+      Value: 0

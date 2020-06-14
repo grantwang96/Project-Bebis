@@ -9,36 +9,46 @@ namespace Bebis {
     
     public interface IPlayerGameplayActionSet {
 
-        CharacterActionData Btn1Skill { get; }
-        CharacterActionData Btn2Skill { get; }
-        CharacterActionData Btn3Skill { get; }
-        CharacterActionData Btn4Skill { get; }
+        CharacterActionData Btn1Skill_Normal { get; }
+        CharacterActionData Btn2Skill_Normal { get; }
+        CharacterActionData Btn3Skill_Normal { get; }
+        CharacterActionData Btn4Skill_Normal { get; }
+
+        CharacterActionData SkillMode1 { get; }
+        CharacterActionData SkillMode2 { get; }
     }
     
-    public class PlayerGameplayActionSet_NormalMode : IPlayerGameplayActionSet {
+    public class PlayerGameplayActionSet : IPlayerGameplayActionSet {
 
         private PlayerCharacter _character;
 
         private int _currentAttackIndex = 0;
         private List<CharacterActionData> _normalAttacks = new List<CharacterActionData>();
         
-        public CharacterActionData Btn1Skill { get; private set; }
-        public CharacterActionData Btn2Skill => GetNextAttackData();
-        public CharacterActionData Btn3Skill { get; private set; }
-        public CharacterActionData Btn4Skill { get; private set; }
+        public CharacterActionData Btn1Skill_Normal { get; private set; }
+        public CharacterActionData Btn2Skill_Normal => GetNextAttackData();
+        public CharacterActionData Btn3Skill_Normal { get; private set; }
+        public CharacterActionData Btn4Skill_Normal { get; private set; }
 
-        public PlayerGameplayActionSet_NormalMode(
+        public CharacterActionData SkillMode1 { get; private set; }
+        public CharacterActionData SkillMode2 { get; private set; }
+
+        public PlayerGameplayActionSet(
             PlayerCharacter character,
             CharacterActionData jumpAction,
             List<CharacterActionData> normalAttacks,
             CharacterActionData secondaryAttack,
-            CharacterActionData interactAction
+            CharacterActionData interactAction,
+            CharacterActionData skillMode1,
+            CharacterActionData skillMode2
             ) {
             _character = character;
-            Btn1Skill = jumpAction;
+            Btn1Skill_Normal = jumpAction;
             _normalAttacks = normalAttacks;
-            Btn3Skill = secondaryAttack;
-            Btn4Skill = interactAction;
+            Btn3Skill_Normal = secondaryAttack;
+            Btn4Skill_Normal = interactAction;
+            SkillMode1 = skillMode1;
+            SkillMode2 = skillMode2;
 
             _character.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
         }
@@ -70,15 +80,5 @@ namespace Bebis {
                 _currentAttackIndex = 0;
             }
         }
-    }
-
-    public class PlayerGameplayActionSet_SkillMode : IPlayerGameplayActionSet {
-
-        private PlayerCharacter _character;
-
-        public CharacterActionData Btn1Skill { get; private set; }
-        public CharacterActionData Btn2Skill { get; private set; }
-        public CharacterActionData Btn3Skill { get; private set; }
-        public CharacterActionData Btn4Skill { get; private set; }
     }
 }

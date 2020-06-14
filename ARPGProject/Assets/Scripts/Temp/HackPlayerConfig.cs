@@ -9,6 +9,8 @@ namespace Bebis {
         [SerializeField] public CharacterActionData JumpAction;
         [SerializeField] public List<CharacterActionData> NormalAttack;
         [SerializeField] public CharacterActionData SecondaryAttack;
+        [SerializeField] public CharacterActionData SkillMode1;
+        [SerializeField] public CharacterActionData SkillMode2;
         [SerializeField] public CharacterStats BaseStats;
     }
 }

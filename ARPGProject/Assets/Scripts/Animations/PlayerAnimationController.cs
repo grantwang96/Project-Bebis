@@ -26,6 +26,9 @@ namespace Bebis {
             for (int i = 0; i < data.Triggers.Length; i++) {
                 _animator.SetTrigger(data.Triggers[i]);
             }
+            for(int i = 0; i < data.ResetTriggers.Length; i++) {
+                _animator.ResetTrigger(data.Triggers[i]);
+            }
             for (int i = 0; i < data.IntValues.Length; i++) {
                 _animator.SetInteger(data.IntValues[i].Key, data.IntValues[i].Value);
             }

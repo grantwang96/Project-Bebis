@@ -26,10 +26,12 @@ namespace Bebis {
         [SerializeField] protected bool _cancelable;
         [SerializeField] protected AnimationData _animationData;
         [SerializeField] protected ActionPermissions _permissions;
+        [SerializeField] protected int _priority;
 
         public bool Cancelable => _cancelable;
         public AnimationData AnimationData => _animationData;
         public ActionPermissions Permissions => _permissions;
+        public int Priority => _priority;
 
         public virtual CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
             CharacterActionResponse response = new CharacterActionResponse(false, state);
