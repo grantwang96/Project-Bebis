@@ -9,6 +9,8 @@ namespace Bebis {
         ActionPermissions Permissions { get; }
         ICharacterActionState CurrentState { get; }
 
+        bool PerformAction(CharacterActionData actionData, CharacterActionContext context);
+
         event Action<ActionStatus> OnActionStatusUpdated;
         event Action OnPerformActionSuccess;
     }

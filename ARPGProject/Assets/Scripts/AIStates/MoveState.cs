@@ -39,13 +39,9 @@ namespace Bebis {
         }
 
         private void GeneratePath() {
-            _npcNavigator.OnCalculatePathCompleted += OnPathCalculated;
-            _npcNavigator.CalculatePath(_npcNavigator.TargetPosition);
-        }
-
-        private void OnPathCalculated(NavMeshPath path) {
-            _npcNavigator.OnCalculatePathCompleted -= OnPathCalculated;
-            if(path.status == NavMeshPathStatus.PathInvalid) {
+            NavMeshPath path = _npcNavigator.CalculatePath(_npcNavigator.TargetPosition);
+            if (path.status == NavMeshPathStatus.PathInvalid) {
+                CustomLogger.Warn(name, $"Failed to path to target: {_npcNavigator.TargetPosition}");
                 FireReadyToChangeState(_onFailedToPathState);
             }
             _pathSet = true;
@@ -70,7 +66,10 @@ namespace Bebis {
             if(_pathIndex >= _pathCorners.Length) {
                 return;
             }
-            _npcNavigator.MoveInput = (_pathCorners[_pathIndex] - _characterPosition).normalized;
+            Vector3 direction = (_pathCorners[_pathIndex] - _characterPosition);
+            direction.y = 0f;
+            _npcNavigator.MoveInput = direction.normalized;
+            _npcNavigator.RotationInput = direction.normalized;
         }
     }
 }

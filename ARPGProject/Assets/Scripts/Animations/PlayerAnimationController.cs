@@ -7,6 +7,7 @@ namespace Bebis {
     public class PlayerAnimationController : MonoBehaviour, IAnimationController {
 
         public event Action<ActionStatus> OnActionStatusUpdated;
+        public event Action<AnimationState> OnAnimationStateUpdated;
 
         [SerializeField] private EquipmentManager _equipmentManager;
         [SerializeField] private Animator _animator;
@@ -48,7 +49,7 @@ namespace Bebis {
 
         private void Update() {
             ProcessMove();
-            _animator.SetBool("Airborne", !_playerCharacter.MoveController.CanJump);
+            _animator.SetBool("Airborne", !_playerCharacter.MoveController.IsGrounded);
         }
 
         private void SetupOverrideController() {
@@ -60,6 +61,10 @@ namespace Bebis {
 
         private void UpdateActionStatus(ActionStatus status) {
             OnActionStatusUpdated?.Invoke(status);
+        }
+
+        private void SendAnimationEvent(AnimationState state) {
+            OnAnimationStateUpdated?.Invoke(state);
         }
 
         private void OnEquipmentUpdated(IEquipment equipment) {

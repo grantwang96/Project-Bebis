@@ -6,17 +6,39 @@ using System;
 namespace Bebis {
     // base class for AI states
     public abstract class AIState : CharacterComponent {
-        
-        [SerializeField] private AnimationData _animationData;
 
+        [SerializeField] protected AIStateMachine _aiStateMachine;
+        [SerializeField] protected AnimationData _animationData;
+
+        public bool Initialized { get; protected set; }
         protected AIState _parentState;
+        public string Id { get; protected set; }
         public bool Active { get; protected set; }
         
         public event Action<AIState> OnReadyToChangeState;
 
         protected override void Awake() {
             base.Awake();
+            Initialize();
+        }
+
+        public virtual void Initialize() {
+            if (Initialized) {
+                return;
+            }
             _parentState = transform.parent?.GetComponent<AIState>();
+            _parentState?.Initialize();
+            SetId();
+            _aiStateMachine.RegisterAIState(this);
+            Initialized = true;
+        }
+
+        protected void SetId() {
+            if (_parentState != null) {
+                Id = $"{_parentState.Id}/{name}";
+            } else {
+                Id = name;
+            }
         }
 
         public virtual void Enter() {

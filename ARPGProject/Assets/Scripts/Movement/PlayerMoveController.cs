@@ -11,8 +11,8 @@ namespace Bebis {
 
         [SerializeField] private Vector3 _move;
         [SerializeField] private Vector3 _rotation;
-
-        public bool CanJump => _characterController.isGrounded; // temp
+        
+        public bool IsGrounded { get; private set; }
 
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private Transform _bodyRoot;
@@ -23,8 +23,18 @@ namespace Bebis {
         [SerializeField] private float _linearDrag = 1f;
         [SerializeField] private Vector3 _forceVector;
 
-        [SerializeField] private bool _canMove = true;
-        [SerializeField] private bool _canRotate = true;
+        [SerializeField] private int _movementRestrictions;
+        [SerializeField] private bool _rotationRestrictions;
+
+        private void Start() {
+            _character.ActionController.OnPerformActionSuccess += OnCharacterPerformAction;
+            _character.Damageable.OnHitStun += OnDamageableHitStun;
+        }
+
+        private void OnDestroy() {
+            _character.ActionController.OnPerformActionSuccess -= OnCharacterPerformAction;
+            _character.Damageable.OnHitStun -= OnDamageableHitStun;
+        }
 
         public void AddForce(Vector3 direction, float force, bool overrideForce = false) {
             if (overrideForce) {
@@ -46,6 +56,7 @@ namespace Bebis {
             ProcessRotationInput();
             ProcessMovement();
             ProcessRotation();
+            IsGrounded = _characterController.isGrounded;
         }
 
         private void ProcessExternalForces() {
@@ -70,8 +81,7 @@ namespace Bebis {
         }
 
         private void ProcessMovementInput(Vector2 moveInput) {
-            if (!_canMove || !_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement)) {
-                _move = new Vector3(0f, Move.y, 0f);
+            if (_movementRestrictions > 0 || !_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement)) {
                 return;
             }
             if (!_characterController.isGrounded) {
@@ -89,8 +99,8 @@ namespace Bebis {
             _rotation = _move;
         }
 
-        private bool IsMoving(Vector2 input) {
-            return !Mathf.Approximately(input.x, 0f) || !Mathf.Approximately(input.y, 0f);
+        private bool IsMoving(Vector3 input) {
+            return !Mathf.Approximately(input.x, 0f) || !Mathf.Approximately(input.z, 0f);
         }
 
         private void ProcessMovement() {
@@ -105,6 +115,36 @@ namespace Bebis {
                 return;
             }
             _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, _move, _turnLerpSpeed * Time.deltaTime, 0f);
+        }
+
+        private void OnCharacterPerformAction() {
+            ActionPermissions permissions = _character.ActionController.Permissions;
+            if (!permissions.HasFlag(ActionPermissions.Movement) && IsGrounded) {
+                _move = new Vector3(0f, _move.y, 0f);
+            }
+            if (!permissions.HasFlag(ActionPermissions.Rotation)) {
+                // todo: process rotation things
+            }
+        }
+
+        private void OnControllerColliderHit(ControllerColliderHit hit) {
+            if (!_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement) && IsGrounded) {
+                _move = new Vector3(0f, _move.y, 0f);
+            }
+        }
+
+        private void OnDamageableHitStun(HitEventInfo hitEventInfo) {
+            _movementRestrictions++;
+            _move = new Vector3(0f, _move.y, 0f);
+            _character.AnimationController.OnAnimationStateUpdated += OnDamageableAnimationCompleted;
+        }
+
+        private void OnDamageableAnimationCompleted(AnimationState state) {
+            if (state != AnimationState.Completed) {
+                return;
+            }
+            _character.AnimationController.OnAnimationStateUpdated -= OnDamageableAnimationCompleted;
+            _movementRestrictions = Mathf.Max(0, _movementRestrictions - 1);
         }
     }
 }

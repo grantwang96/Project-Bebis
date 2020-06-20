@@ -8,6 +8,11 @@ namespace Bebis {
         [SerializeField] private Hitbox[] _hitBoxObjects;
         private Dictionary<string, Hitbox> _hitBoxes = new Dictionary<string, Hitbox>();
 
+        protected override void Awake() {
+            base.Awake();
+            InitializeHitboxList();
+        }
+
         private void InitializeHitboxList() {
             _hitBoxes.Clear();
             for (int i = 0; i < _hitBoxObjects.Length; i++) {

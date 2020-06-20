@@ -7,6 +7,7 @@ namespace Bebis {
     public class PlayerAnimationController2D : MonoBehaviour, IAnimationController {
 
         public event Action<ActionStatus> OnActionStatusUpdated;
+        public event Action<AnimationState> OnAnimationStateUpdated;
 
         [SerializeField] private EquipmentManager _equipmentManager;
         [SerializeField] private Animator _animator;

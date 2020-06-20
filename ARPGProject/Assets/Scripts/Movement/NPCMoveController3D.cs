@@ -11,7 +11,7 @@ namespace Bebis {
         public Vector3 Rotation => _rotation;
         public Transform Body => transform;
 
-        public bool CanJump => true;
+        public bool IsGrounded => true;
 
         [SerializeField] private Vector3 _move;
         [SerializeField] private Vector3 _rotation;
@@ -22,6 +22,7 @@ namespace Bebis {
         [SerializeField] private float _moveSpeed = 5f;
         [SerializeField] private float _turnLerpSpeed = .8f;
         [SerializeField] private float _linearDrag = 1f;
+        [SerializeField] private Transform _bodyRoot;
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private NPCNavigator _npcNavigator;
 
@@ -30,6 +31,7 @@ namespace Bebis {
             ProcessMovementInput(_npcNavigator.MoveInput);
             ProcessRotationInput(_npcNavigator.RotationInput);
             ProcessMovement();
+            ProcessRotation();
         }
 
         public void AddForce(Vector3 totalForce, bool overrideForce = false) {
@@ -58,20 +60,11 @@ namespace Bebis {
             if (!IsMoving(_move)) {
                 return;
             }
-            if (Mathf.Abs(_move.x) > RotationThreshold) {
-                _rotation.x = ExtraMath.Magnitude(_move.x, 1f);
-            } else {
-                _rotation.x = 0f;
-            }
-            if (Mathf.Abs(_move.y) > RotationThreshold) {
-                _rotation.y = ExtraMath.Magnitude(_move.y, 1f);
-            } else {
-                _rotation.y = 0f;
-            }
+            _rotation = moveInput;
         }
 
-        private bool IsMoving(Vector2 input) {
-            return Mathf.Abs(input.x) > RotationThreshold || Mathf.Abs(input.y) > RotationThreshold;
+        private bool IsMoving(Vector3 input) {
+            return Mathf.Abs(input.x) > RotationThreshold || Mathf.Abs(input.z) > RotationThreshold;
         }
 
         private void ProcessExternalForces() {
@@ -91,6 +84,13 @@ namespace Bebis {
             Vector3 moveVector = Move * _moveSpeed;
             moveVector += _forceVector;
             _characterController.Move(moveVector * Time.deltaTime);
+        }
+
+        private void ProcessRotation() {
+            if (_bodyRoot.forward == Rotation) {
+                return;
+            }
+            _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, _move, _turnLerpSpeed * Time.deltaTime, 0f);
         }
     }
 }

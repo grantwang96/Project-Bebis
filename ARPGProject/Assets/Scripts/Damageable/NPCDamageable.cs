@@ -12,6 +12,7 @@ namespace Bebis {
         public int MaxHealth => _maxHealth;
 
         public event Action<HitEventInfo> OnHit;
+        public event Action<HitEventInfo> OnHitStun;
         public event Action OnDefeated;
 
         [SerializeField] private HurtboxController _hurtBoxController;

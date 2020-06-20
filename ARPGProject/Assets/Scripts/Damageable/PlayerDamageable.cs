@@ -11,7 +11,10 @@ namespace Bebis {
         public int Health => _health;
         public int MaxHealth => _maxHealth;
 
+        [SerializeField] private AnimationData _onHitStunAnimationData;
+
         public event Action<HitEventInfo> OnHit;
+        public event Action<HitEventInfo> OnHitStun;
         public event Action OnDefeated;
 
         [SerializeField] private HurtboxController _hurtBoxController;
@@ -21,6 +24,18 @@ namespace Bebis {
             _health -= hitEventInfo.Power;
             _character.MoveController.AddForce(hitEventInfo.KnockBack, hitEventInfo.Force);
             OnHit?.Invoke(hitEventInfo);
+            if(_health <= 0) {
+                // do death things
+                return;
+            }
+            // temp: all hits deal hitstun
+            ApplyHitStun(hitEventInfo);
+        }
+
+        private void ApplyHitStun(HitEventInfo hitEventInfo) {
+            Debug.Log("Hit");
+            _character.AnimationController.UpdateAnimationState(_onHitStunAnimationData);
+            OnHitStun?.Invoke(hitEventInfo);
         }
     }
 }

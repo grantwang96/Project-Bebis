@@ -9,8 +9,8 @@ namespace Bebis {
         [SerializeField] private NPCMoveController3D _moveController;
         [SerializeField] private NPCActionController _actionController;
         [SerializeField] private EquipmentManager _equipmentManager;
-        [SerializeField] private PlayerAnimationController _playerAnimationController;
-        [SerializeField] private PlayerCharacterStatManager _playerCharacterStatManager;
+        [SerializeField] private NPCAnimationController3D _animationController;
+        [SerializeField] private NPCCharacterStatManager _npcCharacterStatManager;
 
         [SerializeField] protected HitboxController _hitboxController;
         [SerializeField] protected HurtboxController _hurtboxController;
@@ -18,8 +18,8 @@ namespace Bebis {
         public IDamageable Damageable => _damageable;
         public IMoveController MoveController => _moveController;
         public IActionController ActionController => _actionController;
-        public IAnimationController AnimationController => _playerAnimationController;
-        public ICharacterStatManager CharacterStatManager => _playerCharacterStatManager;
+        public IAnimationController AnimationController => _animationController;
+        public ICharacterStatManager CharacterStatManager => _npcCharacterStatManager;
         public HitboxController HitboxController => _hitboxController;
         public HurtboxController HurtboxController => _hurtboxController;
 

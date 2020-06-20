@@ -11,7 +11,7 @@ namespace Bebis {
         public Vector3 Rotation => _rotation;
         public Transform Body => transform;
 
-        public bool CanJump => true;
+        public bool IsGrounded => true;
 
         [SerializeField] private Vector2 _move;
         [SerializeField] private Vector2 _rotation;

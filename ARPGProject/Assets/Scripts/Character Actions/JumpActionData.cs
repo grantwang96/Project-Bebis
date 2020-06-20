@@ -22,7 +22,7 @@ namespace Bebis {
         }
 
         private bool CanJump(ICharacter character, ICharacterActionState state) {
-            return character.MoveController.CanJump &&
+            return character.MoveController.IsGrounded &&
                 (state == null || state.Data.Priority < Priority ||
                 state.Status.HasFlag(ActionStatus.CanTransition) ||
                 state.Status.HasFlag(ActionStatus.Completed));

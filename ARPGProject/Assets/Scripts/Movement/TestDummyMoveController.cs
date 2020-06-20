@@ -11,7 +11,7 @@ namespace Bebis {
         public Vector3 WorldPos => _rigidbody2D.position;
         public Vector3 Move { get; private set; }
         public Vector3 Rotation { get; private set; }
-        public bool CanJump { get; } = false;
+        public bool IsGrounded { get; } = false;
         public Transform Body => _rigidbody2D.transform;
 
         [SerializeField] private Rigidbody2D _rigidbody2D;

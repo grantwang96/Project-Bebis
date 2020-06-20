@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Bebis {
     public interface INPCActionController : IActionController {
-        void PerformAction(CharacterActionData data, CharacterActionContext context);
+
     }
 
     public class NPCActionController : CharacterComponent, INPCActionController {
@@ -15,40 +15,49 @@ namespace Bebis {
 
         public event Action<ActionStatus> OnActionStatusUpdated;
         public event Action OnPerformActionSuccess;
-        
-        public void PerformAction(CharacterActionData data, CharacterActionContext context) {
-            switch (context) {
-                case CharacterActionContext.Initiate:
-                    InitiateAction(data, context);
-                    break;
-                case CharacterActionContext.Hold:
-                    HoldAction(data, context);
-                    break;
-                case CharacterActionContext.Release:
-                    ReleaseAction(data, context);
-                    break;
-            }
+
+        private void Start() {
+            _character.AnimationController.OnActionStatusUpdated += OnCharacterAnimationStatusSent;
         }
 
-        private void InitiateAction(CharacterActionData data, CharacterActionContext context) {
+        public bool PerformAction(CharacterActionData data, CharacterActionContext context) {
+            bool success = false;
+            switch (context) {
+                case CharacterActionContext.Initiate:
+                    success = InitiateAction(data, context);
+                    break;
+                case CharacterActionContext.Hold:
+                    success = HoldAction(data, context);
+                    break;
+                case CharacterActionContext.Release:
+                    success = ReleaseAction(data, context);
+                    break;
+            }
+            return success;
+        }
+
+        private bool InitiateAction(CharacterActionData data, CharacterActionContext context) {
             CharacterActionResponse response = data.Initiate(_character, CurrentState, context);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
+            return response.Success;
         }
 
-        private void HoldAction(CharacterActionData data, CharacterActionContext context) {
+        private bool HoldAction(CharacterActionData data, CharacterActionContext context) {
             CharacterActionResponse response = data.Hold(_character, CurrentState, context);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
+            return response.Success;
         }
 
-        private void ReleaseAction(CharacterActionData data, CharacterActionContext context) {
+        private bool ReleaseAction(CharacterActionData data, CharacterActionContext context) {
             CharacterActionResponse response = data.Release(_character, CurrentState, context);
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
+            return response.Success;
         }
 
         private void PerformActionSuccess(ICharacterActionState state) {

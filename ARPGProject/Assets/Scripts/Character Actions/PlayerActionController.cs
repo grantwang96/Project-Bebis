@@ -18,10 +18,15 @@ namespace Bebis {
         private IPlayerGameplayActionSet _skillMode1GameplaySet;
         private IPlayerGameplayActionSet _currentActionSet;
 
+        private int _actionRestrictions;
+
         private void Start() {
             SetGameplayActionSets();
             SubscribeToInputController();
+            SubscribeToDamageable();
             SubscribeToAnimationController();
+
+            _actionRestrictions = 0;
         }
 
         private void SetGameplayActionSets() {
@@ -37,6 +42,7 @@ namespace Bebis {
             _currentActionSet = _normalGameplaySet;
         }
 
+        #region SUBCRIBING/UNSUBSCRIBING TO EVENTS
         private void SubscribeToInputController() {
             InputController.Instance.OnBtn1Pressed += OnBtn1Pressed;
             InputController.Instance.OnBtn1Held += OnBtn1Held;
@@ -68,7 +74,7 @@ namespace Bebis {
         }
 
         private void SubscribeToDamageable() {
-            _playerCharacter.Damageable.OnHit += OnDamageableHit;
+            _playerCharacter.Damageable.OnHitStun += OnDamageableHitStun;
         }
 
         private void UnsubscribeToInputController() {
@@ -102,10 +108,15 @@ namespace Bebis {
         }
 
         private void UnsubscribeToDamageable() {
-            _playerCharacter.Damageable.OnHit -= OnDamageableHit;
+            _playerCharacter.Damageable.OnHit -= OnDamageableHitStun;
         }
+        #endregion
 
+        #region APPLYING INPUTS TO CHARACTER ACTIONS
         private void OnBtn1Pressed() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if(_currentActionSet.Btn1Skill_Normal == null) {
                 return;
             }
@@ -116,6 +127,9 @@ namespace Bebis {
         }
 
         private void OnBtn1Held() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.Btn1Skill_Normal == null) {
                 return;
             }
@@ -126,6 +140,9 @@ namespace Bebis {
         }
 
         private void OnBtn1Released() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.Btn1Skill_Normal == null) {
                 return;
             }
@@ -136,7 +153,10 @@ namespace Bebis {
         }
 
         private void OnBtn2Pressed() {
-            if(_currentActionSet.Btn2Skill_Normal == null) {
+            if (_actionRestrictions > 0) {
+                return;
+            }
+            if (_currentActionSet.Btn2Skill_Normal == null) {
                 return;
             }
             CharacterActionResponse response = _currentActionSet.Btn2Skill_Normal.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Initiate);
@@ -146,6 +166,9 @@ namespace Bebis {
         }
 
         private void OnBtn2Held() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.Btn2Skill_Normal == null) {
                 return;
             }
@@ -156,6 +179,9 @@ namespace Bebis {
         }
 
         private void OnBtn2Released() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.Btn2Skill_Normal == null) {
                 return;
             }
@@ -166,7 +192,10 @@ namespace Bebis {
         }
 
         private void OnBtn3Pressed() {
-            if(_currentActionSet.Btn3Skill_Normal == null) {
+            if (_actionRestrictions > 0) {
+                return;
+            }
+            if (_currentActionSet.Btn3Skill_Normal == null) {
                 return;
             }
             CharacterActionResponse response = _currentActionSet.Btn3Skill_Normal.Initiate(_playerCharacter, CurrentState, CharacterActionContext.Hold);
@@ -176,6 +205,9 @@ namespace Bebis {
         }
 
         private void OnBtn3Held() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.Btn3Skill_Normal == null) {
                 return;
             }
@@ -186,6 +218,9 @@ namespace Bebis {
         }
 
         private void OnBtn3Released() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.Btn3Skill_Normal == null) {
                 return;
             }
@@ -196,6 +231,9 @@ namespace Bebis {
         }
 
         private void OnBtn4Pressed() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.Btn4Skill_Normal == null) {
                 return;
             }
@@ -206,6 +244,9 @@ namespace Bebis {
         }
 
         private void OnBtn4Held() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.Btn4Skill_Normal == null) {
                 return;
             }
@@ -216,6 +257,9 @@ namespace Bebis {
         }
 
         private void OnBtn4Released() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.Btn4Skill_Normal == null) {
                 return;
             }
@@ -226,6 +270,9 @@ namespace Bebis {
         }
 
         private void OnLTriggerPressed() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.SkillMode1 == null) {
                 return;
             }
@@ -236,6 +283,9 @@ namespace Bebis {
         }
 
         private void OnLTriggerHeld() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.SkillMode1 == null) {
                 return;
             }
@@ -246,6 +296,9 @@ namespace Bebis {
         }
 
         private void OnLTriggerReleased() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.SkillMode1 == null) {
                 return;
             }
@@ -256,6 +309,9 @@ namespace Bebis {
         }
 
         private void OnRTriggerPressed() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.SkillMode2 == null) {
                 return;
             }
@@ -266,6 +322,9 @@ namespace Bebis {
         }
 
         private void OnRTriggerHeld() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.SkillMode2 == null) {
                 return;
             }
@@ -276,6 +335,9 @@ namespace Bebis {
         }
 
         private void OnRTriggerReleased() {
+            if (_actionRestrictions > 0) {
+                return;
+            }
             if (_currentActionSet.SkillMode2 == null) {
                 return;
             }
@@ -283,6 +345,29 @@ namespace Bebis {
             if (response.Success) {
                 PerformActionSuccess(response.State);
             }
+        }
+        #endregion
+
+        public bool PerformAction(CharacterActionData actionData, CharacterActionContext context) {
+            CharacterActionResponse response = null;
+            switch (context) {
+                case CharacterActionContext.Initiate:
+                    response = actionData.Initiate(_playerCharacter, CurrentState, context);
+                    break;
+                case CharacterActionContext.Hold:
+                    response = actionData.Hold(_playerCharacter, CurrentState, context);
+                    break;
+                case CharacterActionContext.Release:
+                    response = actionData.Release(_playerCharacter, CurrentState, context);
+                    break;
+                default:
+                    break;
+            }
+            bool success = response != null && response.Success;
+            if (success) {
+                PerformActionSuccess(response.State);
+            }
+            return success;
         }
 
         private void PerformActionSuccess(ICharacterActionState state) {
@@ -307,8 +392,18 @@ namespace Bebis {
             }
         }
 
-        private void OnDamageableHit(HitEventInfo info) {
+        private void OnDamageableHitStun(HitEventInfo info) {
             CurrentState?.Clear();
+            _playerCharacter.AnimationController.OnAnimationStateUpdated += OnDamageableAnimationCompleted;
+            _actionRestrictions++;
+        }
+
+        private void OnDamageableAnimationCompleted(AnimationState state) {
+            if(state != AnimationState.Completed) {
+                return;
+            }
+            _playerCharacter.AnimationController.OnAnimationStateUpdated -= OnDamageableAnimationCompleted;
+            _actionRestrictions = Mathf.Max(0, _actionRestrictions - 1);
         }
     }
 }

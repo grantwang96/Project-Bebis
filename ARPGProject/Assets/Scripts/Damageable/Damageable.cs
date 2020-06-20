@@ -7,6 +7,7 @@ namespace Bebis {
 
         void TakeDamage(HitEventInfo hitEventInfo);
         event Action<HitEventInfo> OnHit;
+        event Action<HitEventInfo> OnHitStun;
         event Action OnDefeated;
     }
 }

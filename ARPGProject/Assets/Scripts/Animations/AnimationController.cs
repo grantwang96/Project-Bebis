@@ -7,6 +7,7 @@ namespace Bebis {
     public interface IAnimationController {
 
         event Action<ActionStatus> OnActionStatusUpdated;
+        event Action<AnimationState> OnAnimationStateUpdated;
 
         void UpdateAnimationState(AnimationData data);
         void OverrideAnimationController(IReadOnlyList<AnimationClipOverride> overrideClips);
@@ -29,5 +30,11 @@ namespace Bebis {
         public SerializedStringInt[] IntValues => _intValues;
         public SerializedStringFloat[] FloatValues => _floatValues;
         public SerializedStringBool[] BoolValues => _boolValues;
+    }
+
+    public enum AnimationState {
+        Started,
+        InProgress,
+        Completed
     }
 }
