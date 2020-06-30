@@ -5,6 +5,8 @@ using UnityEngine;
 namespace Bebis {
     public abstract class PlayerCharacter : MonoBehaviour, ICharacter {
 
+        public static ICharacter Instance { get; protected set; }
+
         [SerializeField] protected HitboxController _hitboxController;
         [SerializeField] protected HurtboxController _hurtboxController;
 

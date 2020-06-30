@@ -9,7 +9,8 @@ namespace Bebis {
 
         public Vector3 Move => _move;
         public Vector3 Rotation => _rotation;
-        public Transform Body => transform;
+        public Transform Body => _bodyRoot;
+        public Transform Center => _bodyCenter;
 
         public bool IsGrounded => true;
 
@@ -23,6 +24,7 @@ namespace Bebis {
         [SerializeField] private float _turnLerpSpeed = .8f;
         [SerializeField] private float _linearDrag = 1f;
         [SerializeField] private Transform _bodyRoot;
+        [SerializeField] private Transform _bodyCenter;
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private NPCNavigator _npcNavigator;
 
@@ -57,7 +59,7 @@ namespace Bebis {
         }
 
         private void ProcessRotationInput(Vector3 moveInput) {
-            if (!IsMoving(_move)) {
+            if (!IsMoving(moveInput)) {
                 return;
             }
             _rotation = moveInput;
@@ -72,11 +74,11 @@ namespace Bebis {
         }
 
         private void ProcessDrag() {
-            if (Mathf.Approximately(_forceVector.x, 0f) && Mathf.Approximately(_forceVector.y, 0f)) {
+            if (Mathf.Approximately(_forceVector.x, 0f) && Mathf.Approximately(_forceVector.z, 0f)) {
                 return;
             }
             _forceVector.x = ExtraMath.Lerp(_forceVector.x, 0f, _linearDrag * Time.deltaTime);
-            _forceVector.y = ExtraMath.Lerp(_forceVector.y, 0f, _linearDrag * Time.deltaTime);
+            _forceVector.z = ExtraMath.Lerp(_forceVector.z, 0f, _linearDrag * Time.deltaTime);
         }
 
         private void ProcessMovement() {
@@ -90,7 +92,7 @@ namespace Bebis {
             if (_bodyRoot.forward == Rotation) {
                 return;
             }
-            _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, _move, _turnLerpSpeed * Time.deltaTime, 0f);
+            _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, _rotation, _turnLerpSpeed * Time.deltaTime, 0f);
         }
     }
 }

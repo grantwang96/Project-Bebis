@@ -8,24 +8,24 @@ namespace Bebis {
         [SerializeField] private CharacterActionData _characterActionData;
         [SerializeField] private AIState _onActionCompletedState;
 
-        private bool _success;
+        private bool _initiated;
 
         public override void Enter() {
             base.Enter();
-            _success = false;
-            TryPerformAction();
+            _initiated = false;
+            TryInitiateAction();
         }
 
         public override void Execute() {
             base.Execute();
-            if (!_success) {
-                TryPerformAction();
+            if (!_initiated) {
+                TryInitiateAction();
             }
         }
 
-        private void TryPerformAction() {
-            _success = _character.ActionController.PerformAction(_characterActionData, CharacterActionContext.Initiate);
-            if (_success) {
+        private void TryInitiateAction() {
+            _initiated = _character.ActionController.PerformAction(_characterActionData, CharacterActionContext.Initiate);
+            if (_initiated) {
                 _character.ActionController.OnActionStatusUpdated += OnActionCompleted;
             }
         }

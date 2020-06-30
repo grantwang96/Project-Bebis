@@ -7,6 +7,7 @@ namespace Bebis {
     public class NonAggroState : AIState {
 
         [SerializeField] private AIState _onTakeDamage;
+        [SerializeField] private NPCTargetManager _npcTargetManager;
 
         public override void Enter() {
             base.Enter();
@@ -21,7 +22,8 @@ namespace Bebis {
         protected virtual void OnTakeDamage(HitEventInfo info) {
             // do take damage things
             // change to the take damage state
-            // FireReadyToChangeState(_onTakeDamage);
+            _npcTargetManager.RegisterOrUpdateHostile(info.Attacker);
+            FireReadyToChangeState(_onTakeDamage);
         }
     }
 }

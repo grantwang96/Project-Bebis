@@ -7,6 +7,8 @@ namespace Bebis {
 
         public static CameraController Instance { get; private set; }
 
+        public Transform CameraRoot { get; private set; }
+
         [SerializeField] private Transform _playerCharacter;
         [SerializeField] private Transform _cameraPivotX;
         [SerializeField] private Transform _cameraPivotY;
@@ -17,6 +19,7 @@ namespace Bebis {
 
         private void Awake() {
             Instance = this;
+            CameraRoot = _cameraPivotX;
         }
 
         private void FixedUpdate() {

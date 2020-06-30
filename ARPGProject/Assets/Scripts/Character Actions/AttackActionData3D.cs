@@ -28,8 +28,9 @@ namespace Bebis {
 
         private bool CanAttack(ICharacter character, ICharacterActionState state) {
             return state == null ||
+                (state.Data == this && (
                 state.Status.HasFlag(ActionStatus.CanTransition) ||
-                state.Status.HasFlag(ActionStatus.Completed);
+                state.Status.HasFlag(ActionStatus.Completed)));
         }
     }
 
@@ -95,7 +96,7 @@ namespace Bebis {
             }
             int power = GeneratePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
             Vector3 direction = CalculateRelativeDirection(hitBox.transform, hitBoxData.KnockbackAngle);
-            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce);
+            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce, _character);
             hurtBox.SendHitEvent(hitBox, OnCharacterHit);
         }
 

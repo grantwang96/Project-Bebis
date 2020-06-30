@@ -6,6 +6,8 @@ namespace Bebis {
         int MaxHealth { get; }
 
         void TakeDamage(HitEventInfo hitEventInfo);
+        event Action<int> OnCurrentHealthChanged;
+        event Action<int> OnMaxHealthChanged;
         event Action<HitEventInfo> OnHit;
         event Action<HitEventInfo> OnHitStun;
         event Action OnDefeated;

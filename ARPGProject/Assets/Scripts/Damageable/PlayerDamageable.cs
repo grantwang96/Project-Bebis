@@ -13,6 +13,8 @@ namespace Bebis {
 
         [SerializeField] private AnimationData _onHitStunAnimationData;
 
+        public event Action<int> OnCurrentHealthChanged;
+        public event Action<int> OnMaxHealthChanged;
         public event Action<HitEventInfo> OnHit;
         public event Action<HitEventInfo> OnHitStun;
         public event Action OnDefeated;
@@ -22,6 +24,7 @@ namespace Bebis {
         public void TakeDamage(HitEventInfo hitEventInfo) {
             // perform checks based on hurt box controller's state
             _health -= hitEventInfo.Power;
+            OnCurrentHealthChanged?.Invoke(_health);
             _character.MoveController.AddForce(hitEventInfo.KnockBack, hitEventInfo.Force);
             OnHit?.Invoke(hitEventInfo);
             if(_health <= 0) {
@@ -33,7 +36,6 @@ namespace Bebis {
         }
 
         private void ApplyHitStun(HitEventInfo hitEventInfo) {
-            Debug.Log("Hit");
             _character.AnimationController.UpdateAnimationState(_onHitStunAnimationData);
             OnHitStun?.Invoke(hitEventInfo);
         }

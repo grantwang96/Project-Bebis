@@ -16,6 +16,8 @@ namespace Bebis {
         public int Health => _health;
         public int MaxHealth => _maxHealth;
 
+        public event Action<int> OnCurrentHealthChanged;
+        public event Action<int> OnMaxHealthChanged;
         public event Action<HitEventInfo> OnHit;
         public event Action<HitEventInfo> OnHitStun;
         public event Action OnDefeated;

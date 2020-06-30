@@ -13,6 +13,7 @@ namespace Bebis {
         public Vector3 Rotation { get; private set; }
         public bool IsGrounded { get; } = false;
         public Transform Body => _rigidbody2D.transform;
+        public Transform Center => transform;
 
         [SerializeField] private Rigidbody2D _rigidbody2D;
 

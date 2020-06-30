@@ -8,6 +8,7 @@ namespace Bebis {
 
         public CharacterStats BaseStats { get; private set; }
         public CharacterStats FinalStats { get; private set; }
+        public CharacterTag CharacterTags => _characterTags;
 
         public int Attack { get; private set; }
         public int Defense { get; private set; }
@@ -17,6 +18,7 @@ namespace Bebis {
 
         [SerializeField] private PlayerCharacter _playerCharacter;
         [SerializeField] private EquipmentManager _equipmentManager;
+        [SerializeField] private CharacterTag _characterTags;
 
         private CharacterStatModifiers _modifiers = CharacterStatModifiers.Standard;
 

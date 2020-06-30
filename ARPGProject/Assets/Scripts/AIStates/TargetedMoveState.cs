@@ -4,16 +4,17 @@ using UnityEngine;
 using UnityEngine.AI;
 
 namespace Bebis {
-    public class MoveState : AIState {
+    public class TargetedMoveState : AIState {
 
         [SerializeField] private NPCNavigator _npcNavigator;
         [SerializeField] private AIState _onArrivedSuccessState;
         [SerializeField] private AIState _onFailedToPathState;
         [SerializeField] private float _targetRadius;
+        [SerializeField] private bool _setRotation;
 
         private bool _pathSet = false;
-        [SerializeField] private Vector3[] _pathCorners;
-        [SerializeField] private int _pathIndex;
+        private Vector3[] _pathCorners;
+        private int _pathIndex;
         private Vector3 _characterPosition => _character.MoveController.Body.position;
 
         public override void Enter() {
@@ -69,7 +70,9 @@ namespace Bebis {
             Vector3 direction = (_pathCorners[_pathIndex] - _characterPosition);
             direction.y = 0f;
             _npcNavigator.MoveInput = direction.normalized;
-            _npcNavigator.RotationInput = direction.normalized;
+            if (_setRotation) {
+                _npcNavigator.RotationInput = direction.normalized;
+            }
         }
     }
 }

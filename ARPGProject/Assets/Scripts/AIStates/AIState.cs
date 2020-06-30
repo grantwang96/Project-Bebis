@@ -13,7 +13,7 @@ namespace Bebis {
         public bool Initialized { get; protected set; }
         protected AIState _parentState;
         public string Id { get; protected set; }
-        public bool Active { get; protected set; }
+        public bool Active;
         
         public event Action<AIState> OnReadyToChangeState;
 

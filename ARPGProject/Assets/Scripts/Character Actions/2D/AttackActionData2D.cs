@@ -89,7 +89,7 @@ namespace Bebis {
             }
             int power = GeneratePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
             Vector3 direction = CalculateRelativeDirection(hitBox.transform, hitBoxData.KnockbackAngle.z);
-            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce);
+            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce, _character);
             hurtBox.SendHitEvent(hitBox, OnCharacterHit);
         }
 

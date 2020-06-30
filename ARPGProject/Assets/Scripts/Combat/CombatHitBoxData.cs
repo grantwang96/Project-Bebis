@@ -21,14 +21,18 @@ namespace Bebis {
         public readonly int Power;
         public readonly Vector3 KnockBack;
         public readonly float Force;
+        public readonly ICharacter Attacker;
 
         public HitEventInfo(
             int power,
             Vector3 knockBack,
-            float force) {
+            float force,
+            ICharacter attacker
+            ) {
             Power = power;
             KnockBack = knockBack;
             Force = force;
+            Attacker = attacker;
         }
     }
 }

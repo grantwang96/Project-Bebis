@@ -19,6 +19,7 @@ namespace Bebis {
         public override ICharacterStatManager CharacterStatManager => _playerCharacterStatManager;
 
         private void Awake() {
+            Instance = this;
             InitializeConfig();
             InitializeCharacterComponents();
         }

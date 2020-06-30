@@ -8,6 +8,7 @@ namespace Bebis {
         public Vector3 Move => _move;
         public Vector3 Rotation => _rotation;
         public Transform Body => _bodyRoot;
+        public Transform Center => _bodyCenter;
 
         [SerializeField] private Vector3 _move;
         [SerializeField] private Vector3 _rotation;
@@ -16,7 +17,7 @@ namespace Bebis {
 
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private Transform _bodyRoot;
-        [SerializeField] private Transform _cameraPivotX;
+        [SerializeField] private Transform _bodyCenter;
 
         [SerializeField] private float _moveSpeed = 5f;
         [SerializeField] private float _turnLerpSpeed = .8f;
@@ -88,8 +89,8 @@ namespace Bebis {
                 return;
             }
             _move = new Vector3(0f, _move.y, 0f);
-            _move += _cameraPivotX.right * moveInput.x;
-            _move += _cameraPivotX.forward * moveInput.y;
+            _move += CameraController.Instance.CameraRoot.right * moveInput.x;
+            _move += CameraController.Instance.CameraRoot.forward * moveInput.y;
         }
 
         private void ProcessRotationInput() {
