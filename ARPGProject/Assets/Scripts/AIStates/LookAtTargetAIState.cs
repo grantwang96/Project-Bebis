@@ -7,10 +7,27 @@ namespace Bebis {
 
         [SerializeField] private NPCTargetManager _npcTargetManager;
         [SerializeField] private NPCNavigator _npcNavigator;
+        [SerializeField] private AIStateMode _lookMode;
+
+        public override void Enter() {
+            base.Enter();
+            if(_lookMode == AIStateMode.Enter) {
+                SetRotation();
+            }
+        }
 
         public override void Execute() {
             base.Execute();
-            SetRotation();
+            if(_lookMode == AIStateMode.Execute) {
+                SetRotation();
+            }
+        }
+
+        public override void Exit(AIState nextState) {
+            base.Exit(nextState);
+            if(_lookMode == AIStateMode.Exit) {
+                SetRotation();
+            }
         }
 
         private void SetRotation() {

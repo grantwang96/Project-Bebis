@@ -7,6 +7,12 @@ namespace Bebis {
     // base class for AI states
     public abstract class AIState : CharacterComponent {
 
+        protected enum AIStateMode {
+            Enter,
+            Execute,
+            Exit
+        }
+
         [SerializeField] protected AIStateMachine _aiStateMachine;
         [SerializeField] protected AnimationData _animationData;
 

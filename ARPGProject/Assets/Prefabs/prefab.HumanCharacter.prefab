@@ -238,6 +238,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6256814906736302556}
+  - {fileID: 8605037676638016036}
   m_Father: {fileID: 3875271714107873089}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -263,7 +264,7 @@ MonoBehaviour:
     _floatValues: []
     _boolValues: []
   Active: 0
-  _onTakeDamageHostileFound: {fileID: 8738230947540150548}
+  _onTakeDamageHostileFound: {fileID: 331964338755314009}
   _onTakeDamageHostileHidden: {fileID: 3875271716025496056}
   _hostileHiddenStartingDetection: 0.5
   _npcTargetManager: {fileID: 5244029089961613850}
@@ -667,6 +668,7 @@ MonoBehaviour:
   Active: 0
   _npcTargetManager: {fileID: 5244029089961613850}
   _npcNavigator: {fileID: 3875271714720044895}
+  _lookMode: 0
 --- !u!1 &5108865392849096236
 GameObject:
   m_ObjectHideFlags: 0
@@ -975,6 +977,61 @@ Transform:
   m_Father: {fileID: 4845551442258347466}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5285580682538270075
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 352861064535972081}
+  - component: {fileID: 331964338755314009}
+  m_Layer: 0
+  m_Name: HitStun_TargetFound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &352861064535972081
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5285580682538270075}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8605037676638016036}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &331964338755314009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5285580682538270075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a6146eb6ad8cb24e83d99a38cbc5cb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _characterGO: {fileID: 5108865392849096236}
+  _aiStateMachine: {fileID: 3875271714720044832}
+  _animationData:
+    _animationName: 
+    _triggers:
+    - HitStun
+    _resetTriggers: []
+    _intValues: []
+    _floatValues: []
+    _boolValues: []
+  Active: 0
+  _onAnimationCompleted: {fileID: 8738230947540150548}
 --- !u!1 &5454856271225663017
 GameObject:
   m_ObjectHideFlags: 0
@@ -1284,6 +1341,64 @@ Transform:
   m_Father: {fileID: 6996548378611753722}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7908508258865318255
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8605037676638016036}
+  - component: {fileID: 5274061738006456614}
+  m_Layer: 0
+  m_Name: LookAtAggressor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8605037676638016036
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7908508258865318255}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 352861064535972081}
+  - {fileID: 8903844272255029625}
+  m_Father: {fileID: 3875271714071250365}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5274061738006456614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7908508258865318255}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf07ccdeac61ac947b3fd9ba9bcc5860, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _characterGO: {fileID: 5108865392849096236}
+  _aiStateMachine: {fileID: 3875271714720044832}
+  _animationData:
+    _animationName: 
+    _triggers: []
+    _resetTriggers: []
+    _intValues: []
+    _floatValues: []
+    _boolValues: []
+  Active: 0
+  _npcTargetManager: {fileID: 5244029089961613850}
+  _npcNavigator: {fileID: 3875271714720044895}
+  _lookMode: 0
 --- !u!1 &8051580278849356617
 GameObject:
   m_ObjectHideFlags: 0
@@ -1315,6 +1430,61 @@ Transform:
   m_Father: {fileID: 3252203621283806308}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8305549022994665498
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8903844272255029625}
+  - component: {fileID: 965869100683199778}
+  m_Layer: 0
+  m_Name: HitStun_TargetLost
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8903844272255029625
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8305549022994665498}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8605037676638016036}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &965869100683199778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8305549022994665498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a6146eb6ad8cb24e83d99a38cbc5cb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _characterGO: {fileID: 5108865392849096236}
+  _aiStateMachine: {fileID: 3875271714720044832}
+  _animationData:
+    _animationName: 
+    _triggers:
+    - HitStun
+    _resetTriggers: []
+    _intValues: []
+    _floatValues: []
+    _boolValues: []
+  Active: 0
+  _onAnimationCompleted: {fileID: 3875271716025496056}
 --- !u!1 &8421344683715379640
 GameObject:
   m_ObjectHideFlags: 0

@@ -29,15 +29,10 @@ namespace Bebis {
             OnHit?.Invoke(hitEventInfo);
             if (_health > 0) {
                 // temp: all hits deal hitstun
-                ApplyHitStun(hitEventInfo);
+                OnHitStun?.Invoke(hitEventInfo);
             } else {
-
+                OnDefeated?.Invoke();
             }
-        }
-        
-        private void ApplyHitStun(HitEventInfo hitEventInfo) {
-            _character.AnimationController.UpdateAnimationState(_onHitStunAnimationData);
-            OnHitStun?.Invoke(hitEventInfo);
         }
     }
 }
