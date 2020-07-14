@@ -83,6 +83,9 @@ namespace Bebis {
                 CustomLogger.Warn(nameof(AttackActionData3D), $"Could not retrieve hitbox data for hitbox {hitBox.name}");
                 return;
             }
+            int power = GeneratePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
+            Vector3 direction = CalculateRelativeDirection(hitBox.transform, hitBoxData.KnockbackAngle);
+            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce, _character);
             Hurtbox3D hurtBox = collider.GetComponent<Hurtbox3D>();
             if (hurtBox == null) {
                 IDamageable damageable = collider.GetComponent<IDamageable>();
@@ -94,9 +97,6 @@ namespace Bebis {
             if (_character.HurtboxController.Hurtboxes.ContainsKey(hurtBox.name)) {
                 return;
             }
-            int power = GeneratePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
-            Vector3 direction = CalculateRelativeDirection(hitBox.transform, hitBoxData.KnockbackAngle);
-            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce, _character);
             hurtBox.SendHitEvent(hitBox, OnCharacterHit);
         }
 

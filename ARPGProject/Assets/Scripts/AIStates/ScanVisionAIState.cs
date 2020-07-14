@@ -35,7 +35,6 @@ namespace Bebis {
         }
 
         private void OnNewHostileRegistered(HostileEntry entry) {
-            Debug.Log($"New Hostile Registered: {entry.Hostile.MoveController.Body.name}");
             if(_onNewHostileRegistered != null) {
                 FireReadyToChangeState(_onNewHostileRegistered);
             }
@@ -43,14 +42,12 @@ namespace Bebis {
 
         private void OnCurrentTargetSet() {
             if (_onHostileTargetFound != null && _npcTargetManager.CurrentTarget != null) {
-                Debug.Log($"Target Found: {_npcTargetManager.CurrentTarget.MoveController.Body.name}");
                 FireReadyToChangeState(_onHostileTargetFound);
             }
         }
 
         private void OnRegisteredHostilesUpdated(int count) {
             if (count == 0 && _onAllHostilesLost != null) {
-                Debug.Log("All Hostiles lost!");
                 FireReadyToChangeState(_onAllHostilesLost);
             }
         }

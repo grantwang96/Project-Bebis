@@ -94,5 +94,12 @@ namespace Bebis {
             }
             _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, _rotation, _turnLerpSpeed * Time.deltaTime, 0f);
         }
+
+        private void OnControllerColliderHit(ControllerColliderHit hit) {
+            Vector3 lateralForce = _forceVector;
+            lateralForce.y = 0f;
+            float dotProd = Vector3.Dot(lateralForce.normalized, hit.normal);
+            _forceVector += lateralForce * dotProd;
+        }
     }
 }

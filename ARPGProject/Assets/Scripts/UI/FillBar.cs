@@ -8,11 +8,17 @@ namespace Bebis {
 
         [SerializeField] private Image _fillBackground;
         [SerializeField] private Image _fill;
+        [SerializeField] private bool _useY;
 
         public void SetFillPercent(float value) {
-            Vector2 fillSize = _fillBackground.rectTransform.sizeDelta;
-            fillSize.x = Mathf.Clamp(fillSize.x * value, 0f, fillSize.x);
-            _fill.rectTransform.sizeDelta = fillSize;
+            float width = _fillBackground.rectTransform.rect.width;
+            float height = _fillBackground.rectTransform.rect.height;
+            if (_useY) {
+                height = Mathf.Clamp(height * value, 0f, height);
+            } else {
+                width = Mathf.Clamp(width * value, 0f, width);
+            }
+            _fill.rectTransform.sizeDelta = new Vector2(width, height);
         }
     }
 }

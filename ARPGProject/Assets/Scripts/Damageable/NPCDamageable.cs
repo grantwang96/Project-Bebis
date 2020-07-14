@@ -11,6 +11,8 @@ namespace Bebis {
         public int Health => _health;
         public int MaxHealth => _maxHealth;
 
+        [SerializeField] private AnimationData _onHitStunAnimationData;
+
         public event Action<int> OnCurrentHealthChanged;
         public event Action<int> OnMaxHealthChanged;
         public event Action<HitEventInfo> OnHit;
@@ -25,6 +27,17 @@ namespace Bebis {
             OnCurrentHealthChanged?.Invoke(_health);
             _character.MoveController.AddForce(hitEventInfo.KnockBack, hitEventInfo.Force);
             OnHit?.Invoke(hitEventInfo);
+            if (_health > 0) {
+                // temp: all hits deal hitstun
+                ApplyHitStun(hitEventInfo);
+            } else {
+
+            }
+        }
+        
+        private void ApplyHitStun(HitEventInfo hitEventInfo) {
+            _character.AnimationController.UpdateAnimationState(_onHitStunAnimationData);
+            OnHitStun?.Invoke(hitEventInfo);
         }
     }
 }

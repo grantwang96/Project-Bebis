@@ -54,11 +54,14 @@ namespace Bebis {
 
         public Vector3 GetRandomLocationAtDistanceRadius(float radius) {
             List<Vector3> possibleDestinations = new List<Vector3>();
+            // check all directions with the given distance
             for(int i = 0; i < _radiusDirections.Count; i++) {
                 Vector3 direction = _radiusDirections[i] * radius;
                 direction.y = _characterPosition.y;
-                if(NavMesh.SamplePosition(_characterPosition + direction, out NavMeshHit hit, _navMeshRadius, NavMesh.AllAreas) ||
-                   NavMesh.CalculatePath(GetNavMeshPosition(), hit.position, NavMesh.AllAreas, new NavMeshPath())) {
+                NavMeshPath path = new NavMeshPath();
+                // if location is valid on the navmesh and path can be generated to it
+                if (NavMesh.SamplePosition(_characterPosition + direction, out NavMeshHit hit, _navMeshRadius, NavMesh.AllAreas) &&
+                   NavMesh.CalculatePath(GetNavMeshPosition(), hit.position, NavMesh.AllAreas, path) && path.status == NavMeshPathStatus.PathComplete) {
                     possibleDestinations.Add(hit.position);
                 }
             }

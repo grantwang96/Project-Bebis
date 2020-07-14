@@ -8,10 +8,12 @@ namespace Bebis {
         public static CameraController Instance { get; private set; }
 
         public Transform CameraRoot { get; private set; }
+        public Camera MainCamera => _mainCamera;
 
         [SerializeField] private Transform _playerCharacter;
         [SerializeField] private Transform _cameraPivotX;
         [SerializeField] private Transform _cameraPivotY;
+        [SerializeField] private Camera _mainCamera;
 
         [SerializeField] private float _cameraXUpperLimit;
         [SerializeField] private float _cameraXLowerLimit;

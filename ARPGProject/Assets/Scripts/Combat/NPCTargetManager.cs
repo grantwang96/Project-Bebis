@@ -8,7 +8,7 @@ namespace Bebis {
 
         private const int TargetsInRangeMaximum = 10;
         private const float DetectionFactor = .2f;
-        private const float AttentionBuffer = 3f;
+        public const float AttentionBuffer = 3f;
 
         // current focused target
         private HostileEntry _currentTarget = new HostileEntry();
@@ -62,6 +62,9 @@ namespace Bebis {
             };
             RegisteredHostiles.Add(newEntry);
             OnNewHostileRegistered?.Invoke(newEntry);
+            if(newEntry.DetectionValue >= 1f && CurrentTarget == null) {
+                OverrideCurrentTarget(character);
+            }
         }
 
         // scans the surrounding area and updates list of aware hostiles
@@ -132,9 +135,13 @@ namespace Bebis {
         }
 
         public bool ScanForTarget(ICharacter target) {
-            if (!TargetWithinRange(target)) {
+            if (!TargetWithinRange(target) || !TargetWithinFieldOfView(target)) {
                 return false;
             }
+            return TargetVisible(target);
+        }
+
+        public bool TargetVisible(ICharacter target) {
             Vector3 direction = (target.MoveController.Center.position - _rayOrigin.position).normalized;
             if (Physics.Raycast(_rayOrigin.position, direction, out RaycastHit info, _visionDistance, _scanLayers, QueryTriggerInteraction.Ignore)) {
                 Collider collider = info.collider;
@@ -146,11 +153,12 @@ namespace Bebis {
             return false;
         }
 
-        private bool TargetWithinRange(ICharacter target) {
+        public bool TargetWithinRange(ICharacter target) {
             float distance = Vector3.Distance(target.MoveController.Center.position, _rayOrigin.position);
-            if(distance > _visionDistance) {
-                return false;
-            }
+            return distance <= _visionDistance;
+        }
+
+        private bool TargetWithinFieldOfView(ICharacter target) {
             Vector3 direction = (target.MoveController.Center.position - _rayOrigin.position).normalized;
             float angle = Vector3.Angle(_rayOrigin.forward, direction);
             return angle <= _visionRange;
