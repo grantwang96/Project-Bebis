@@ -7,12 +7,11 @@ namespace Bebis {
     public class NPCTargetManager : CharacterComponent {
 
         private const int TargetsInRangeMaximum = 10;
-        private const float DetectionFactor = .2f;
         public const float AttentionBuffer = 3f;
 
         // current focused target
         private HostileEntry _currentTarget = new HostileEntry();
-        public ICharacter CurrentTarget => _currentTarget.Hostile;
+        public ICharacter CurrentTarget => _currentTarget?.Hostile;
 
         [SerializeField] private float _visionDistance;
         [SerializeField] private float _visionRange;
@@ -20,38 +19,35 @@ namespace Bebis {
         [SerializeField] private LayerMask _charactersLayers;
         [SerializeField] private LayerMask _scanLayers;
         [SerializeField] private CharacterTag _hostilesTags;
-        
-        // current list of registered hostiles
-        public readonly List<HostileEntry> RegisteredHostiles = new List<HostileEntry>();
-        private List<HostileEntry> _registeredHostilesToBeRemoved = new List<HostileEntry>();
+        [SerializeField] private float _detectionFactor;
+
+        private readonly Dictionary<ICharacter, HostileEntry> _registeredHostiles = new Dictionary<ICharacter, HostileEntry>();
         private Vector3 _bodyPosition => _character.MoveController.Body.position;
         private Collider[] _targetsWithinRange = new Collider[TargetsInRangeMaximum];
 
+        // current list of registered hostiles
+        public IReadOnlyDictionary<ICharacter, HostileEntry> RegisteredHostiles => _registeredHostiles;
         public event Action<HostileEntry> OnNewHostileRegistered;
         public event Action<int> OnRegisteredHostilesUpdated;
         public event Action OnCurrentTargetSet;
 
-        public void OverrideCurrentTarget(ICharacter character) {
-            _currentTarget = new HostileEntry() {
-                Hostile = character,
-                DetectionValue = 1 + AttentionBuffer,
-                Detected = true
-            };
+        private void SetCurrentTarget(ICharacter character) {
+            _currentTarget = _registeredHostiles[character];
+            _currentTarget.DetectionValue = 1 + AttentionBuffer;
             OnCurrentTargetSet?.Invoke();
         }
 
         public void ClearCurrentTarget() {
-            _currentTarget.Hostile = null;
+            _currentTarget = null;
             OnCurrentTargetSet?.Invoke();
         }
 
         // registers or updates a hostile in the list
         public void RegisterOrUpdateHostile(ICharacter character, float startingDetection = 0f) {
-            int index = RegisteredHostiles.FindIndex(x => x.Hostile == character);
             // if this one has been found before, update its state
-            if (index >= 0) {
-                RegisteredHostiles[index].DetectionValue = ChangeDetectionValue(RegisteredHostiles[index].DetectionValue, true);
-                RegisteredHostiles[index].Detected = true;
+            if (_registeredHostiles.TryGetValue(character, out HostileEntry entry)) {
+                entry.DetectionValue = ChangeDetectionValue(entry.DetectionValue, true, _detectionFactor);
+                entry.Detected = true;
                 return;
             }
             // add this as a new hostile
@@ -60,10 +56,11 @@ namespace Bebis {
                 DetectionValue = startingDetection,
                 Detected = true
             };
-            RegisteredHostiles.Add(newEntry);
+            _registeredHostiles.Add(character, newEntry);
             OnNewHostileRegistered?.Invoke(newEntry);
+            // if this entry has reached threshold level, set as current target
             if(newEntry.DetectionValue >= 1f && CurrentTarget == null) {
-                OverrideCurrentTarget(character);
+                SetCurrentTarget(character);
             }
         }
 
@@ -94,44 +91,41 @@ namespace Bebis {
         }
 
         private void UpdateRegisteredHostiles() {
-            for(int i = 0; i < RegisteredHostiles.Count; i++) {
-                HostileEntry entry = RegisteredHostiles[i];
+            List<ICharacter> keys = new List<ICharacter>(_registeredHostiles.Keys);
+            for(int i = 0; i < keys.Count; i++) {
+                HostileEntry entry = RegisteredHostiles[keys[i]];
                 // decrement the state of those that were not found
                 if (!entry.Detected) {
-                    entry.DetectionValue = ChangeDetectionValue(entry.DetectionValue, false);
+                    entry.DetectionValue = ChangeDetectionValue(entry.DetectionValue, false, _detectionFactor);
                     // mark for removal if the detection value is 0
-                    if(entry.DetectionValue < 0f) {
-                        _registeredHostilesToBeRemoved.Add(entry);
+                    if(entry.DetectionValue <= 0f) {
+                        _registeredHostiles.Remove(keys[i]);
                     }
                 }
+
                 // Set as current target if threshold has been crossed
-                if(entry.DetectionValue >= 1f) {
-                    OverrideCurrentTarget(entry.Hostile);
+                if (entry.DetectionValue > 1f) {
+                    SetCurrentTarget(entry.Hostile);
                 }
                 // reset the detection state off all registered hostiles
                 entry.Detected = false;
             }
-            // remove all hostiles that have remained out of sight for too long
-            for(int i = 0; i < _registeredHostilesToBeRemoved.Count; i++) {
-                RegisteredHostiles.Remove(_registeredHostilesToBeRemoved[i]);
-            }
-            _registeredHostilesToBeRemoved.Clear();
             OnRegisteredHostilesUpdated?.Invoke(RegisteredHostiles.Count);
         }
 
         private void ScanForCurrentTarget() {
-            if(_currentTarget.DetectionValue <= 0f) {
+            // clear current target if detection value has returned to normal levels
+            if(_currentTarget.DetectionValue < 1f) {
                 ClearCurrentTarget();
                 return;
             }
             _currentTarget.Detected = ScanForTarget(CurrentTarget);
-            _currentTarget.DetectionValue = ChangeDetectionValue(_currentTarget.DetectionValue, _currentTarget.Detected);
-            _currentTarget.DetectionValue = Mathf.Clamp(_currentTarget.DetectionValue, 0f, 1 + AttentionBuffer);
+            _currentTarget.DetectionValue = ChangeDetectionValue(_currentTarget.DetectionValue, _currentTarget.Detected, _detectionFactor);
         }
 
-        private static float ChangeDetectionValue(float baseValue, bool increment) {
-            return increment ? baseValue + Time.deltaTime * DetectionFactor :
-                baseValue - Time.deltaTime * DetectionFactor;
+        private static float ChangeDetectionValue(float baseValue, bool increment, float detectionFactor) {
+            return increment ? baseValue + Time.deltaTime * detectionFactor :
+                baseValue - Time.deltaTime * detectionFactor;
         }
 
         public bool ScanForTarget(ICharacter target) {
