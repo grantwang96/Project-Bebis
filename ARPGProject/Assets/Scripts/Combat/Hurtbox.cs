@@ -26,7 +26,7 @@ namespace Bebis {
         }
         
         public bool SendHitEvent(Hitbox hitbox, Action<ICharacter> OnHitAction) {
-            if (!enabled) {
+            if (!ShouldHit()) {
                 return false;
             }
             switch (_hurtBoxState) {
@@ -40,6 +40,10 @@ namespace Bebis {
                     // do invulnerable hit fx
                     return false;
             }
+        }
+
+        private bool ShouldHit() {
+            return enabled;
         }
     }
 }

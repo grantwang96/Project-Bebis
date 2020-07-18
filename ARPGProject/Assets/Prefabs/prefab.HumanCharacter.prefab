@@ -946,6 +946,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 513
   _hostilesTags: 3
+  _detectionFactor: 0.2
 --- !u!1 &5174116564953839726
 GameObject:
   m_ObjectHideFlags: 0

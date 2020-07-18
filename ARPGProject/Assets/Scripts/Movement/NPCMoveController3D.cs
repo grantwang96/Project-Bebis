@@ -71,6 +71,7 @@ namespace Bebis {
 
         private void ProcessExternalForces() {
             ProcessDrag();
+            ProcessGravity();
         }
 
         private void ProcessDrag() {
@@ -79,6 +80,12 @@ namespace Bebis {
             }
             _forceVector.x = ExtraMath.Lerp(_forceVector.x, 0f, _linearDrag * Time.deltaTime);
             _forceVector.z = ExtraMath.Lerp(_forceVector.z, 0f, _linearDrag * Time.deltaTime);
+        }
+
+        private void ProcessGravity() {
+            if (_forceVector.y > Physics.gravity.y) {
+                _forceVector.y += Physics.gravity.y * Time.deltaTime;
+            }
         }
 
         private void ProcessMovement() {

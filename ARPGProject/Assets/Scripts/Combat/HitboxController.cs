@@ -7,6 +7,7 @@ namespace Bebis {
 
         [SerializeField] private Hitbox[] _hitBoxObjects;
         private Dictionary<string, Hitbox> _hitBoxes = new Dictionary<string, Hitbox>();
+        public IReadOnlyDictionary<string, Hitbox> HitBoxes => _hitBoxes;
 
         protected override void Awake() {
             base.Awake();

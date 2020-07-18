@@ -20,11 +20,6 @@ namespace Bebis {
 
         private void OnTriggerEnter(Collider collider) {
             _info?.HitboxTriggered(this, collider);
-            OnHit();
-        }
-
-        private void OnHit() {
-            // do hitting collider effects here?
         }
     }
 

@@ -19,18 +19,17 @@ namespace Bebis {
         public bool OverrideForce => _overrideForce;
 
         public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            if (state != null && !state.Status.HasFlag(ActionStatus.CanTransition) && !state.Status.HasFlag(ActionStatus.Completed)) {
+            if (!CanAttack(character, state)) {
                 return new CharacterActionResponse(false, state);
             }
             AttackActionState3D newState = new AttackActionState3D(this, character);
             return new CharacterActionResponse(true, newState);
         }
 
-        private bool CanAttack(ICharacter character, ICharacterActionState state) {
+        protected virtual bool CanAttack(ICharacter character, ICharacterActionState state) {
             return state == null ||
-                (state.Data == this && (
                 state.Status.HasFlag(ActionStatus.CanTransition) ||
-                state.Status.HasFlag(ActionStatus.Completed)));
+                state.Status.HasFlag(ActionStatus.Completed);
         }
     }
 
@@ -84,17 +83,18 @@ namespace Bebis {
                 return;
             }
             int power = GeneratePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
-            Vector3 direction = CalculateRelativeDirection(hitBox.transform, hitBoxData.KnockbackAngle);
+            Vector3 direction = CalculateRelativeDirection(_character.MoveController.Body, hitBoxData.KnockbackAngle);
             _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce, _character);
             Hurtbox3D hurtBox = collider.GetComponent<Hurtbox3D>();
             if (hurtBox == null) {
                 IDamageable damageable = collider.GetComponent<IDamageable>();
-                if (damageable != null) {
+                if (damageable != null && damageable != _character.Damageable) {
                     OnDamageableHit(damageable);
                 }
                 return;
             }
-            if (_character.HurtboxController.Hurtboxes.ContainsKey(hurtBox.name)) {
+            List<Hurtbox> characterHurtBoxes = new List<Hurtbox>(_character.HurtboxController.Hurtboxes.Values);
+            if (characterHurtBoxes.Contains(hurtBox)) {
                 return;
             }
             hurtBox.SendHitEvent(hitBox, OnCharacterHit);
