@@ -9,6 +9,7 @@ namespace Bebis {
         public int YPos => throw new System.NotImplementedException();
 
         public Vector3 WorldPos => _rigidbody2D.position;
+        public float MoveMagnitude { get; private set; }
         public Vector3 Move { get; private set; }
         public Vector3 Rotation { get; private set; }
         public bool IsGrounded { get; } = false;

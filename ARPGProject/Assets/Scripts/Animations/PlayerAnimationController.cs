@@ -91,8 +91,7 @@ namespace Bebis {
             if (!_enabled) {
                 return;
             }
-            Vector3 moveVector = _playerCharacter.MoveController.Move;
-            float moveValue = moveVector.magnitude;
+            float moveValue = _playerCharacter.MoveController.MoveMagnitude;
             _animator.SetFloat("Move", moveValue);
         }
     }

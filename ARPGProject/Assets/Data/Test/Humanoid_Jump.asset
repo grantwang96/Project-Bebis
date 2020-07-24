@@ -14,14 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cancelable: 0
   _animationData:
-    _animationName: 
-    _triggers:
-    - Jump
+    _animationName: Jump
+    _triggers: []
     _resetTriggers: []
     _intValues: []
     _floatValues: []
     _boolValues: []
-  _permissions: -1
+  _permissions: 5
   _priority: 100
-  _jumpForce: 12
+  _jumpForce: 8
   _jumpDirection: {x: 0, y: 1, z: 0}

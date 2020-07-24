@@ -2,6 +2,7 @@
 
 namespace Bebis {
     public interface IMoveController {
+        float MoveMagnitude { get; }
         Vector3 Move { get; }
         Vector3 Rotation { get; }
         bool IsGrounded { get; }

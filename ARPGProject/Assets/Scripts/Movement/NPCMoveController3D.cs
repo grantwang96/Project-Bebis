@@ -7,6 +7,7 @@ namespace Bebis {
 
         private const float RotationThreshold = 0.25f;
 
+        public float MoveMagnitude { get; private set; }
         public Vector3 Move => _move;
         public Vector3 Rotation => _rotation;
         public Transform Body => _bodyRoot;

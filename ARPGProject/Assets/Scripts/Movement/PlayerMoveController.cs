@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Bebis {
     public class PlayerMoveController : CharacterComponent, IMoveController {
 
+        public float MoveMagnitude { get; private set; }
         public Vector3 Move => _move;
         public Vector3 Rotation => _rotation;
         public Transform Body => _bodyRoot;
@@ -12,16 +13,18 @@ namespace Bebis {
 
         [SerializeField] private Vector3 _move;
         [SerializeField] private Vector3 _rotation;
-        
+
         public bool IsGrounded { get; private set; }
 
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private Transform _bodyRoot;
         [SerializeField] private Transform _bodyCenter;
 
-        [SerializeField] private float _moveSpeed = 5f;
-        [SerializeField] private float _turnLerpSpeed = .8f;
-        [SerializeField] private float _linearDrag = 1f;
+        [SerializeField] private float _moveSpeed;
+        [SerializeField] private float _airSpeed;
+        [SerializeField] private float _airImpulse;
+        [SerializeField] private float _turnLerpSpeed;
+        [SerializeField] private float _linearDrag;
         [SerializeField] private Vector3 _forceVector;
 
         [SerializeField] private int _movementRestrictions;
@@ -57,22 +60,30 @@ namespace Bebis {
             ProcessRotationInput();
             ProcessMovement();
             ProcessRotation();
-            IsGrounded = _characterController.isGrounded;
+            LateSetIsGrounded();
         }
 
+        // process forces like gravity and other applied forces
         private void ProcessExternalForces() {
             ProcessGravity();
             ProcessDrag();
         }
 
+        // apply gravity to downward velocity each frame as needed
         private void ProcessGravity() {
             if (_forceVector.y > Physics.gravity.y) {
                 _forceVector.y += Physics.gravity.y * Time.deltaTime;
             }
         }
 
+        // call in FixedUpdate to avoid false positives
+        private void LateSetIsGrounded() {
+            IsGrounded = IsCharacterGrounded();
+        }
+
+        // handles ground friction when an active force is applied to a character
         private void ProcessDrag() {
-            if(Mathf.Approximately(_forceVector.x, 0f) && Mathf.Approximately(_forceVector.z, 0f)) {
+            if (Mathf.Approximately(_forceVector.x, 0f) && Mathf.Approximately(_forceVector.z, 0f)) {
                 return;
             }
             if (_characterController.isGrounded) {
@@ -82,31 +93,65 @@ namespace Bebis {
         }
 
         private void ProcessMovementInput(Vector2 moveInput) {
-            if (_movementRestrictions > 0 || !_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement)) {
+            // if there are movement restrictions or character is in the middle of an action, return
+            if (_movementRestrictions > 0 || !CanMove()) {
                 return;
             }
-            if (!_characterController.isGrounded) {
-                return;
+            SetMove(moveInput);
+            // set the move magnitude based on largest input
+            float x = Mathf.Abs(moveInput.x);
+            float y = Mathf.Abs(moveInput.y);
+            MoveMagnitude = Mathf.Max(x, y);
+        }
+
+        private void SetMove(Vector2 moveInput) {
+            float multiplier = 1f;
+            // if character is grounded
+            if (IsGrounded) {
+                // reset the direction
+                _move = new Vector3(0f, _move.y, 0f);
+            } else {
+                multiplier = _airImpulse;
             }
-            _move = new Vector3(0f, _move.y, 0f);
-            _move += CameraController.Instance.CameraRoot.right * moveInput.x;
-            _move += CameraController.Instance.CameraRoot.forward * moveInput.y;
+            // set the direction based on camera orientation
+            _move += CameraController.Instance.CameraRoot.right * moveInput.x * multiplier;
+            _move += CameraController.Instance.CameraRoot.forward * moveInput.y * multiplier;
+            // clamp at magnitude 1
+            _move.x = Mathf.Clamp(_move.x, -1f, 1f);
+            _move.z = Mathf.Clamp(_move.z, -1f, 1f);
+        }
+
+        private bool CanMove() {
+            return _character.ActionController.Permissions.HasFlag(ActionPermissions.Movement);
         }
 
         private void ProcessRotationInput() {
-            if (!IsMoving(_move)) {
+            if (!IsMoving(_move) || !CanRotate()) {
                 return;
             }
             _rotation = _move;
         }
+        
+        // can this character change rotation
+        private bool CanRotate() {
+            ActionPermissions permissions = _character.ActionController.Permissions;
+            return permissions.HasFlag(ActionPermissions.Rotation);
+        }
 
+        // is this character moving
         private bool IsMoving(Vector3 input) {
             return !Mathf.Approximately(input.x, 0f) || !Mathf.Approximately(input.z, 0f);
         }
 
+        // is this character grounded
+        private bool IsCharacterGrounded() {
+            return _characterController.isGrounded;
+        }
+
         private void ProcessMovement() {
             // move the character controller
-            Vector3 moveVector = Move * _moveSpeed;
+            float speed = IsGrounded ? _moveSpeed : _airSpeed;
+            Vector3 moveVector = Move * speed;
             moveVector += _forceVector;
             _characterController.Move(moveVector * Time.deltaTime);
         }
@@ -115,25 +160,23 @@ namespace Bebis {
             if (_bodyRoot.forward == Rotation) {
                 return;
             }
-            _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, _move, _turnLerpSpeed * Time.deltaTime, 0f);
+            _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, Rotation, _turnLerpSpeed * Time.deltaTime, 0f);
         }
 
+        // when the character performs an action
         private void OnCharacterPerformAction() {
-            ActionPermissions permissions = _character.ActionController.Permissions;
-            if (!permissions.HasFlag(ActionPermissions.Movement) && IsGrounded) {
+            if (!CanMove() && IsGrounded) {
                 _move = new Vector3(0f, _move.y, 0f);
-            }
-            if (!permissions.HasFlag(ActionPermissions.Rotation)) {
-                // todo: process rotation things
             }
         }
 
         private void OnControllerColliderHit(ControllerColliderHit hit) {
-            if (!_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement) && IsGrounded) {
+            if (!CanMove() && IsGrounded) {
                 _move = new Vector3(0f, _move.y, 0f);
             }
         }
 
+        // upon entering hitstun
         private void OnDamageableHitStun(HitEventInfo hitEventInfo) {
             _movementRestrictions++;
             _move = new Vector3(0f, _move.y, 0f);
