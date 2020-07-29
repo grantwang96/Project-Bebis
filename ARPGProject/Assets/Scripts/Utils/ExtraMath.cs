@@ -5,14 +5,18 @@ using UnityEngine;
 public static class ExtraMath
 {
     public static float Lerp(float current, float target, float rate) {
-        float value = Mathf.Abs(current);
-        float absTarget = Mathf.Abs(target);
-        float absRate = Mathf.Abs(rate);
-        if(Mathf.Approximately(current, target) || (value - absTarget < absRate)) {
+        float diff = Mathf.Abs(current - target);
+        if (Mathf.Approximately(current, target) || (diff < rate)) {
             return target;
         }
-        value -= absRate;
-        value = current >= target ? value : -value;
+        float value = current;
+        if(current > target) {
+            value -= rate;
+            if(current < target) { value = target; }
+        } else {
+            value += rate;
+            if(current > target) { value = target; }
+        }
         return value;
     }
 

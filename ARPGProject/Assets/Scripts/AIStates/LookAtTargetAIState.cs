@@ -31,6 +31,10 @@ namespace Bebis {
         }
 
         private void SetRotation() {
+            if(_npcTargetManager.CurrentTarget == null) {
+                CustomLogger.Error(name, $"Current target is null!");
+                return;
+            }
             Vector3 targetPosition = _npcTargetManager.CurrentTarget.MoveController.Body.position;
             Vector3 currentPosition = _character.MoveController.Body.position;
             Vector3 direction = targetPosition - currentPosition;

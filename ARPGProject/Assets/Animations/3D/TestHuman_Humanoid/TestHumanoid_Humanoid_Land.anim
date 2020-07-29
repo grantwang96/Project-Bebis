@@ -38139,7 +38139,14 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.25
+  - time: 0
+    functionName: UpdateActionStatus
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 10
+    messageOptions: 0
+  - time: 0.4
     functionName: UpdateActionStatus
     data: 
     objectReferenceParameter: {fileID: 0}

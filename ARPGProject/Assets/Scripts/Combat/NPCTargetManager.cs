@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 namespace Bebis {
-    public class NPCTargetManager : CharacterComponent {
+    public class NPCTargetManager : CharacterComponent, ITargetManager {
 
         private const int TargetsInRangeMaximum = 10;
         public const float AttentionBuffer = 3f;
@@ -37,6 +37,21 @@ namespace Bebis {
             OnCurrentTargetSet?.Invoke();
         }
 
+        // override the current target
+        public void OverrideCurrentTarget(ICharacter character) {
+            if(!_registeredHostiles.TryGetValue(character, out HostileEntry entry)) {
+                // add this as a new hostile
+                HostileEntry newEntry = new HostileEntry() {
+                    Hostile = character,
+                    DetectionValue = 1f + AttentionBuffer,
+                    Detected = true
+                };
+                _registeredHostiles.Add(_character, newEntry);
+            }
+            SetCurrentTarget(character);
+        }
+
+        // removes the current target
         public void ClearCurrentTarget() {
             _currentTarget = null;
             OnCurrentTargetSet?.Invoke();

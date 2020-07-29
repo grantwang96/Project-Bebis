@@ -13,7 +13,7 @@ namespace Bebis {
                 return base.Initiate(character, state, context);
             }
             interactable.OnInteractStart(character);
-            CharacterActionResponse response = new CharacterActionResponse(true, state);
+            CharacterActionResponse response = new CharacterActionResponse(true, true, state);
             return response;
         }
 
@@ -24,7 +24,7 @@ namespace Bebis {
                 return base.Hold(character, state, context);
             }
             interactable.OnInteractHold(character);
-            CharacterActionResponse response = new CharacterActionResponse(true, state);
+            CharacterActionResponse response = new CharacterActionResponse(true, true, state);
             return response;
         }
 
@@ -35,7 +35,7 @@ namespace Bebis {
                 return base.Release(character, state, context);
             }
             interactable.OnInteractRelease(character);
-            CharacterActionResponse response = new CharacterActionResponse(true, state);
+            CharacterActionResponse response = new CharacterActionResponse(true, true, state);
             return response;
         }
 

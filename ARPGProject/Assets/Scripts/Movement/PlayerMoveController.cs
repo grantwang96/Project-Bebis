@@ -22,13 +22,14 @@ namespace Bebis {
 
         [SerializeField] private float _moveSpeed;
         [SerializeField] private float _airSpeed;
-        [SerializeField] private float _airImpulse;
         [SerializeField] private float _turnLerpSpeed;
         [SerializeField] private float _linearDrag;
         [SerializeField] private Vector3 _forceVector;
 
         [SerializeField] private int _movementRestrictions;
         [SerializeField] private bool _rotationRestrictions;
+
+        private bool _overrideRotation;
 
         private void Start() {
             _character.ActionController.OnPerformActionSuccess += OnCharacterPerformAction;
@@ -54,10 +55,15 @@ namespace Bebis {
             _forceVector += totalForce;
         }
 
+        public void OverrideRotation(Vector3 direction) {
+            _rotation = direction;
+            _overrideRotation = true;
+        }
+
         private void FixedUpdate() {
             ProcessExternalForces();
             ProcessMovementInput(InputController.Instance.MoveInput);
-            ProcessRotationInput();
+            ProcessRotationInput(InputController.Instance.MoveInput);
             ProcessMovement();
             ProcessRotation();
             LateSetIsGrounded();
@@ -94,39 +100,32 @@ namespace Bebis {
 
         private void ProcessMovementInput(Vector2 moveInput) {
             // if there are movement restrictions or character is in the middle of an action, return
-            if (_movementRestrictions > 0 || !CanMove()) {
+            if (_movementRestrictions > 0 || !CanInputMove()) {
                 return;
             }
-            SetMove(moveInput);
-            // set the move magnitude based on largest input
-            float x = Mathf.Abs(moveInput.x);
-            float y = Mathf.Abs(moveInput.y);
-            MoveMagnitude = Mathf.Max(x, y);
-        }
-
-        private void SetMove(Vector2 moveInput) {
-            float multiplier = 1f;
-            // if character is grounded
+            // set move magnitude
+            MoveMagnitude = Mathf.Clamp01(moveInput.magnitude);
+            // set move vector
+            Vector2 inputNormalized = moveInput.normalized;
+            Vector3 localizedInput = new Vector3();
+            localizedInput += CameraController.Instance.CameraRoot.right * inputNormalized.x;
+            localizedInput += CameraController.Instance.CameraRoot.forward * inputNormalized.y;
             if (IsGrounded) {
-                // reset the direction
-                _move = new Vector3(0f, _move.y, 0f);
+                // directly set the localized input
+                _move = localizedInput;
             } else {
-                multiplier = _airImpulse;
+                // lerp the move vector towards localized input
+                _move.x = ExtraMath.Lerp(_move.x, localizedInput.x, 0.05f);
+                _move.z = ExtraMath.Lerp(_move.z, localizedInput.z, 0.05f);
             }
-            // set the direction based on camera orientation
-            _move += CameraController.Instance.CameraRoot.right * moveInput.x * multiplier;
-            _move += CameraController.Instance.CameraRoot.forward * moveInput.y * multiplier;
-            // clamp at magnitude 1
-            _move.x = Mathf.Clamp(_move.x, -1f, 1f);
-            _move.z = Mathf.Clamp(_move.z, -1f, 1f);
         }
 
-        private bool CanMove() {
+        private bool CanInputMove() {
             return _character.ActionController.Permissions.HasFlag(ActionPermissions.Movement);
         }
 
-        private void ProcessRotationInput() {
-            if (!IsMoving(_move) || !CanRotate()) {
+        private void ProcessRotationInput(Vector2 moveInput) {
+            if (!IsMoving(moveInput) || !CanRotate() || _overrideRotation) {
                 return;
             }
             _rotation = _move;
@@ -139,8 +138,8 @@ namespace Bebis {
         }
 
         // is this character moving
-        private bool IsMoving(Vector3 input) {
-            return !Mathf.Approximately(input.x, 0f) || !Mathf.Approximately(input.z, 0f);
+        private bool IsMoving(Vector2 input) {
+            return !Mathf.Approximately(input.x, 0f) || !Mathf.Approximately(input.y, 0f);
         }
 
         // is this character grounded
@@ -151,7 +150,7 @@ namespace Bebis {
         private void ProcessMovement() {
             // move the character controller
             float speed = IsGrounded ? _moveSpeed : _airSpeed;
-            Vector3 moveVector = Move * speed;
+            Vector3 moveVector = Move * speed * MoveMagnitude;
             moveVector += _forceVector;
             _characterController.Move(moveVector * Time.deltaTime);
         }
@@ -161,17 +160,18 @@ namespace Bebis {
                 return;
             }
             _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, Rotation, _turnLerpSpeed * Time.deltaTime, 0f);
+            _overrideRotation = false;
         }
 
         // when the character performs an action
         private void OnCharacterPerformAction() {
-            if (!CanMove() && IsGrounded) {
+            if (!CanInputMove() && IsGrounded) {
                 _move = new Vector3(0f, _move.y, 0f);
             }
         }
 
         private void OnControllerColliderHit(ControllerColliderHit hit) {
-            if (!CanMove() && IsGrounded) {
+            if (!CanInputMove() && IsGrounded) {
                 _move = new Vector3(0f, _move.y, 0f);
             }
         }

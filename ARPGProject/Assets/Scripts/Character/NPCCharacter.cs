@@ -11,6 +11,7 @@ namespace Bebis {
         [SerializeField] private EquipmentManager _equipmentManager;
         [SerializeField] private NPCAnimationController3D _animationController;
         [SerializeField] private NPCCharacterStatManager _npcCharacterStatManager;
+        [SerializeField] private NPCTargetManager _npcTargetManager;
 
         [SerializeField] protected HitboxController _hitboxController;
         [SerializeField] protected HurtboxController _hurtboxController;
@@ -20,6 +21,7 @@ namespace Bebis {
         public IActionController ActionController => _actionController;
         public IAnimationController AnimationController => _animationController;
         public ICharacterStatManager CharacterStatManager => _npcCharacterStatManager;
+        public ITargetManager TargetManager => _npcTargetManager;
         public HitboxController HitboxController => _hitboxController;
         public HurtboxController HurtboxController => _hurtboxController;
 
@@ -27,7 +29,6 @@ namespace Bebis {
         public CharacterStats FinalStats { get; protected set; }
 
         private void Awake() {
-
             InitializeCharacterComponents();
         }
 

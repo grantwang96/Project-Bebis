@@ -40,6 +40,10 @@ namespace Bebis {
             _forceVector += (Vector2)totalForce;
         }
 
+        public void OverrideRotation(Vector3 direction) {
+            _rotation = direction;
+        }
+
         private void FixedUpdate() {
             ProcessExternalForces();
             ProcessMovementInput(InputController.Instance.MoveInput);

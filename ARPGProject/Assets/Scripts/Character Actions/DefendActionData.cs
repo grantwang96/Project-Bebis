@@ -14,7 +14,7 @@ namespace Bebis {
                 return base.Initiate(character, state, context);
             }
             DefendActionState defendActionState = new DefendActionState(this, character);
-            CharacterActionResponse response = new CharacterActionResponse(true, defendActionState);
+            CharacterActionResponse response = new CharacterActionResponse(true, true, defendActionState);
             return response;
         }
 
@@ -26,12 +26,12 @@ namespace Bebis {
             if(state == null) {
                 defendState = new DefendActionState(this, character);
             }
-            CharacterActionResponse response = new CharacterActionResponse(true, defendState);
+            CharacterActionResponse response = new CharacterActionResponse(true, true, defendState);
             return response;
         }
 
         public override CharacterActionResponse Release(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            CharacterActionResponse response = new CharacterActionResponse(true, state);
+            CharacterActionResponse response = new CharacterActionResponse(true, true, state);
             if(state != null && state.Data == this) {
                 state.Status = ActionStatus.Completed;
             }

@@ -27,24 +27,26 @@ namespace Bebis {
         [SerializeField] protected AnimationData _animationData;
         [SerializeField] protected ActionPermissions _permissions;
         [SerializeField] protected int _priority;
+        [SerializeField] protected bool _bufferable;
 
         public bool Cancelable => _cancelable;
         public AnimationData AnimationData => _animationData;
         public ActionPermissions Permissions => _permissions;
         public int Priority => _priority;
+        public bool Bufferable => _bufferable;
 
         public virtual CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            CharacterActionResponse response = new CharacterActionResponse(false, state);
+            CharacterActionResponse response = new CharacterActionResponse(false, false, state);
             return response;
         }
 
         public virtual CharacterActionResponse Hold(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            CharacterActionResponse response = new CharacterActionResponse(false, state);
+            CharacterActionResponse response = new CharacterActionResponse(false, false, state);
             return response;
         }
 
         public virtual CharacterActionResponse Release(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            CharacterActionResponse response = new CharacterActionResponse(false, state);
+            CharacterActionResponse response = new CharacterActionResponse(false, false, state);
             return response;
         }
     }
@@ -92,10 +94,12 @@ namespace Bebis {
 
     public class CharacterActionResponse {
         public readonly bool Success;
+        public readonly bool Bufferable;
         public readonly ICharacterActionState State;
 
-        public CharacterActionResponse(bool success, ICharacterActionState state) {
+        public CharacterActionResponse(bool success, bool bufferable, ICharacterActionState state) {
             Success = success;
+            Bufferable = bufferable;
             State = state;
         }
     }

@@ -29,6 +29,8 @@ namespace Bebis {
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private NPCNavigator _npcNavigator;
 
+        private bool _overrideRotation;
+
         private void FixedUpdate() {
             ProcessExternalForces();
             ProcessMovementInput(_npcNavigator.MoveInput);
@@ -49,6 +51,11 @@ namespace Bebis {
                 _forceVector = Vector3.zero;
             }
             _forceVector += direction * force;
+        }
+
+        public void OverrideRotation(Vector3 direction) {
+            _rotation = direction;
+            _overrideRotation = true;
         }
 
         private void ProcessMovementInput(Vector3 moveInput) {
@@ -101,6 +108,7 @@ namespace Bebis {
                 return;
             }
             _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, _rotation, _turnLerpSpeed * Time.deltaTime, 0f);
+            _overrideRotation = false;
         }
 
         private void OnControllerColliderHit(ControllerColliderHit hit) {

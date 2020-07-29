@@ -22,9 +22,11 @@ namespace Bebis {
         }
 
         public virtual void SetHitboxInfo(string id, HitboxInfo info) {
-            if (_hitBoxes.TryGetValue(id, out Hitbox hitBox)) {
-                hitBox.Initialize(info);
+            if (!_hitBoxes.TryGetValue(id, out Hitbox hitBox)) {
+                CustomLogger.Error(name, $"Could not retrieve hitbox with id {id}!");
+                return;
             }
+            hitBox.Initialize(info);
         }
     }
 }

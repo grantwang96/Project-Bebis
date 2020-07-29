@@ -12,12 +12,14 @@ namespace Bebis {
         [SerializeField] private EquipmentManager _equipmentManager;
         [SerializeField] private PlayerAnimationController2D _playerAnimationController;
         [SerializeField] private PlayerCharacterStatManager _playerCharacterStatManager;
+        [SerializeField] private PlayerTargetManager _playerTargetManager;
 
         public override IDamageable Damageable => _playerDamageable;
         public override IMoveController MoveController => _playerMoveController;
         public override IActionController ActionController => _playerActionController;
         public override IAnimationController AnimationController => _playerAnimationController;
         public override ICharacterStatManager CharacterStatManager => _playerCharacterStatManager;
+        public override ITargetManager TargetManager => _playerTargetManager;
 
         private void Awake() {
             InitializeConfig();

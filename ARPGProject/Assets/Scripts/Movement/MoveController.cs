@@ -11,5 +11,6 @@ namespace Bebis {
 
         void AddForce(Vector3 direction, float force, bool overrideForce = false);
         void AddForce(Vector3 totalForce, bool overrideForce = false);
+        void OverrideRotation(Vector3 direction);
     }
 }

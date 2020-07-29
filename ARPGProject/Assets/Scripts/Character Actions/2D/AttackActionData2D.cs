@@ -20,10 +20,10 @@ namespace Bebis {
 
         public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
             if(state != null && !state.Status.HasFlag(ActionStatus.CanTransition) && !state.Status.HasFlag(ActionStatus.Completed)) {
-                return new CharacterActionResponse(false, state);
+                return new CharacterActionResponse(false, false, state);
             }
             AttackActionState2D newState = new AttackActionState2D(this, character);
-            return new CharacterActionResponse(true, newState);
+            return new CharacterActionResponse(true, true, newState);
         }
     }
 
@@ -89,7 +89,7 @@ namespace Bebis {
             }
             int power = GeneratePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
             Vector3 direction = CalculateRelativeDirection(hitBox.transform, hitBoxData.KnockbackAngle.z);
-            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce, _character);
+            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce, hitBoxData.OverrideForce, _character);
             hurtBox.SendHitEvent(hitBox, OnCharacterHit);
         }
 

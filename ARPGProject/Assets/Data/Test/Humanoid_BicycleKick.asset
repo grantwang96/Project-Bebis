@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cancelable: 0
   _animationData:
-    _animationName: TestHuman_BicycleKick
+    _animationName: BicycleKick
     _triggers: []
     _resetTriggers: []
     _intValues: []
@@ -22,24 +22,29 @@ MonoBehaviour:
     _boolValues: []
   _permissions: 4
   _priority: 0
+  _bufferable: 1
   _combatHitBoxDatas:
-  - _id: FootHitbox_Right_1
+  - _id: Hitbox_RightFoot_Sphere_1
     _combatHitboxData:
       _basePower: 1
       _powerRange:
         _min: 2
         _max: 5
-      _knockbackAngle: {x: 0, y: 1, z: 0.5}
-      _knockbackForce: 10
-  - _id: FootHitbox_Right_2
+      _knockbackAngle: {x: 0, y: 1, z: 0.25}
+      _knockbackForce: 8
+      _overrideForce: 1
+  - _id: Hitbox_RightKnee_Sphere_1
     _combatHitboxData:
       _basePower: 1
       _powerRange:
         _min: 2
         _max: 5
-      _knockbackAngle: {x: 0, y: 1, z: 0.5}
-      _knockbackForce: 10
-  _applyDash: 0
-  _dashAngle: {x: 0, y: 0, z: 1}
-  _force: 8
-  _overrideForce: 0
+      _knockbackAngle: {x: 0, y: 1, z: 0.25}
+      _knockbackForce: 8
+      _overrideForce: 1
+  _autoCorrectForTarget: 1
+  _scanAngle: 75
+  _scanRange: 1.5
+  _scanLayers:
+    serializedVersion: 2
+    m_Bits: 512

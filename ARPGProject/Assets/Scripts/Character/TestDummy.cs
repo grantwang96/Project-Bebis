@@ -10,12 +10,14 @@ namespace Bebis {
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private HitboxController _hitboxController;
         [SerializeField] private HurtboxController _hurtboxController;
+        [SerializeField] private NPCTargetManager _npcTargetManager;
 
         public IDamageable Damageable { get; private set; }
         public IMoveController MoveController { get; private set; }
         public IActionController ActionController { get; private set; }
         public IAnimationController AnimationController { get; private set; }
         public ICharacterStatManager CharacterStatManager { get; private set; }
+        public ITargetManager TargetManager => _npcTargetManager;
         public HitboxController HitboxController => _hitboxController;
         public HurtboxController HurtboxController => _hurtboxController;
 

@@ -23,8 +23,9 @@ MonoBehaviour:
     _boolValues: []
   _permissions: 4
   _priority: 0
+  _bufferable: 1
   _combatHitBoxDatas:
-  - _id: FootHitbox_Left_1
+  - _id: Hitbox_LeftFoot_Sphere_1
     _combatHitboxData:
       _basePower: 1
       _powerRange:
@@ -32,7 +33,8 @@ MonoBehaviour:
         _max: 5
       _knockbackAngle: {x: 0, y: 0, z: 1}
       _knockbackForce: 0
-  - _id: FootHitbox_Left_2
+      _overrideForce: 0
+  - _id: Hitbox_LeftKnee_Sphere_1
     _combatHitboxData:
       _basePower: 1
       _powerRange:
@@ -40,7 +42,10 @@ MonoBehaviour:
         _max: 5
       _knockbackAngle: {x: 0, y: 0, z: 1}
       _knockbackForce: 0
-  _applyDash: 0
-  _dashAngle: {x: 0, y: 0, z: 1}
-  _force: 8
-  _overrideForce: 0
+      _overrideForce: 0
+  _autoCorrectForTarget: 1
+  _scanAngle: 75
+  _scanRange: 1
+  _scanLayers:
+    serializedVersion: 2
+    m_Bits: 0

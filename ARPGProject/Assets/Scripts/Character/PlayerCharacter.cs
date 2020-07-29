@@ -15,6 +15,7 @@ namespace Bebis {
         public abstract IActionController ActionController { get; }
         public abstract IAnimationController AnimationController { get; }
         public abstract ICharacterStatManager CharacterStatManager { get; }
+        public abstract ITargetManager TargetManager { get; }
 
         public CharacterStats BaseStats { get; protected set; }
         public CharacterStats FinalStats { get; protected set; }

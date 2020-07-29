@@ -7,23 +7,26 @@ namespace Bebis {
     public class AttackActionData3D : CharacterActionData {
 
         [SerializeField] private List<CombatHitboxDataEntry3D> _combatHitBoxDatas = new List<CombatHitboxDataEntry3D>();
-        [SerializeField] private bool _applyDash;
-        [SerializeField] private Vector3 _dashAngle;
-        [SerializeField] private float _force;
-        [SerializeField] private bool _overrideForce;
+
+        // for auto-correcting the character for the attack angle
+        [SerializeField] private bool _autoCorrectForTarget;
+        [SerializeField] private float _scanAngle;
+        [SerializeField] private float _scanRange;
+        [SerializeField] private LayerMask _scanLayers;
 
         public IReadOnlyList<CombatHitboxDataEntry3D> CombatHitboxDatas => _combatHitBoxDatas;
-        public bool ApplyDash => _applyDash;
-        public Vector3 DashAngle => _dashAngle;
-        public float DashForce => _force;
-        public bool OverrideForce => _overrideForce;
+        public bool AutoCorrectForTarget => _autoCorrectForTarget;
+        public float ScanAngle => _scanAngle;
+        public float ScanRange => _scanRange;
+        public LayerMask ScanLayers => _scanLayers;
 
         public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
             if (!CanAttack(character, state)) {
-                return new CharacterActionResponse(false, state);
+                bool bufferable = state.Data != this;
+                return new CharacterActionResponse(false, bufferable, state);
             }
             AttackActionState3D newState = new AttackActionState3D(this, character);
-            return new CharacterActionResponse(true, newState);
+            return new CharacterActionResponse(true, Bufferable, newState);
         }
 
         protected virtual bool CanAttack(ICharacter character, ICharacterActionState state) {
@@ -65,6 +68,7 @@ namespace Bebis {
 
             // update hitboxes
             SetHitboxInfos();
+            TryAutoCorrectForTarget();
         }
 
         // update the hitboxes on the weapon
@@ -77,14 +81,74 @@ namespace Bebis {
             }
         }
 
+        private void TryAutoCorrectForTarget() {
+            ICharacter target = null;
+            if(_character.TargetManager.CurrentTarget != null &&
+                TargetWithinFieldOfView(_character.TargetManager.CurrentTarget, out float yeet) &&
+                TargetVisible(_character.TargetManager.CurrentTarget)) {
+                target = _character.TargetManager.CurrentTarget;
+            }
+            // if there is no target or not in range
+            if(target == null) {
+                float bestAngle = -1f;
+                Collider[] possibleTargets = Physics.OverlapSphere(_character.MoveController.Center.position, _data.ScanRange, _data.ScanLayers);
+                for (int i = 0; i < possibleTargets.Length; i++) {
+                    ICharacter otherCharacter = possibleTargets[i].GetComponent<ICharacter>();
+                    // ignore if this is not a character
+                    if (otherCharacter == null || otherCharacter == _character) {
+                        continue;
+                    }
+                    // TODO: ADD HOSTILE TAGS CHECK HERE
+                    float angle = 0f;
+                    if (TargetWithinFieldOfView(otherCharacter, out angle) && TargetVisible(otherCharacter)) {
+                        if (target == null || angle < bestAngle) {
+                            bestAngle = angle;
+                            target = otherCharacter;
+                        }
+                    }
+                }
+            }
+            // if a target has been found
+            if (target != null) {
+                AutoCorrectForTarget(target);
+            }
+        }
+
+        private bool TargetWithinFieldOfView(ICharacter target, out float angle) {
+            Vector3 direction = (target.MoveController.Body.position - _character.MoveController.Body.position).normalized;
+            angle = Vector3.Angle(_character.MoveController.Body.forward, direction);
+            return angle <= _data.ScanAngle;
+        }
+
+        private bool TargetVisible(ICharacter target) {
+            Vector3 direction = (target.MoveController.Center.position - _character.MoveController.Center.position).normalized;
+            if (Physics.Raycast(
+                _character.MoveController.Center.position, direction,
+                out RaycastHit info,
+                _data.ScanRange,
+                _data.ScanLayers,
+                QueryTriggerInteraction.Ignore)) {
+                Collider collider = info.collider;
+                ICharacter hitCharacter = collider.GetComponent<ICharacter>();
+                if (hitCharacter == target) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void AutoCorrectForTarget(ICharacter target) {
+            Vector3 direction = target.MoveController.Body.position - _character.MoveController.Body.position;
+            direction.y = 0f;
+            _character.MoveController.OverrideRotation(direction.normalized);
+        }
+
         private void OnHitboxTriggered(Hitbox hitBox, Collider collider) {
             if (!_combatHitBoxData.TryGetValue(hitBox.name, out CombatHitBoxData hitBoxData)) {
                 CustomLogger.Warn(nameof(AttackActionData3D), $"Could not retrieve hitbox data for hitbox {hitBox.name}");
                 return;
             }
-            int power = GeneratePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
-            Vector3 direction = CalculateRelativeDirection(_character.MoveController.Body, hitBoxData.KnockbackAngle);
-            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce, _character);
+            SetHitEventInfo(hitBoxData);
             Hurtbox3D hurtBox = collider.GetComponent<Hurtbox3D>();
             if (hurtBox == null) {
                 IDamageable damageable = collider.GetComponent<IDamageable>();
@@ -100,42 +164,36 @@ namespace Bebis {
             hurtBox.SendHitEvent(hitBox, OnCharacterHit);
         }
 
+        // sets the hit event info for this attack state
+        private void SetHitEventInfo(CombatHitBoxData hitBoxData) {
+            int power = CalculatePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
+            Vector3 direction = CalculateRelativeDirection(_character.MoveController.Body, hitBoxData.KnockbackAngle);
+            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce, hitBoxData.OverrideForce, _character);
+        }
+
+        // upon hitting a character
         private void OnCharacterHit(ICharacter otherCharacter) {
             OnDamageableHit(otherCharacter.Damageable);
         }
 
+        // upon hitting a damageable object
         private void OnDamageableHit(IDamageable damageable) {
             damageable.TakeDamage(_hitEventInfo);
         }
 
-        private int GeneratePower(ICharacterStatManager characterStatManager, int basePower, MinMax_Int range) {
+        // calculate total damage
+        private int CalculatePower(ICharacterStatManager characterStatManager, int basePower, MinMax_Int range) {
             int attackPower = characterStatManager.Attack;
             attackPower += basePower;
             attackPower += Random.Range(range.Min, range.Max);
             return attackPower;
         }
 
+        // calculate knockback direction in worldspace
         private Vector3 CalculateRelativeDirection(Transform transform, Vector3 angle) {
             return transform.TransformDirection(angle);
         }
-
-        protected override void OnActionStatusUpdated(ActionStatus status) {
-            // do action status update here
-            if (status == ActionStatus.InProgress) {
-                TryDash();
-            }
-            base.OnActionStatusUpdated(status);
-        }
-
-        // attempt to force the character in a direction
-        private void TryDash() {
-            if (!_data.ApplyDash) {
-                return;
-            }
-            Vector3 direction = GetRelativeDirection(_data.DashAngle).normalized;
-            _character.MoveController.AddForce(direction, _data.DashForce, _data.OverrideForce);
-        }
-
+        
         // Calculate the general direction that the player will move
         private Vector3 GetRelativeDirection(Vector3 angle) {
             return _character.MoveController.Body.TransformDirection(angle);

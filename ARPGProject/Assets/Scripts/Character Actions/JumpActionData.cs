@@ -14,10 +14,11 @@ namespace Bebis {
 
         public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
             if (!CanJump(character, state)) {
-                return base.Initiate(character, state, context);
+                bool bufferable = state.Data != this;
+                return new CharacterActionResponse(false, bufferable, state);
             }
             JumpActionState newState = new JumpActionState(this, character);
-            CharacterActionResponse response = new CharacterActionResponse(true, newState);
+            CharacterActionResponse response = new CharacterActionResponse(true, true, newState);
             return response;
         }
 

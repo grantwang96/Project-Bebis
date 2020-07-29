@@ -5,6 +5,7 @@
         IActionController ActionController { get; }
         IAnimationController AnimationController { get; }
         ICharacterStatManager CharacterStatManager { get; }
+        ITargetManager TargetManager { get; }
 
         HitboxController HitboxController { get; }
         HurtboxController HurtboxController { get; }

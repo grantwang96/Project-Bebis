@@ -31,5 +31,9 @@ namespace Bebis {
             }
             _rigidbody2D.AddForce(totalForce, ForceMode2D.Impulse);
         }
+
+        public void OverrideRotation(Vector3 direction) {
+
+        }
     }
 }
