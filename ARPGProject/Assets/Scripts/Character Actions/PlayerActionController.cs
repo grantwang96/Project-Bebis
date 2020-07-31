@@ -16,6 +16,7 @@ namespace Bebis {
 
         private IPlayerGameplayActionSet _normalGameplaySet;
         private IPlayerGameplayActionSet _skillMode1GameplaySet;
+        private IPlayerGameplayActionSet _skillMode2GameplaySet;
         private IPlayerGameplayActionSet _currentActionSet;
 
         private CharacterActionData _bufferedActionData;
@@ -29,23 +30,23 @@ namespace Bebis {
             SubscribeToInputController();
             SubscribeToDamageable();
             SubscribeToAnimationController();
+            PlayerCharacterManager.Instance.OnPlayerSkillsLoadoutSet += OnSkillsLoadoutUpdated;
 
             _actionRestrictions = 0;
         }
 
         // set the player's action sets
         private void SetGameplayActionSets() {
-            // TODO: populate action sets with data propogated from manager/persistence
-            HackPlayerConfig hackConfig = _playerCharacter.HackConfig;
-            _normalGameplaySet = new PlayerGameplayActionSet(
-                _playerCharacter,
-                hackConfig.JumpAction,
-                hackConfig.NormalAttack,
-                hackConfig.SecondaryAttack,
-                hackConfig.InteractAction,
-                hackConfig.SkillMode1,
-                hackConfig.SkillMode2);
+            _normalGameplaySet = new PlayerNormalGameplayActionSet(_playerCharacter, PlayerCharacterManager.Instance.SkillsLoadout);
+            _skillMode1GameplaySet = new PlayerSkillsActionSet(true, PlayerCharacterManager.Instance.SkillsLoadout);
+            _skillMode2GameplaySet = new PlayerSkillsActionSet(false, PlayerCharacterManager.Instance.SkillsLoadout);
             _currentActionSet = _normalGameplaySet;
+        }
+
+        private void OnSkillsLoadoutUpdated(IPlayerSkillsLoadout skillsLoadout) {
+            _normalGameplaySet.Override(skillsLoadout);
+            _skillMode1GameplaySet.Override(skillsLoadout);
+            _skillMode2GameplaySet.Override(skillsLoadout);
         }
 
         #region SUBCRIBING/UNSUBSCRIBING TO EVENTS
@@ -132,7 +133,7 @@ namespace Bebis {
         }
 
         private void OnBtn2Pressed() {
-            bool se = TryPerformAction(_currentActionSet.Btn2Skill, CharacterActionContext.Initiate);
+            TryPerformAction(_currentActionSet.Btn2Skill, CharacterActionContext.Initiate);
         }
 
         private void OnBtn2Held() {
@@ -167,30 +168,32 @@ namespace Bebis {
             TryPerformAction(_currentActionSet.Btn4Skill, CharacterActionContext.Release);
         }
 
-        private void OnLTriggerPressed() {
+        private void OnRTriggerPressed() {
+            // TODO: set to skill mode 1
+            _currentActionSet = _skillMode1GameplaySet;
             TryPerformAction(_currentActionSet.SkillMode1, CharacterActionContext.Initiate);
         }
 
-        private void OnLTriggerHeld() {
+        private void OnRTriggerHeld() {
+            // TODO: set to skill mode 1
             TryPerformAction(_currentActionSet.SkillMode1, CharacterActionContext.Hold);
         }
 
-        private void OnLTriggerReleased() {
+        private void OnRTriggerReleased() {
+            // TODO: set to skill mode 1
             TryPerformAction(_currentActionSet.SkillMode1, CharacterActionContext.Release);
+            _currentActionSet = _normalGameplaySet;
         }
 
-        private void OnRTriggerPressed() {
-            // TODO: set to skill mode 2
+        private void OnLTriggerPressed() {
             TryPerformAction(_currentActionSet.SkillMode2, CharacterActionContext.Initiate);
         }
 
-        private void OnRTriggerHeld() {
-            // TODO: set to skill mode 2
+        private void OnLTriggerHeld() {
             TryPerformAction(_currentActionSet.SkillMode2, CharacterActionContext.Hold);
         }
 
-        private void OnRTriggerReleased() {
-            // TODO: set to skill mode 2
+        private void OnLTriggerReleased() {
             TryPerformAction(_currentActionSet.SkillMode2, CharacterActionContext.Release);
         }
         #endregion

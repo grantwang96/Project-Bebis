@@ -29,6 +29,7 @@ namespace Bebis {
         [SerializeField] private int _movementRestrictions;
         [SerializeField] private bool _rotationRestrictions;
 
+        private bool _overrideMovement;
         private bool _overrideRotation;
 
         private void Start() {
@@ -58,6 +59,11 @@ namespace Bebis {
         public void OverrideRotation(Vector3 direction) {
             _rotation = direction;
             _overrideRotation = true;
+        }
+
+        public void OverrideMovement(Vector3 direction) {
+            _move = direction;
+            _overrideMovement = true;
         }
 
         private void FixedUpdate() {
@@ -100,7 +106,7 @@ namespace Bebis {
 
         private void ProcessMovementInput(Vector2 moveInput) {
             // if there are movement restrictions or character is in the middle of an action, return
-            if (_movementRestrictions > 0 || !CanInputMove()) {
+            if (_movementRestrictions > 0 || !CanInputMove() || _overrideMovement) {
                 return;
             }
             // set move magnitude
@@ -153,6 +159,7 @@ namespace Bebis {
             Vector3 moveVector = Move * speed * MoveMagnitude;
             moveVector += _forceVector;
             _characterController.Move(moveVector * Time.deltaTime);
+            _overrideMovement = false;
         }
 
         private void ProcessRotation() {

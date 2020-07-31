@@ -31,7 +31,7 @@ MonoBehaviour:
         _min: 2
         _max: 5
       _knockbackAngle: {x: 0, y: 1, z: 0.25}
-      _knockbackForce: 8
+      _knockbackForce: 15
       _overrideForce: 1
   - _id: Hitbox_RightKnee_Sphere_1
     _combatHitboxData:
@@ -40,10 +40,10 @@ MonoBehaviour:
         _min: 2
         _max: 5
       _knockbackAngle: {x: 0, y: 1, z: 0.25}
-      _knockbackForce: 8
+      _knockbackForce: 15
       _overrideForce: 1
   _autoCorrectForTarget: 1
-  _scanAngle: 75
+  _scanAngle: 100
   _scanRange: 1.5
   _scanLayers:
     serializedVersion: 2

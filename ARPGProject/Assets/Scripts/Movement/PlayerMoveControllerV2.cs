@@ -40,6 +40,10 @@ namespace Bebis {
             _forceVector += (Vector2)totalForce;
         }
 
+        public void OverrideMovement(Vector3 direction) {
+
+        }
+
         public void OverrideRotation(Vector3 direction) {
             _rotation = direction;
         }

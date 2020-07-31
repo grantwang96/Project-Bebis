@@ -16,70 +16,118 @@ namespace Bebis {
 
         CharacterActionData SkillMode1 { get; }
         CharacterActionData SkillMode2 { get; }
+
+        void Override(IPlayerSkillsLoadout skillsLoadout);
     }
 
-    public class PlayerGameplayActionSet : IPlayerGameplayActionSet {
+    public class PlayerNormalGameplayActionSet : IPlayerGameplayActionSet {
 
-        private PlayerCharacter _character;
+        private PlayerCharacter _player;
 
         private int _currentAttackIndex = 0;
-        private List<CharacterActionData> _normalAttacks = new List<CharacterActionData>();
+        private List<CharacterActionData> _groundedNormalAttacks = new List<CharacterActionData>();
         private CharacterActionData _normalAerialAttack;
+        private CharacterActionData _secondaryAttack;
+        private CharacterActionData _secondaryAerialAttack;
 
         public CharacterActionData Btn1Skill { get; private set; }
-        public CharacterActionData Btn2Skill => GetNextAttackData();
+        public CharacterActionData Btn2Skill => GetNormalAttackData();
+        public CharacterActionData Btn3Skill => GetSecondaryAttackData();
+        public CharacterActionData Btn4Skill { get; private set; }
+
+        public CharacterActionData SkillMode1 { get; private set; }
+        public CharacterActionData SkillMode2 { get; private set; }
+
+        // only utilize the "normal" skills in this action set
+        public PlayerNormalGameplayActionSet(PlayerCharacter player, IPlayerSkillsLoadout playerSkillsLoadout) {
+            _player = player;
+            _player.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
+            Override(playerSkillsLoadout);
+        }
+
+        public void Override(IPlayerSkillsLoadout playerSkillsLoadout) {
+            Btn1Skill = playerSkillsLoadout.NormalBtn1Skill;
+            _groundedNormalAttacks = new List<CharacterActionData>(playerSkillsLoadout.NormalAttackSkills);
+            _normalAerialAttack = playerSkillsLoadout.NormalAerialAttackSkill;
+            _secondaryAttack = playerSkillsLoadout.SecondaryAttackSkill;
+            _secondaryAerialAttack = playerSkillsLoadout.SecondaryAerialAttackSkill;
+            Btn4Skill = playerSkillsLoadout.NormalBtn4Skill;
+
+            SkillMode1 = playerSkillsLoadout.RightTriggerSkill;
+            SkillMode2 = playerSkillsLoadout.LeftTriggerSkill;
+        }
+
+        private void OnActionStatusUpdated(ActionStatus status) {
+            if (status == ActionStatus.Started && _player.ActionController.CurrentState.Data == _groundedNormalAttacks[_currentAttackIndex]) {
+                IncrementAttackIndex();
+            }
+        }
+
+        private CharacterActionData GetNormalAttackData() {
+            return _player.MoveController.IsGrounded ? GetNextGroundedAttackData() : GetNormalAerialAttackData();
+        }
+
+        private CharacterActionData GetNextGroundedAttackData() {
+            if (_player.ActionController.CurrentState == null) {
+                _currentAttackIndex = 0;
+                if (_groundedNormalAttacks.Count == 0) {
+                    return null;
+                }
+                return _groundedNormalAttacks[0];
+            }
+            ActionStatus status = _player.ActionController.CurrentState.Status;
+            if (status.HasFlag(ActionStatus.CanBufferInput) || status.HasFlag(ActionStatus.CanTransition) || status.HasFlag(ActionStatus.Completed)) {
+                return _groundedNormalAttacks[_currentAttackIndex];
+            }
+            return null;
+        }
+
+        private CharacterActionData GetNormalAerialAttackData() {
+            _currentAttackIndex = 0;
+            return _normalAerialAttack;
+        }
+
+        private void IncrementAttackIndex() {
+            _currentAttackIndex++;
+            if(_currentAttackIndex >= _groundedNormalAttacks.Count) {
+                _currentAttackIndex = 0;
+            }
+        }
+
+        private CharacterActionData GetSecondaryAttackData() {
+            return _player.MoveController.IsGrounded ? _secondaryAttack : _secondaryAerialAttack;
+        }
+    }
+
+    public class PlayerSkillsActionSet : IPlayerGameplayActionSet {
+        public CharacterActionData Btn1Skill { get; private set; }
+        public CharacterActionData Btn2Skill { get; private set; }
         public CharacterActionData Btn3Skill { get; private set; }
         public CharacterActionData Btn4Skill { get; private set; }
 
         public CharacterActionData SkillMode1 { get; private set; }
         public CharacterActionData SkillMode2 { get; private set; }
 
-        public PlayerGameplayActionSet(
-            PlayerCharacter character,
-            CharacterActionData jumpAction,
-            List<CharacterActionData> normalAttacks,
-            CharacterActionData secondaryAttack,
-            CharacterActionData interactAction,
-            CharacterActionData skillMode1,
-            CharacterActionData skillMode2
-            ) {
-            _character = character;
-            Btn1Skill = jumpAction;
-            _normalAttacks = normalAttacks;
-            Btn3Skill = secondaryAttack;
-            Btn4Skill = interactAction;
-            SkillMode1 = skillMode1;
-            SkillMode2 = skillMode2;
+        private bool _skillSet1;
 
-            _character.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
+        public PlayerSkillsActionSet(bool skillSet1, IPlayerSkillsLoadout skillsLoadout) {
+            _skillSet1 = skillSet1;
         }
 
-        private void OnActionStatusUpdated(ActionStatus status) {
-            if (status == ActionStatus.Started && _character.ActionController.CurrentState.Data == _normalAttacks[_currentAttackIndex]) {
-                IncrementAttackIndex();
+        public void Override(IPlayerSkillsLoadout skillsLoadout) {
+            if (_skillSet1) {
+                Btn1Skill = skillsLoadout.SkillSet1Btn1Skill;
+                Btn2Skill = skillsLoadout.SkillSet1Btn2Skill;
+                Btn3Skill = skillsLoadout.SkillSet1Btn3Skill;
+                Btn4Skill = skillsLoadout.SkillSet1Btn4Skill;
+            } else {
+                Btn1Skill = skillsLoadout.SkillSet2Btn1Skill;
+                Btn2Skill = skillsLoadout.SkillSet2Btn2Skill;
+                Btn3Skill = skillsLoadout.SkillSet2Btn3Skill;
+                Btn4Skill = skillsLoadout.SkillSet2Btn4Skill;
             }
-        }
-
-        private CharacterActionData GetNextAttackData() {
-            if (_character.ActionController.CurrentState == null) {
-                _currentAttackIndex = 0;
-                if (_normalAttacks.Count == 0) {
-                    return null;
-                }
-                return _normalAttacks[0];
-            }
-            ActionStatus status = _character.ActionController.CurrentState.Status;
-            if (status.HasFlag(ActionStatus.CanBufferInput) || status.HasFlag(ActionStatus.CanTransition) || status.HasFlag(ActionStatus.Completed)) {
-                return _normalAttacks[_currentAttackIndex];
-            }
-            return null;
-        }
-
-        private void IncrementAttackIndex() {
-            _currentAttackIndex++;
-            if(_currentAttackIndex >= _normalAttacks.Count) {
-                _currentAttackIndex = 0;
-            }
+            SkillMode1 = skillsLoadout.RightTriggerSkill;
+            SkillMode2 = skillsLoadout.LeftTriggerSkill;
         }
     }
 }

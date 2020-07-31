@@ -44,7 +44,7 @@ MonoBehaviour:
       _knockbackForce: 0
       _overrideForce: 0
   _autoCorrectForTarget: 1
-  _scanAngle: 75
+  _scanAngle: 120
   _scanRange: 1.5
   _scanLayers:
     serializedVersion: 2

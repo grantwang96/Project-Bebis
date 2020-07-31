@@ -29,6 +29,7 @@ namespace Bebis {
         [SerializeField] private CharacterController _characterController;
         [SerializeField] private NPCNavigator _npcNavigator;
 
+        private bool _overrideMovement;
         private bool _overrideRotation;
 
         private void FixedUpdate() {
@@ -53,14 +54,18 @@ namespace Bebis {
             _forceVector += direction * force;
         }
 
+        public void OverrideMovement(Vector3 direction) {
+            _move = direction;
+            _overrideMovement = true;
+        }
+
         public void OverrideRotation(Vector3 direction) {
             _rotation = direction;
             _overrideRotation = true;
         }
 
         private void ProcessMovementInput(Vector3 moveInput) {
-            if (!_canMove || !_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement)) {
-                _move = new Vector3(0f, 0f);
+            if (!_canMove || !_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement) || _overrideMovement) {
                 return;
             }
             _move = moveInput;
@@ -101,6 +106,7 @@ namespace Bebis {
             Vector3 moveVector = Move * _moveSpeed;
             moveVector += _forceVector;
             _characterController.Move(moveVector * Time.deltaTime);
+            _overrideMovement = false;
         }
 
         private void ProcessRotation() {

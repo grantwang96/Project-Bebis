@@ -35,5 +35,9 @@ namespace Bebis {
         public void OverrideRotation(Vector3 direction) {
 
         }
+
+        public void OverrideMovement(Vector3 direction) {
+
+        }
     }
 }
