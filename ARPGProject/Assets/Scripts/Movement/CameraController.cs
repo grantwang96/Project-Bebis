@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Bebis {
     public class CameraController : MonoBehaviour {
@@ -21,6 +22,7 @@ namespace Bebis {
         [SerializeField] private float _cameraTurnSpeed;
 
         private CharacterController _characterController;
+        private InputAction _lookInputAction;
 
         private void Awake() {
             Instance = this;
@@ -28,8 +30,12 @@ namespace Bebis {
             _characterController = _playerCharacter.GetComponent<CharacterController>();
         }
 
+        private void Start() {
+            _lookInputAction = InputController.Instance.PlayerInputActionMap["Look"];
+        }
+
         private void FixedUpdate() {
-            ProcessRotation();
+            HandleLookInput(_lookInputAction.ReadValue<Vector2>());
         }
 
         private void LateUpdate() {
@@ -40,8 +46,7 @@ namespace Bebis {
             _cameraPivotX.position = _playerCharacter.transform.position;
         }
 
-        private void ProcessRotation() {
-            Vector2 lookInput = InputController.Instance.LookInput;
+        private void HandleLookInput(Vector2 lookInput) {
             Vector3 cameraX = _cameraPivotX.localEulerAngles;
             cameraX.y += lookInput.x * _cameraTurnSpeed * Time.deltaTime;
             _cameraPivotX.localEulerAngles = cameraX;

@@ -2,9 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.InputSystem;
 
 namespace Bebis {
     public class PlayerActionController : MonoBehaviour, IActionController {
+
+        private const string ActionButton1Id = "ActionButton1";
+        private const string ActionButton2Id = "ActionButton2";
+        private const string ActionButton3Id = "ActionButton3";
+        private const string ActionButton4Id = "ActionButton4";
+        private const string SkillsButton1Id = "SkillsButton1";
+        private const string SkillsButton2Id = "SkillsButton2";
 
         [SerializeField] private PlayerCharacter _playerCharacter;
 
@@ -50,30 +58,31 @@ namespace Bebis {
         }
 
         #region SUBCRIBING/UNSUBSCRIBING TO EVENTS
+
         private void SubscribeToInputController() {
-            InputController.Instance.OnBtn1Pressed += OnBtn1Pressed;
-            InputController.Instance.OnBtn1Held += OnBtn1Held;
-            InputController.Instance.OnBtn1Released += OnBtn1Released;
+            InputController.Instance.PlayerInputActionMap[ActionButton1Id].started += HandleActionButton1;
+            InputController.Instance.PlayerInputActionMap[ActionButton1Id].performed += HandleActionButton1;
+            InputController.Instance.PlayerInputActionMap[ActionButton1Id].canceled += HandleActionButton1;
 
-            InputController.Instance.OnBtn2Pressed += OnBtn2Pressed;
-            InputController.Instance.OnBtn2Held += OnBtn2Held;
-            InputController.Instance.OnBtn2Released += OnBtn2Released;
+            InputController.Instance.PlayerInputActionMap[ActionButton2Id].started += HandleActionButton2;
+            InputController.Instance.PlayerInputActionMap[ActionButton2Id].performed += HandleActionButton2;
+            InputController.Instance.PlayerInputActionMap[ActionButton2Id].canceled += HandleActionButton2;
 
-            InputController.Instance.OnBtn3Pressed += OnBtn3Pressed;
-            InputController.Instance.OnBtn3Held += OnBtn3Held;
-            InputController.Instance.OnBtn3Released += OnBtn3Released;
+            InputController.Instance.PlayerInputActionMap[ActionButton3Id].started += HandleActionButton3;
+            InputController.Instance.PlayerInputActionMap[ActionButton3Id].performed += HandleActionButton3;
+            InputController.Instance.PlayerInputActionMap[ActionButton3Id].canceled += HandleActionButton3;
 
-            InputController.Instance.OnBtn4Pressed += OnBtn4Pressed;
-            InputController.Instance.OnBtn4Held += OnBtn4Held;
-            InputController.Instance.OnBtn4Released += OnBtn4Released;
+            InputController.Instance.PlayerInputActionMap[ActionButton4Id].started += HandleActionButton4;
+            InputController.Instance.PlayerInputActionMap[ActionButton4Id].performed += HandleActionButton4;
+            InputController.Instance.PlayerInputActionMap[ActionButton4Id].canceled += HandleActionButton4;
 
-            InputController.Instance.OnLTriggerPressed += OnLTriggerPressed;
-            InputController.Instance.OnLTriggerHeld += OnLTriggerHeld;
-            InputController.Instance.OnLTriggerReleased += OnLTriggerReleased;
+            InputController.Instance.PlayerInputActionMap[SkillsButton1Id].started += HandleSkillsButton1;
+            InputController.Instance.PlayerInputActionMap[SkillsButton1Id].performed += HandleSkillsButton1;
+            InputController.Instance.PlayerInputActionMap[SkillsButton1Id].canceled += HandleSkillsButton1;
 
-            InputController.Instance.OnRTriggerPressed += OnRTriggerPressed;
-            InputController.Instance.OnRTriggerHeld += OnRTriggerHeld;
-            InputController.Instance.OnRTriggerReleased += OnRTriggerReleased;
+            InputController.Instance.PlayerInputActionMap[SkillsButton2Id].started += HandleSkillsButton2;
+            InputController.Instance.PlayerInputActionMap[SkillsButton2Id].performed += HandleSkillsButton2;
+            InputController.Instance.PlayerInputActionMap[SkillsButton2Id].canceled += HandleSkillsButton2;
         }
 
         private void SubscribeToAnimationController() {
@@ -83,33 +92,7 @@ namespace Bebis {
         private void SubscribeToDamageable() {
             _playerCharacter.Damageable.OnHitStun += OnDamageableHitStun;
         }
-
-        private void UnsubscribeToInputController() {
-            InputController.Instance.OnBtn1Pressed -= OnBtn1Pressed;
-            InputController.Instance.OnBtn1Held -= OnBtn1Held;
-            InputController.Instance.OnBtn1Released -= OnBtn1Released;
-
-            InputController.Instance.OnBtn2Pressed -= OnBtn2Pressed;
-            InputController.Instance.OnBtn2Held -= OnBtn2Held;
-            InputController.Instance.OnBtn2Released -= OnBtn2Released;
-
-            InputController.Instance.OnBtn3Pressed -= OnBtn3Pressed;
-            InputController.Instance.OnBtn3Held -= OnBtn3Held;
-            InputController.Instance.OnBtn3Released -= OnBtn3Released;
-
-            InputController.Instance.OnBtn4Pressed -= OnBtn4Pressed;
-            InputController.Instance.OnBtn4Held -= OnBtn4Held;
-            InputController.Instance.OnBtn4Released -= OnBtn4Released;
-
-            InputController.Instance.OnLTriggerPressed -= OnLTriggerPressed;
-            InputController.Instance.OnLTriggerHeld -= OnLTriggerHeld;
-            InputController.Instance.OnLTriggerReleased += OnLTriggerReleased;
-
-            InputController.Instance.OnRTriggerPressed -= OnRTriggerPressed;
-            InputController.Instance.OnRTriggerHeld -= OnRTriggerHeld;
-            InputController.Instance.OnRTriggerReleased -= OnRTriggerReleased;
-        }
-
+        
         private void UnsubscribeToAnimationController() {
             _playerCharacter.AnimationController.OnActionStatusUpdated -= OnCharacterAnimationStatusSent;
         }
@@ -120,81 +103,61 @@ namespace Bebis {
         #endregion
 
         #region APPLYING INPUTS TO CHARACTER ACTIONS
-        private void OnBtn1Pressed() {
-            TryPerformAction(_currentActionSet.Btn1Skill, CharacterActionContext.Initiate);
+
+        private void HandleActionButton1(InputAction.CallbackContext callbackContext) {
+            CharacterActionData actionData = _currentActionSet.Btn1Skill;
+            CharacterActionContext context = GetCharacterActionContext(callbackContext);
+            TryPerformAction(actionData, context);
         }
 
-        private void OnBtn1Held() {
-            TryPerformAction(_currentActionSet.Btn1Skill, CharacterActionContext.Hold);
+        private void HandleActionButton2(InputAction.CallbackContext callbackContext) {
+            CharacterActionData actionData = _currentActionSet.Btn2Skill;
+            CharacterActionContext context = GetCharacterActionContext(callbackContext);
+            TryPerformAction(actionData, context);
         }
 
-        private void OnBtn1Released() {
-            TryPerformAction(_currentActionSet.Btn1Skill, CharacterActionContext.Release);
+        private void HandleActionButton3(InputAction.CallbackContext callbackContext) {
+            CharacterActionData actionData = _currentActionSet.Btn3Skill;
+            CharacterActionContext context = GetCharacterActionContext(callbackContext);
+            TryPerformAction(actionData, context);
         }
 
-        private void OnBtn2Pressed() {
-            TryPerformAction(_currentActionSet.Btn2Skill, CharacterActionContext.Initiate);
+        private void HandleActionButton4(InputAction.CallbackContext callbackContext) {
+            CharacterActionData actionData = _currentActionSet.Btn4Skill;
+            CharacterActionContext context = GetCharacterActionContext(callbackContext);
+            TryPerformAction(actionData, context);
         }
 
-        private void OnBtn2Held() {
-            TryPerformAction(_currentActionSet.Btn2Skill, CharacterActionContext.Hold);
+        private void HandleSkillsButton1(InputAction.CallbackContext callbackContext) {
+            CharacterActionData actionData = _currentActionSet.SkillMode1;
+            CharacterActionContext context = GetCharacterActionContext(callbackContext);
+            switch (context) {
+                case CharacterActionContext.Initiate:
+                    _currentActionSet = _skillMode1GameplaySet;
+                    break;
+                case CharacterActionContext.Release:
+                    _currentActionSet = _normalGameplaySet;
+                    break;
+                default: break;
+            }
+            TryPerformAction(actionData, context);
         }
 
-        private void OnBtn2Released() {
-            TryPerformAction(_currentActionSet.Btn2Skill, CharacterActionContext.Release);
+        private void HandleSkillsButton2(InputAction.CallbackContext callbackContext) {
+            CharacterActionData actionData = _currentActionSet.SkillMode2;
+            CharacterActionContext context = GetCharacterActionContext(callbackContext);
+            TryPerformAction(actionData, context);
         }
 
-        private void OnBtn3Pressed() {
-            TryPerformAction(_currentActionSet.Btn3Skill, CharacterActionContext.Initiate);
-        }
-
-        private void OnBtn3Held() {
-            TryPerformAction(_currentActionSet.Btn3Skill, CharacterActionContext.Hold);
-        }
-
-        private void OnBtn3Released() {
-            TryPerformAction(_currentActionSet.Btn3Skill, CharacterActionContext.Release);
-        }
-
-        private void OnBtn4Pressed() {
-            TryPerformAction(_currentActionSet.Btn4Skill, CharacterActionContext.Initiate);
-        }
-
-        private void OnBtn4Held() {
-            TryPerformAction(_currentActionSet.Btn4Skill, CharacterActionContext.Hold);
-        }
-
-        private void OnBtn4Released() {
-            TryPerformAction(_currentActionSet.Btn4Skill, CharacterActionContext.Release);
-        }
-
-        private void OnRTriggerPressed() {
-            // TODO: set to skill mode 1
-            _currentActionSet = _skillMode1GameplaySet;
-            TryPerformAction(_currentActionSet.SkillMode1, CharacterActionContext.Initiate);
-        }
-
-        private void OnRTriggerHeld() {
-            // TODO: set to skill mode 1
-            TryPerformAction(_currentActionSet.SkillMode1, CharacterActionContext.Hold);
-        }
-
-        private void OnRTriggerReleased() {
-            // TODO: set to skill mode 1
-            TryPerformAction(_currentActionSet.SkillMode1, CharacterActionContext.Release);
-            _currentActionSet = _normalGameplaySet;
-        }
-
-        private void OnLTriggerPressed() {
-            TryPerformAction(_currentActionSet.SkillMode2, CharacterActionContext.Initiate);
-        }
-
-        private void OnLTriggerHeld() {
-            TryPerformAction(_currentActionSet.SkillMode2, CharacterActionContext.Hold);
-        }
-
-        private void OnLTriggerReleased() {
-            TryPerformAction(_currentActionSet.SkillMode2, CharacterActionContext.Release);
+        private static CharacterActionContext GetCharacterActionContext(InputAction.CallbackContext callbackContext) {
+            if (callbackContext.started) {
+                return CharacterActionContext.Initiate;
+            } else if (callbackContext.performed) {
+                return CharacterActionContext.Hold;
+            } else if (callbackContext.canceled) {
+                return CharacterActionContext.Release;
+            }
+            return CharacterActionContext.Invalid;
         }
         #endregion
 

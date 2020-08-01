@@ -50,8 +50,8 @@ namespace Bebis {
 
         private void FixedUpdate() {
             ProcessExternalForces();
-            ProcessMovementInput(InputController.Instance.MoveInput);
-            ProcessRotationInput(InputController.Instance.MoveInput);
+            // ProcessMovementInput(InputController.Instance.MoveInput);
+            // ProcessRotationInput(InputController.Instance.MoveInput);
             ProcessMovement();
             // ProcessRotation();
         }

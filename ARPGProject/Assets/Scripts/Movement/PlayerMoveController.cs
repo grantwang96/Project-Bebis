@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Bebis {
     public class PlayerMoveController : CharacterComponent, IMoveController {
@@ -29,12 +30,14 @@ namespace Bebis {
         [SerializeField] private int _movementRestrictions;
         [SerializeField] private bool _rotationRestrictions;
 
+        private InputAction _moveInputAction;
         private bool _overrideMovement;
         private bool _overrideRotation;
 
         private void Start() {
             _character.ActionController.OnPerformActionSuccess += OnCharacterPerformAction;
             _character.Damageable.OnHitStun += OnDamageableHitStun;
+            _moveInputAction = InputController.Instance.PlayerInputActionMap["Move"];
         }
 
         private void OnDestroy() {
@@ -66,10 +69,13 @@ namespace Bebis {
             _overrideMovement = true;
         }
 
+        private void Update() {
+            HandleMoveInput(_moveInputAction.ReadValue<Vector2>());
+            HandleRotation();
+        }
+
         private void FixedUpdate() {
             ProcessExternalForces();
-            ProcessMovementInput(InputController.Instance.MoveInput);
-            ProcessRotationInput(InputController.Instance.MoveInput);
             ProcessMovement();
             ProcessRotation();
             LateSetIsGrounded();
@@ -88,7 +94,7 @@ namespace Bebis {
             }
         }
 
-        // call in FixedUpdate to avoid false positives
+        // call in FixedUpdate at the end to avoid false positives
         private void LateSetIsGrounded() {
             IsGrounded = IsCharacterGrounded();
         }
@@ -104,9 +110,9 @@ namespace Bebis {
             }
         }
 
-        private void ProcessMovementInput(Vector2 moveInput) {
-            // if there are movement restrictions or character is in the middle of an action, return
-            if (_movementRestrictions > 0 || !CanInputMove() || _overrideMovement) {
+        private void HandleMoveInput(Vector2 moveInput) {
+            // if the character can take move inputs
+            if (!CanInputMove()) {
                 return;
             }
             // set move magnitude
@@ -127,24 +133,28 @@ namespace Bebis {
         }
 
         private bool CanInputMove() {
-            return _character.ActionController.Permissions.HasFlag(ActionPermissions.Movement);
+            return _movementRestrictions <= 0 && 
+                _character.ActionController.Permissions.HasFlag(ActionPermissions.Movement) &&
+                !_overrideMovement;
         }
 
-        private void ProcessRotationInput(Vector2 moveInput) {
-            if (!IsMoving(moveInput) || !CanRotate() || _overrideRotation) {
-                return;
+        private void HandleRotation() {
+            // if the character can take rotation inputs (built from move input)
+            if (CanRotate()) {
+                _rotation = _move;
             }
-            _rotation = _move;
         }
         
         // can this character change rotation
         private bool CanRotate() {
             ActionPermissions permissions = _character.ActionController.Permissions;
-            return permissions.HasFlag(ActionPermissions.Rotation);
+            return permissions.HasFlag(ActionPermissions.Rotation) &&
+                IsMoving(_move) &&
+                !_overrideRotation;
         }
 
         // is this character moving
-        private bool IsMoving(Vector2 input) {
+        private static bool IsMoving(Vector2 input) {
             return !Mathf.Approximately(input.x, 0f) || !Mathf.Approximately(input.y, 0f);
         }
 
