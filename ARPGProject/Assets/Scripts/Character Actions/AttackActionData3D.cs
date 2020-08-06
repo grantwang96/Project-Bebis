@@ -37,15 +37,6 @@ namespace Bebis {
     }
 
     [System.Serializable]
-    public class HitboxInfoEntry3D {
-        [SerializeField] private string _id;
-        [SerializeField] private HitboxInfo2D _hitBoxInfo;
-
-        public string Id => _id;
-        public HitboxInfo2D HitboxInfo => _hitBoxInfo;
-    }
-
-    [System.Serializable]
     public class CombatHitboxDataEntry3D {
         [SerializeField] private string _id;
         [SerializeField] private CombatHitBoxData _combatHitboxData;

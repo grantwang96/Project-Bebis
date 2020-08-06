@@ -20,7 +20,7 @@ namespace Bebis {
 
         public virtual void Initialize(ICharacter character) {
             if (character == null) {
-                CustomLogger.Warn(nameof(Hurtbox2D), $"Initializing with null [{nameof(ICharacter)}]");
+                CustomLogger.Warn(nameof(Hurtbox), $"Initializing with null [{nameof(ICharacter)}]");
             }
             Character = character;
         }
