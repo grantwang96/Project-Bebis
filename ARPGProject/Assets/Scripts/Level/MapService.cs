@@ -21,7 +21,7 @@ public partial class MapService
         List<TileNode> toBeVisited = new List<TileNode>();
         List<IntVector3> alreadyVisited = new List<IntVector3>();
 
-        if (!LevelDataManager.Instance.IsWithinMap(start.x, start.y)) {
+        if (!LevelDataManagerV2.Instance.IsWithinMap(start.x, start.y)) {
             CustomLogger.Warn(nameof(MapService), $"Starting position '{start}' is out of bounds!");
             return null;
         }
@@ -53,14 +53,14 @@ public partial class MapService
                 if (distanceFromStart > radius) {
                     continue;
                 } // stay within the radius
-                if(!LevelDataManager.Instance.IsWithinMap(neighborX, neighborY)) {
+                if(!LevelDataManagerV2.Instance.IsWithinMap(neighborX, neighborY)) {
                     continue;
                 } // don't check outside of map
                 if (alreadyVisited.Contains(new IntVector3(neighborX, neighborY))) {
                     continue;
                 } // don't re-attempt tiles we've already checked
 
-                TileInfo info = LevelDataManager.Instance.TileInfos[neighborX][neighborY];
+                TileInfo info = LevelDataManagerV2.Instance.TileInfos[neighborX][neighborY];
                 bool _canTraverse = info != null && info.TileOccupant == null;
 
                 if (!_canTraverse || ContainsNode(neighborX, neighborY, toBeVisited)) {
@@ -87,7 +87,7 @@ public partial class MapService
         List<TileNode> toBeVisited = new List<TileNode>();
         List<IntVector3> alreadyVisited = new List<IntVector3>();
 
-        if(!LevelDataManager.Instance.IsWithinMap(start.x, start.y)) {
+        if(!LevelDataManagerV2.Instance.IsWithinMap(start.x, start.y)) {
             CustomLogger.Warn(nameof(MapService), $"Starting position '{start}' is out of bounds!");
             return null;
         }
@@ -121,19 +121,19 @@ public partial class MapService
                     continue;
                 }
 
-                if (alreadyVisited.Contains(neighbor) || !LevelDataManager.Instance.IsWithinMap(neighbor.x, neighbor.y)) {
+                if (alreadyVisited.Contains(neighbor) || !LevelDataManagerV2.Instance.IsWithinMap(neighbor.x, neighbor.y)) {
                     continue;
                 }
 
-                TileInfo info = LevelDataManager.Instance.TileInfos[neighborX][neighborY];
+                TileInfo info = LevelDataManagerV2.Instance.TileInfos[neighborX][neighborY];
                 bool _canTraverse = info != null && info.TileOccupant == null;
 
                 // if this is a corner piece
                 int sumOf = Mathf.Abs(dirX) + Mathf.Abs(dirY);
                 if (sumOf == 2 && _canTraverse) {
                     // check if adjacent sides are open
-                    TileInfo neighborTileX = LevelDataManager.Instance.TileInfos[current.X + dirX][current.Y];
-                    TileInfo neighborTileY = LevelDataManager.Instance.TileInfos[current.X][current.Y + dirY];
+                    TileInfo neighborTileX = LevelDataManagerV2.Instance.TileInfos[current.X + dirX][current.Y];
+                    TileInfo neighborTileY = LevelDataManagerV2.Instance.TileInfos[current.X][current.Y + dirY];
                     // check if both tiles are available
                     if (neighborTileX != null) {
                         _canTraverse &= neighborTileX.TileOccupant == null;

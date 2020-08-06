@@ -4,6 +4,7 @@ namespace Bebis {
     public interface IDamageable {
         int Health { get; }
         int MaxHealth { get; }
+        bool Dead { get; }
 
         void TakeDamage(HitEventInfo hitEventInfo);
         event Action<int> OnCurrentHealthChanged;

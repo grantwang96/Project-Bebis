@@ -264,6 +264,8 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 3
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -630,6 +632,7 @@ MonoBehaviour:
   _move: {x: 0, y: 0, z: 0}
   _rotation: {x: 0, y: 0, z: 0}
   _characterController: {fileID: 4463349179039499993}
+  _playerAnimationController: {fileID: 5512652059090843384}
   _bodyRoot: {fileID: 8762392946724106292}
   _bodyCenter: {fileID: 2595603746530832495}
   _moveSpeed: 5

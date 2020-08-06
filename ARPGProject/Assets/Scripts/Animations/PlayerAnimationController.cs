@@ -8,6 +8,7 @@ namespace Bebis {
 
         public event Action<ActionStatus> OnActionStatusUpdated;
         public event Action<AnimationState> OnAnimationStateUpdated;
+        public event Action<string> OnCharacterLandingStatusUpdated;
 
         [SerializeField] private EquipmentManager _equipmentManager;
         [SerializeField] private Animator _animator;
@@ -67,6 +68,10 @@ namespace Bebis {
             OnAnimationStateUpdated?.Invoke(state);
         }
 
+        private void OnLandingStatusUpdated(string state) {
+            OnCharacterLandingStatusUpdated?.Invoke(state);
+        }
+
         private void OnEquipmentUpdated(IEquipment equipment) {
             IReadOnlyList<AnimationClipOverride> overrideClips = equipment?.AnimationOverrides ?? new List<AnimationClipOverride>();
             OverrideAnimationController(equipment.AnimationOverrides);
@@ -82,11 +87,7 @@ namespace Bebis {
         public AnimatorClipInfo[] GetCurrentAnimatorClipInfos() {
             return _animator.GetCurrentAnimatorClipInfo(0);
         }
-
-        public Vector3 DeltaPosition() {
-            return _animator.deltaPosition;
-        }
-
+        
         private void ProcessMove() {
             if (!_enabled) {
                 return;

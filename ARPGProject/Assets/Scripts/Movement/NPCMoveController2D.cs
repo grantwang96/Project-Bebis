@@ -12,6 +12,7 @@ namespace Bebis {
         public Vector3 Rotation => _rotation;
         public Transform Body => transform;
         public Transform Center => transform;
+        public float Height { get; }
 
         public bool IsGrounded => true;
 

@@ -94,8 +94,8 @@ namespace Bebis {
                 Collider[] possibleTargets = Physics.OverlapSphere(_character.MoveController.Center.position, _data.ScanRange, _data.ScanLayers);
                 for (int i = 0; i < possibleTargets.Length; i++) {
                     ICharacter otherCharacter = possibleTargets[i].GetComponent<ICharacter>();
-                    // ignore if this is not a character
-                    if (otherCharacter == null || otherCharacter == _character) {
+                    // ignore if this is not a valid target
+                    if (!IsValidTarget(otherCharacter)) {
                         continue;
                     }
                     // TODO: ADD HOSTILE TAGS CHECK HERE
@@ -104,6 +104,7 @@ namespace Bebis {
                         if (target == null || angle < bestAngle) {
                             bestAngle = angle;
                             target = otherCharacter;
+                            TryOverrideCurrentTarget(target);
                         }
                     }
                 }
@@ -112,6 +113,16 @@ namespace Bebis {
             if (target != null) {
                 AutoCorrectForTarget(target);
             }
+        }
+
+        private bool IsValidTarget(ICharacter target) {
+            return target != null &&
+                target != _character &&
+                !target.Damageable.Dead;
+        }
+
+        private void TryOverrideCurrentTarget(ICharacter target) {
+            _character.TargetManager.OverrideCurrentTarget(target);
         }
 
         private bool TargetWithinFieldOfView(ICharacter target, out float angle) {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    public class LevelDataManager : MonoBehaviour {
+    public class LevelDataManagerV2 : MonoBehaviour {
 
-        public static LevelDataManager Instance { get; private set; }
+        public static LevelDataManagerV2 Instance { get; private set; }
 
         [SerializeField] private int _mapWidth;
         [SerializeField] private int _mapHeight;
@@ -29,7 +29,7 @@ namespace Bebis {
 
         public void SetTileOccupant(int x, int y, ITileOccupant occupant) {
             if(!IsWithinMap(x, y)) {
-                CustomLogger.Warn(nameof(LevelDataManager), $"Coordinate {x}, {y} is outside map bounds!");
+                CustomLogger.Warn(nameof(LevelDataManagerV2), $"Coordinate {x}, {y} is outside map bounds!");
                 return;
             }
             TileInfos[x][y].SetOccupant(occupant);
@@ -37,7 +37,7 @@ namespace Bebis {
 
         public void AddTileInteractable(int x, int y, IInteractable interactable) {
             if(!IsWithinMap(x, y)) {
-                CustomLogger.Warn(nameof(LevelDataManager), $"Coordinate {x}, {y} is outside map bounds!");
+                CustomLogger.Warn(nameof(LevelDataManagerV2), $"Coordinate {x}, {y} is outside map bounds!");
                 return;
             }
             TileInfos[x][y].AddInteractable(interactable);
@@ -45,7 +45,7 @@ namespace Bebis {
 
         public void RemoveTileInteractable(int x, int y, IInteractable interactable) {
             if (!IsWithinMap(x, y)) {
-                CustomLogger.Warn(nameof(LevelDataManager), $"Coordinate {x}, {y} is outside map bounds!");
+                CustomLogger.Warn(nameof(LevelDataManagerV2), $"Coordinate {x}, {y} is outside map bounds!");
                 return;
             }
             TileInfos[x][y].RemoveInteractable(interactable);

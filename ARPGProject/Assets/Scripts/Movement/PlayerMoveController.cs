@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 namespace Bebis {
     public class PlayerMoveController : CharacterComponent, IMoveController {
@@ -11,13 +12,16 @@ namespace Bebis {
         public Vector3 Rotation => _rotation;
         public Transform Body => _bodyRoot;
         public Transform Center => _bodyCenter;
+        public bool IsGrounded { get; private set; }
+        public float Height { get; private set; }
+
+        public event Action OnLanding;
 
         [SerializeField] private Vector3 _move;
         [SerializeField] private Vector3 _rotation;
 
-        public bool IsGrounded { get; private set; }
-
         [SerializeField] private CharacterController _characterController;
+        [SerializeField] private PlayerAnimationController _playerAnimationController;
         [SerializeField] private Transform _bodyRoot;
         [SerializeField] private Transform _bodyCenter;
 
@@ -36,12 +40,17 @@ namespace Bebis {
 
         private void Start() {
             _character.ActionController.OnPerformActionSuccess += OnCharacterPerformAction;
+            _character.ActionController.OnActionStatusUpdated += OnCharacterActionStatusUpdated;
             _character.Damageable.OnHitStun += OnDamageableHitStun;
+            _playerAnimationController.OnCharacterLandingStatusUpdated += OnCharacterLandingStatusUpdated;
+
             _moveInputAction = InputController.Instance.PlayerInputActionMap["Move"];
+            Height = _characterController.height;
         }
 
         private void OnDestroy() {
             _character.ActionController.OnPerformActionSuccess -= OnCharacterPerformAction;
+            _character.ActionController.OnActionStatusUpdated -= OnCharacterActionStatusUpdated;
             _character.Damageable.OnHitStun -= OnDamageableHitStun;
         }
 
@@ -78,7 +87,7 @@ namespace Bebis {
             ProcessExternalForces();
             ProcessMovement();
             ProcessRotation();
-            LateSetIsGrounded();
+            LateCheckGrounded();
         }
 
         // process forces like gravity and other applied forces
@@ -95,8 +104,10 @@ namespace Bebis {
         }
 
         // call in FixedUpdate at the end to avoid false positives
-        private void LateSetIsGrounded() {
-            IsGrounded = IsCharacterGrounded();
+        private void LateCheckGrounded() {
+            if (IsGrounded && !IsCharacterGrounded()) {
+                IsGrounded = false;
+            }
         }
 
         // handles ground friction when an active force is applied to a character
@@ -115,8 +126,6 @@ namespace Bebis {
             if (!CanInputMove()) {
                 return;
             }
-            // set move magnitude
-            MoveMagnitude = Mathf.Clamp01(moveInput.magnitude);
             // set move vector
             Vector2 inputNormalized = moveInput.normalized;
             Vector3 localizedInput = new Vector3();
@@ -125,10 +134,11 @@ namespace Bebis {
             if (IsGrounded) {
                 // directly set the localized input
                 _move = localizedInput;
-            } else {
-                // lerp the move vector towards localized input
-                _move.x = ExtraMath.Lerp(_move.x, localizedInput.x, 0.05f);
-                _move.z = ExtraMath.Lerp(_move.z, localizedInput.z, 0.05f);
+                // set move magnitude
+                MoveMagnitude = Mathf.Clamp01(moveInput.magnitude);
+            } else if (IsMoving(moveInput)) {
+                _move.x = ExtraMath.Lerp(_move.x, localizedInput.x, 0.1f);
+                _move.z = ExtraMath.Lerp(_move.z, localizedInput.z, 0.11f);
             }
         }
 
@@ -150,6 +160,7 @@ namespace Bebis {
             ActionPermissions permissions = _character.ActionController.Permissions;
             return permissions.HasFlag(ActionPermissions.Rotation) &&
                 IsMoving(_move) &&
+                IsGrounded &&
                 !_overrideRotation;
         }
 
@@ -187,9 +198,30 @@ namespace Bebis {
             }
         }
 
+        private void OnCharacterActionStatusUpdated(ActionStatus status) {
+            if(status.HasFlag(ActionStatus.Completed)) {
+                DecrementMovementRestrictions();
+            }
+        }
+
         private void OnControllerColliderHit(ControllerColliderHit hit) {
-            if (!CanInputMove() && IsGrounded) {
+            if (!CanInputMove() && _characterController.collisionFlags == CollisionFlags.Sides) {
+                _forceVector = new Vector3(0f, _move.y, 0f);
+            }
+            if (_characterController.collisionFlags.HasFlag(CollisionFlags.Below) && !IsGrounded) {
+                IsGrounded = true;
+            }
+        }
+
+        // Refactor this??? Could be a circular dependency
+        // listen for animation updates when landing
+        private void OnCharacterLandingStatusUpdated(string state) {
+            if(state == "LANDSTART") {
+                _movementRestrictions++;
                 _move = new Vector3(0f, _move.y, 0f);
+                OnLanding?.Invoke();
+            } else {
+                DecrementMovementRestrictions();
             }
         }
 
@@ -205,6 +237,10 @@ namespace Bebis {
                 return;
             }
             _character.AnimationController.OnAnimationStateUpdated -= OnDamageableAnimationCompleted;
+            DecrementMovementRestrictions();
+        }
+
+        private void DecrementMovementRestrictions() {
             _movementRestrictions = Mathf.Max(0, _movementRestrictions - 1);
         }
     }

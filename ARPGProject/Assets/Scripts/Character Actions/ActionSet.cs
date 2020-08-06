@@ -58,7 +58,9 @@ namespace Bebis {
         }
 
         private void OnActionStatusUpdated(ActionStatus status) {
-            if (status == ActionStatus.Started && _player.ActionController.CurrentState.Data == _groundedNormalAttacks[_currentAttackIndex]) {
+            if (status == ActionStatus.Started
+                && _player.ActionController.CurrentState != null 
+                && _player.ActionController.CurrentState.Data == _groundedNormalAttacks[_currentAttackIndex]) {
                 IncrementAttackIndex();
             }
         }

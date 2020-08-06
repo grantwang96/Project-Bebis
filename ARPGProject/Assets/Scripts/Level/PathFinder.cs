@@ -31,11 +31,11 @@ public partial class MapService
         List<TileNode> toBeVisited = new List<TileNode>();
         List<IntVector3> alreadyVisited = new List<IntVector3>();
 
-        if (!LevelDataManager.Instance.IsWithinMap(targetDestination.x, targetDestination.y)) {
+        if (!LevelDataManagerV2.Instance.IsWithinMap(targetDestination.x, targetDestination.y)) {
             CustomLogger.Warn(nameof(MapService), $"Target Destination {targetDestination} is out of bounds!");
             return PathStatus.Invalid;
         }
-        TileInfo info = LevelDataManager.Instance.TileInfos[targetDestination.x][targetDestination.y];
+        TileInfo info = LevelDataManagerV2.Instance.TileInfos[targetDestination.x][targetDestination.y];
         if (info != null && info.TileOccupant != null) {
             CustomLogger.Warn(nameof(MapService), $"Target Destination {targetDestination} is solid!");
             return PathStatus.Invalid;
@@ -81,18 +81,18 @@ public partial class MapService
                 if (alreadyVisited.Contains(neighbor)) {
                     continue;
                 }
-                if(!LevelDataManager.Instance.IsWithinMap(neighborX, neighborY)) {
+                if(!LevelDataManagerV2.Instance.IsWithinMap(neighborX, neighborY)) {
                     continue;
                 }
-                TileInfo tileInfo = LevelDataManager.Instance.TileInfos[neighborX][neighborY];
+                TileInfo tileInfo = LevelDataManagerV2.Instance.TileInfos[neighborX][neighborY];
                 bool _canTraverse = tileInfo != null && tileInfo.TileOccupant == null;
 
                 // if this is a corner piece
                 int sumOf = Mathf.Abs(dirX) + Mathf.Abs(dirY);
                 if (sumOf == 2 && _canTraverse) {
                     // check if adjacent sides are open
-                    TileInfo neighborTileX = LevelDataManager.Instance.TileInfos[current.X + dirX][current.Y];
-                    TileInfo neighborTileY = LevelDataManager.Instance.TileInfos[current.X][current.Y + dirY];
+                    TileInfo neighborTileX = LevelDataManagerV2.Instance.TileInfos[current.X + dirX][current.Y];
+                    TileInfo neighborTileY = LevelDataManagerV2.Instance.TileInfos[current.X][current.Y + dirY];
                     // check if both tiles are available
                     _canTraverse &= neighborTileX.TileOccupant == null;
                     _canTraverse &= neighborTileY.TileOccupant == null;

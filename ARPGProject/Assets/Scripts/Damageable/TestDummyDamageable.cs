@@ -15,6 +15,7 @@ namespace Bebis {
 
         public int Health => _health;
         public int MaxHealth => _maxHealth;
+        public bool Dead => _health <= 0;
 
         public event Action<int> OnCurrentHealthChanged;
         public event Action<int> OnMaxHealthChanged;

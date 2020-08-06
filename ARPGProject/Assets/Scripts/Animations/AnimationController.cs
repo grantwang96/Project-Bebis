@@ -12,7 +12,6 @@ namespace Bebis {
         void UpdateAnimationState(AnimationData data);
         void OverrideAnimationController(IReadOnlyList<AnimationClipOverride> overrideClips);
         AnimatorClipInfo[] GetCurrentAnimatorClipInfos();
-        Vector3 DeltaPosition();
     }
 
     [System.Serializable]

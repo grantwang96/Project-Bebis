@@ -15,6 +15,7 @@ namespace Bebis {
         public bool IsGrounded { get; } = false;
         public Transform Body => _rigidbody2D.transform;
         public Transform Center => transform;
+        public float Height { get; }
 
         [SerializeField] private Rigidbody2D _rigidbody2D;
 

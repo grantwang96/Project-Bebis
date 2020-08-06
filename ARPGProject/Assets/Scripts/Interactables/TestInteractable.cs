@@ -8,9 +8,9 @@ namespace Bebis {
         [SerializeField] private IntVector3 _position;
 
         private void Start() {
-            IntVector3 position = LevelDataManager.GetMapPosition(transform.position);
+            IntVector3 position = LevelDataManagerV2.GetMapPosition(transform.position);
             _position = position;
-            LevelDataManager.Instance.AddTileInteractable(position.x, position.y, this);
+            LevelDataManagerV2.Instance.AddTileInteractable(position.x, position.y, this);
         }
 
         public void OnInteractStart(ICharacter character) {

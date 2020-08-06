@@ -238,24 +238,23 @@ namespace Bebis {
         
         // listens for action status updates from character animations
         private void OnCharacterAnimationStatusSent(ActionStatus status) {
-            if (CurrentState == null) {
-                return;
+            if (CurrentState != null) {
+                // update the current action status
+                CurrentState.Status = status;
+                // if state can be transitioned or is completed
+                if (CurrentState.Status.HasFlag(ActionStatus.CanTransition) || CurrentState.Status.HasFlag(ActionStatus.Completed)) {
+                    // if action is completed, reset state
+                    if (CurrentState.Status.HasFlag(ActionStatus.Completed)) {
+                        CurrentState.Clear();
+                        CurrentState = null;
+                    }
+                    // if a buffered action is set, trigger
+                    if (_hasBufferedAction) {
+                        PerformBufferedAction();
+                    }
+                }
             }
-            // update the current action status
-            CurrentState.Status = status;
             OnActionStatusUpdated?.Invoke(status);
-            // if state can be transitioned or is completed
-            if (CurrentState.Status.HasFlag(ActionStatus.CanTransition) || CurrentState.Status.HasFlag(ActionStatus.Completed)) {
-                // if action is completed, reset state
-                if (CurrentState.Status.HasFlag(ActionStatus.Completed)) {
-                    CurrentState.Clear();
-                    CurrentState = null;
-                }
-                // if a buffered action is set, trigger
-                if (_hasBufferedAction) {
-                    PerformBufferedAction();
-                }
-            }
         }
 
         // upon taking entering hitstun

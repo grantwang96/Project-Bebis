@@ -12,8 +12,8 @@ namespace Bebis {
         public Vector3 Rotation => _rotation;
         public Transform Body => _bodyRoot;
         public Transform Center => _bodyCenter;
-
         public bool IsGrounded => true;
+        public float Height { get; private set; }
 
         [SerializeField] private Vector3 _move;
         [SerializeField] private Vector3 _rotation;
@@ -31,6 +31,10 @@ namespace Bebis {
 
         private bool _overrideMovement;
         private bool _overrideRotation;
+
+        private void Start() {
+            Height = _characterController.height;
+        }
 
         private void FixedUpdate() {
             ProcessExternalForces();

@@ -10,6 +10,7 @@ namespace Bebis {
         [SerializeField] private int _maxHealth;
         public int Health => _health;
         public int MaxHealth => _maxHealth;
+        public bool Dead => _health <= 0;
 
         [SerializeField] private AnimationData _onHitStunAnimationData;
 

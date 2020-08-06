@@ -10,6 +10,7 @@ namespace Bebis {
         [SerializeField] private int _maxHealth;
         public int Health => _health;
         public int MaxHealth => _maxHealth;
+        public bool Dead => _health <= 0;
 
         [SerializeField] private AnimationData _onHitStunAnimationData;
 
@@ -22,6 +23,10 @@ namespace Bebis {
         [SerializeField] private HurtboxController _hurtBoxController;
 
         public void TakeDamage(HitEventInfo hitEventInfo) {
+            // do nothing if this character is already dead
+            if(_health <= 0) {
+                return;
+            }
             // perform checks based on hurt box controller's state
             _health -= hitEventInfo.Power;
             OnCurrentHealthChanged?.Invoke(_health);

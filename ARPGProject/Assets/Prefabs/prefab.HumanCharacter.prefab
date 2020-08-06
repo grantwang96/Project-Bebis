@@ -465,6 +465,8 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 3
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -893,6 +895,7 @@ MonoBehaviour:
   _equipmentManager: {fileID: 0}
   _animationController: {fileID: 1152324737}
   _npcCharacterStatManager: {fileID: 7360653821747455121}
+  _npcTargetManager: {fileID: 5244029089961613850}
   _hitboxController: {fileID: 3875271714720044893}
   _hurtboxController: {fileID: 3875271714720044894}
 --- !u!114 &1152324737
@@ -1685,6 +1688,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1709,6 +1714,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &1163232196523171360
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1823,6 +1829,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: prefab.ui_NPCCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 583980665978999550, guid: aa833fbcb63c6a84489c3c26f42f83a9,
+        type: 3}
+      propertyPath: _characterGO
+      value: 
+      objectReference: {fileID: 5108865392849096236}
+    - target: {fileID: 583980665978999550, guid: aa833fbcb63c6a84489c3c26f42f83a9,
+        type: 3}
+      propertyPath: _npcTargetManager
+      value: 
+      objectReference: {fileID: 5244029089961613850}
     - target: {fileID: 583980665978999551, guid: aa833fbcb63c6a84489c3c26f42f83a9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1886,17 +1902,17 @@ PrefabInstance:
     - target: {fileID: 583980665978999551, guid: aa833fbcb63c6a84489c3c26f42f83a9,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 583980665978999551, guid: aa833fbcb63c6a84489c3c26f42f83a9,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 904
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 583980665978999551, guid: aa833fbcb63c6a84489c3c26f42f83a9,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 508
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 583980665978999551, guid: aa833fbcb63c6a84489c3c26f42f83a9,
         type: 3}
@@ -1921,23 +1937,13 @@ PrefabInstance:
     - target: {fileID: 583980665978999551, guid: aa833fbcb63c6a84489c3c26f42f83a9,
         type: 3}
       propertyPath: m_Pivot.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 583980665978999551, guid: aa833fbcb63c6a84489c3c26f42f83a9,
         type: 3}
       propertyPath: m_Pivot.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 583980665978999550, guid: aa833fbcb63c6a84489c3c26f42f83a9,
-        type: 3}
-      propertyPath: _characterGO
-      value: 
-      objectReference: {fileID: 5108865392849096236}
-    - target: {fileID: 583980665978999550, guid: aa833fbcb63c6a84489c3c26f42f83a9,
-        type: 3}
-      propertyPath: _npcTargetManager
-      value: 
-      objectReference: {fileID: 5244029089961613850}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa833fbcb63c6a84489c3c26f42f83a9, type: 3}
 --- !u!224 &127698904608210749 stripped

@@ -73,10 +73,17 @@ namespace Bebis {
             };
             _registeredHostiles.Add(character, newEntry);
             OnNewHostileRegistered?.Invoke(newEntry);
+            if(character == PlayerCharacter.Instance) {
+                RegisterPlayer();
+            }
             // if this entry has reached threshold level, set as current target
             if(newEntry.DetectionValue >= 1f && CurrentTarget == null) {
                 SetCurrentTarget(character);
             }
+        }
+
+        private void RegisterPlayer() {
+            PlayerTargetsUIManager.Instance.RegisterPlayer(_character);
         }
 
         // scans the surrounding area and updates list of aware hostiles
@@ -105,6 +112,7 @@ namespace Bebis {
             UpdateRegisteredHostiles();
         }
 
+        // run thru all registered hostiles and update detection values. Remove entries that have hit 0
         private void UpdateRegisteredHostiles() {
             List<ICharacter> keys = new List<ICharacter>(_registeredHostiles.Keys);
             for(int i = 0; i < keys.Count; i++) {
