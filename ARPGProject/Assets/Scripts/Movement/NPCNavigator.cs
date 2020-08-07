@@ -34,12 +34,14 @@ namespace Bebis {
             }
         }
 
+        /*
         public NavMeshPath CalculatePath(Vector3 target) {
             if(NavMesh.CalculatePath(_characterPosition, target, NavMesh.AllAreas, _path)) {
                 return _path;
             }
             return null;
         }
+        */
 
         public bool CanDirectPathToPoint(Vector3 point) {
             return NavMesh.Raycast(_characterPosition, point, out NavMeshHit hit, NavMesh.AllAreas);

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using System;
 
 namespace Bebis {
     public class NPCMoveController3D : CharacterComponent, IMoveController {
@@ -8,124 +10,145 @@ namespace Bebis {
         private const float RotationThreshold = 0.25f;
 
         public float MoveMagnitude { get; private set; }
-        public Vector3 Move => _move;
-        public Vector3 Rotation => _rotation;
+        public Vector3 Move { get; private set; }
+        public Vector3 Rotation { get; private set; }
         public Transform Body => _bodyRoot;
         public Transform Center => _bodyCenter;
         public bool IsGrounded => true;
-        public float Height { get; private set; }
+        public float Height => _characterController.height;
 
-        [SerializeField] private Vector3 _move;
-        [SerializeField] private Vector3 _rotation;
-        [SerializeField] private Vector3 _forceVector;
+        public NavMeshPathStatus PathStatus => _navMeshAgent.path?.status ?? NavMeshPathStatus.PathInvalid;
+        
         [SerializeField] private bool _canMove = true;
         [SerializeField] private bool _canRotate = true;
 
         [SerializeField] private float _moveSpeed = 5f;
-        [SerializeField] private float _turnLerpSpeed = .8f;
         [SerializeField] private float _linearDrag = 1f;
         [SerializeField] private Transform _bodyRoot;
         [SerializeField] private Transform _bodyCenter;
         [SerializeField] private CharacterController _characterController;
+
         [SerializeField] private NPCNavigator _npcNavigator;
+        [SerializeField] private NavMeshAgent _navMeshAgent;
 
         private bool _overrideMovement;
         private bool _overrideRotation;
+        private bool _physicsMode;
+        [SerializeField] private Vector3 _totalExternalForces;
 
-        private void Start() {
-            Height = _characterController.height;
-        }
+        public event Action<bool> OnArriveDestination;
 
         private void FixedUpdate() {
+            CheckArrivedDestination();
             ProcessExternalForces();
-            ProcessMovementInput(_npcNavigator.MoveInput);
-            ProcessRotationInput(_npcNavigator.RotationInput);
-            ProcessMovement();
-            ProcessRotation();
+        }
+
+        private void CheckArrivedDestination() {
+            if (!_navMeshAgent.hasPath || _physicsMode) {
+                return;
+            }
+            float distance = Vector3.Distance(_navMeshAgent.nextPosition, _npcNavigator.TargetPosition);
+            if(distance <= _navMeshAgent.stoppingDistance) {
+                ClearDestination();
+                OnArriveDestination?.Invoke(true);
+            }
+        }
+
+        private void SetPhysicsMode(bool mode) {
+            _physicsMode = mode;
+            _characterController.enabled = mode;
+            _navMeshAgent.updatePosition = !mode;
+            _navMeshAgent.updateRotation = !mode;
+            _navMeshAgent.nextPosition = transform.position;
+        }
+
+        private void ProcessExternalForces() {
+            if (!_physicsMode) {
+                return;
+            }
+            ProcessDrag();
+            ProcessGravity();
+            CheckExternalForces();
+            _characterController.Move(_totalExternalForces * Time.deltaTime);
+        }
+
+        private void ProcessDrag() {
+            if (HasExternalForces()) {
+                return;
+            }
+            if (_characterController.isGrounded) {
+                _totalExternalForces.x = ExtraMath.Lerp(_totalExternalForces.x, 0f, _linearDrag * Time.deltaTime);
+                _totalExternalForces.z = ExtraMath.Lerp(_totalExternalForces.z, 0f, _linearDrag * Time.deltaTime);
+            }
+        }
+
+        private void CheckExternalForces() {
+            if (!HasExternalForces() && _physicsMode) {
+                SetPhysicsMode(false);
+                _totalExternalForces = Vector3.zero;
+            }
+        }
+
+        private void ProcessGravity() {
+            if (_totalExternalForces.y > Physics.gravity.y) {
+                _totalExternalForces.y += Physics.gravity.y * Time.deltaTime;
+            }
+        }
+
+        private bool HasExternalForces() {
+            return _physicsMode &&
+                (!Mathf.Approximately(_totalExternalForces.x, 0f) ||
+                !Mathf.Approximately(_totalExternalForces.z, 0f) ||
+                !IsGrounded);
         }
 
         public void AddForce(Vector3 totalForce, bool overrideForce = false) {
+            ClearDestination();
+            SetPhysicsMode(true);
             if (overrideForce) {
-                _forceVector = Vector3.zero;
+                _totalExternalForces = Vector3.zero;
             }
-            _forceVector += totalForce;
+            _totalExternalForces += totalForce;
         }
 
         public void AddForce(Vector3 direction, float force, bool overrideForce = false) {
-            if (overrideForce) {
-                _forceVector = Vector3.zero;
-            }
-            _forceVector += direction * force;
+            Vector3 totalForce = direction * force;
+            AddForce(totalForce, overrideForce);
         }
 
         public void OverrideMovement(Vector3 direction) {
-            _move = direction;
+            // _move = direction;
             _overrideMovement = true;
         }
 
         public void OverrideRotation(Vector3 direction) {
-            _rotation = direction;
+            // _rotation = direction;
             _overrideRotation = true;
         }
 
-        private void ProcessMovementInput(Vector3 moveInput) {
-            if (!_canMove || !_character.ActionController.Permissions.HasFlag(ActionPermissions.Movement) || _overrideMovement) {
+        public void SetDestination(Vector3 position) {
+            if (_physicsMode) {
                 return;
             }
-            _move = moveInput;
-        }
-
-        private void ProcessRotationInput(Vector3 moveInput) {
-            if (!IsMoving(moveInput)) {
-                return;
-            }
-            _rotation = moveInput;
-        }
-
-        private bool IsMoving(Vector3 input) {
-            return Mathf.Abs(input.x) > RotationThreshold || Mathf.Abs(input.z) > RotationThreshold;
-        }
-
-        private void ProcessExternalForces() {
-            ProcessDrag();
-            ProcessGravity();
-        }
-
-        private void ProcessDrag() {
-            if (Mathf.Approximately(_forceVector.x, 0f) && Mathf.Approximately(_forceVector.z, 0f)) {
-                return;
-            }
-            _forceVector.x = ExtraMath.Lerp(_forceVector.x, 0f, _linearDrag * Time.deltaTime);
-            _forceVector.z = ExtraMath.Lerp(_forceVector.z, 0f, _linearDrag * Time.deltaTime);
-        }
-
-        private void ProcessGravity() {
-            if (_forceVector.y > Physics.gravity.y) {
-                _forceVector.y += Physics.gravity.y * Time.deltaTime;
+            bool success = _navMeshAgent.SetDestination(position);
+            if (!success) {
+                ClearDestination();
+                OnArriveDestination?.Invoke(false);
             }
         }
 
-        private void ProcessMovement() {
-            // move the character controller
-            Vector3 moveVector = Move * _moveSpeed;
-            moveVector += _forceVector;
-            _characterController.Move(moveVector * Time.deltaTime);
-            _overrideMovement = false;
-        }
-
-        private void ProcessRotation() {
-            if (_bodyRoot.forward == Rotation) {
-                return;
-            }
-            _bodyRoot.forward = Vector3.RotateTowards(_bodyRoot.forward, _rotation, _turnLerpSpeed * Time.deltaTime, 0f);
-            _overrideRotation = false;
+        public void ClearDestination() {
+            _navMeshAgent.ResetPath();
         }
 
         private void OnControllerColliderHit(ControllerColliderHit hit) {
-            Vector3 lateralForce = _forceVector;
-            lateralForce.y = 0f;
-            float dotProd = Vector3.Dot(lateralForce.normalized, hit.normal);
-            _forceVector += lateralForce * dotProd;
+            if(_characterController.collisionFlags.HasFlag(CollisionFlags.Sides) && _physicsMode) {
+                Vector3 normal = hit.normal;
+                float dotProd = Vector3.Dot(_totalExternalForces.normalized, normal);
+                Debug.Log(dotProd);
+                Vector3 reduction = _totalExternalForces * dotProd;
+                _totalExternalForces = new Vector3(0f, _totalExternalForces.y, 0f);
+            }
         }
     }
 }

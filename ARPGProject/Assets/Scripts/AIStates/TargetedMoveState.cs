@@ -7,31 +7,16 @@ namespace Bebis {
     public class TargetedMoveState : AIState {
 
         [SerializeField] private NPCNavigator _npcNavigator;
+        [SerializeField] private NPCMoveController3D _npcMoveController;
         [SerializeField] private AIState _onArrivedSuccessState;
         [SerializeField] private AIState _onFailedToPathState;
-        [SerializeField] private float _targetRadius;
         [SerializeField] private bool _setRotation;
-
-        private bool _pathSet = false;
-        private Vector3[] _pathCorners;
-        private int _pathIndex;
+        
         private Vector3 _characterPosition => _character.MoveController.Body.position;
 
         public override void Enter() {
             base.Enter();
-            _pathSet = false;
-            GeneratePath();
-        }
-
-        public override void Execute() {
-            base.Execute();
-            if (!_pathSet) {
-                return;
-            }
-            if (HasReachedCurrentNode()) {
-                OnPathNodeReached();
-            }
-            SetMoveDirection();
+            SetDestination();
         }
 
         public override void Exit(AIState nextState) {
@@ -39,39 +24,18 @@ namespace Bebis {
             _npcNavigator.MoveInput = Vector3.zero;
         }
 
-        private void GeneratePath() {
-            NavMeshPath path = _npcNavigator.CalculatePath(_npcNavigator.TargetPosition);
-            if (path.status == NavMeshPathStatus.PathInvalid) {
-                CustomLogger.Warn(name, $"Failed to path to target: {_npcNavigator.TargetPosition}");
-                FireReadyToChangeState(_onFailedToPathState);
-            }
-            _pathSet = true;
-            _pathCorners = path.corners;
-            _pathIndex = 0;
+        private void SetDestination() {
+            _npcMoveController.OnArriveDestination += OnArrivedDestination;
+            _npcMoveController.SetDestination(_npcNavigator.TargetPosition);
         }
 
-        private bool HasReachedCurrentNode() {
-            float distance = Vector3.Distance(_characterPosition, _pathCorners[_pathIndex]);
-            return distance <= _targetRadius;
-        }
-
-        private void OnPathNodeReached() {
-            _pathIndex++;
-            if(_pathIndex >= _pathCorners.Length) {
+        private void OnArrivedDestination(bool success) {
+            _npcMoveController.OnArriveDestination -= OnArrivedDestination;
+            _npcMoveController.ClearDestination();
+            if (success) {
                 FireReadyToChangeState(_onArrivedSuccessState);
-                return;
-            }
-        }
-
-        private void SetMoveDirection() {
-            if(_pathIndex >= _pathCorners.Length) {
-                return;
-            }
-            Vector3 direction = (_pathCorners[_pathIndex] - _characterPosition);
-            direction.y = 0f;
-            _npcNavigator.MoveInput = direction.normalized;
-            if (_setRotation) {
-                _npcNavigator.RotationInput = direction.normalized;
+            } else {
+                FireReadyToChangeState(_onFailedToPathState);
             }
         }
     }

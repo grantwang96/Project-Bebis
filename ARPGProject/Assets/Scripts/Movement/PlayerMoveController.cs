@@ -29,7 +29,7 @@ namespace Bebis {
         [SerializeField] private float _airSpeed;
         [SerializeField] private float _turnLerpSpeed;
         [SerializeField] private float _linearDrag;
-        [SerializeField] private Vector3 _forceVector;
+        [SerializeField] private Vector3 _totalExternalForces;
 
         [SerializeField] private int _movementRestrictions;
         [SerializeField] private bool _rotationRestrictions;
@@ -56,16 +56,16 @@ namespace Bebis {
 
         public void AddForce(Vector3 direction, float force, bool overrideForce = false) {
             if (overrideForce) {
-                _forceVector = Vector3.zero;
+                _totalExternalForces = Vector3.zero;
             }
-            _forceVector += direction * force;
+            _totalExternalForces += direction * force;
         }
 
         public void AddForce(Vector3 totalForce, bool overrideForce = false) {
             if (overrideForce) {
-                _forceVector = Vector3.zero;
+                _totalExternalForces = Vector3.zero;
             }
-            _forceVector += totalForce;
+            _totalExternalForces += totalForce;
         }
 
         public void OverrideRotation(Vector3 direction) {
@@ -98,8 +98,8 @@ namespace Bebis {
 
         // apply gravity to downward velocity each frame as needed
         private void ProcessGravity() {
-            if (_forceVector.y > Physics.gravity.y) {
-                _forceVector.y += Physics.gravity.y * Time.deltaTime;
+            if (_totalExternalForces.y > Physics.gravity.y) {
+                _totalExternalForces.y += Physics.gravity.y * Time.deltaTime;
             }
         }
 
@@ -112,12 +112,12 @@ namespace Bebis {
 
         // handles ground friction when an active force is applied to a character
         private void ProcessDrag() {
-            if (Mathf.Approximately(_forceVector.x, 0f) && Mathf.Approximately(_forceVector.z, 0f)) {
+            if (Mathf.Approximately(_totalExternalForces.x, 0f) && Mathf.Approximately(_totalExternalForces.z, 0f)) {
                 return;
             }
             if (_characterController.isGrounded) {
-                _forceVector.x = ExtraMath.Lerp(_forceVector.x, 0f, _linearDrag * Time.deltaTime);
-                _forceVector.z = ExtraMath.Lerp(_forceVector.z, 0f, _linearDrag * Time.deltaTime);
+                _totalExternalForces.x = ExtraMath.Lerp(_totalExternalForces.x, 0f, _linearDrag * Time.deltaTime);
+                _totalExternalForces.z = ExtraMath.Lerp(_totalExternalForces.z, 0f, _linearDrag * Time.deltaTime);
             }
         }
 
@@ -178,7 +178,7 @@ namespace Bebis {
             // move the character controller
             float speed = IsGrounded ? _moveSpeed : _airSpeed;
             Vector3 moveVector = Move * speed * MoveMagnitude;
-            moveVector += _forceVector;
+            moveVector += _totalExternalForces;
             _characterController.Move(moveVector * Time.deltaTime);
             _overrideMovement = false;
         }
@@ -206,7 +206,7 @@ namespace Bebis {
 
         private void OnControllerColliderHit(ControllerColliderHit hit) {
             if (!CanInputMove() && _characterController.collisionFlags == CollisionFlags.Sides) {
-                _forceVector = new Vector3(0f, _move.y, 0f);
+                _totalExternalForces = new Vector3(0f, _move.y, 0f);
             }
             if (_characterController.collisionFlags.HasFlag(CollisionFlags.Below) && !IsGrounded) {
                 IsGrounded = true;
