@@ -21,20 +21,20 @@ namespace Bebis {
     public class HitEventInfo {
 
         public readonly int Power;
-        public readonly Vector3 KnockBack;
+        public readonly Vector3 KnockBackDirection;
         public readonly float Force;
         public readonly bool OverrideForce;
         public readonly ICharacter Attacker;
 
         public HitEventInfo(
             int power,
-            Vector3 knockBack,
+            Vector3 knockBackDirection,
             float force,
             bool overrideForce,
             ICharacter attacker
             ) {
             Power = power;
-            KnockBack = knockBack;
+            KnockBackDirection = knockBackDirection;
             Force = force;
             OverrideForce = overrideForce;
             Attacker = attacker;

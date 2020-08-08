@@ -157,6 +157,11 @@ namespace Bebis {
                 if (damageable != null && damageable != _character.Damageable) {
                     OnDamageableHit(damageable);
                 }
+                Rigidbody rigidbody = collider.GetComponent<Rigidbody>();
+                if (rigidbody != null) {
+                    Debug.Log(_hitEventInfo.KnockBackDirection);
+                    rigidbody.AddForce(_hitEventInfo.KnockBackDirection * _hitEventInfo.Force, ForceMode.Impulse);
+                }
                 return;
             }
             List<Hurtbox> characterHurtBoxes = new List<Hurtbox>(_character.HurtboxController.Hurtboxes.Values);

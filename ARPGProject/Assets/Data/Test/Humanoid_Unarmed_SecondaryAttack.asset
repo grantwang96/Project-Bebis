@@ -31,7 +31,7 @@ MonoBehaviour:
       _powerRange:
         _min: 2
         _max: 5
-      _knockbackAngle: {x: 0, y: 0.25, z: 1}
+      _knockbackAngle: {x: 0, y: 0.5, z: 1}
       _knockbackForce: 8
       _overrideForce: 1
   - _id: Hitbox_RightKnee_Sphere_1
@@ -40,7 +40,7 @@ MonoBehaviour:
       _powerRange:
         _min: 1
         _max: 3
-      _knockbackAngle: {x: 0, y: 0.25, z: 1}
+      _knockbackAngle: {x: 0, y: 0.5, z: 1}
       _knockbackForce: 8
       _overrideForce: 1
   _autoCorrectForTarget: 1

@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 
 namespace Bebis {
+
+    public enum CharacterMoveMode {
+        Stopped, Walk, Run
+    }
+
     public interface IMoveController {
         float MoveMagnitude { get; }
         Vector3 Move { get; }

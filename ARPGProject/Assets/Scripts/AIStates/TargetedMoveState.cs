@@ -11,6 +11,7 @@ namespace Bebis {
         [SerializeField] private AIState _onArrivedSuccessState;
         [SerializeField] private AIState _onFailedToPathState;
         [SerializeField] private bool _setRotation;
+        [SerializeField] private CharacterMoveMode _moveMode;
         
         private Vector3 _characterPosition => _character.MoveController.Body.position;
 
@@ -21,11 +22,12 @@ namespace Bebis {
 
         public override void Exit(AIState nextState) {
             base.Exit(nextState);
-            _npcNavigator.MoveInput = Vector3.zero;
+            _npcMoveController.SetMoveMode(CharacterMoveMode.Stopped);
         }
 
         private void SetDestination() {
             _npcMoveController.OnArriveDestination += OnArrivedDestination;
+            _npcMoveController.SetMoveMode(_moveMode);
             _npcMoveController.SetDestination(_npcNavigator.TargetPosition);
         }
 

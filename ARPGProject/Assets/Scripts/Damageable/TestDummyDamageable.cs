@@ -36,7 +36,7 @@ namespace Bebis {
                     CustomLogger.Log(nameof(TestDummyDamageable), $"Defended {info.Power} damage!");
                     break;
             }
-            _moveController.AddForce(info.KnockBack, info.Force, true);
+            _moveController.AddForce(info.KnockBackDirection, info.Force, true);
         }
     }
 }
