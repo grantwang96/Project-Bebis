@@ -6,7 +6,7 @@ namespace Bebis {
     public class LookAtTargetAIState : AIState {
 
         [SerializeField] private NPCTargetManager _npcTargetManager;
-        [SerializeField] private NPCNavigator _npcNavigator;
+        [SerializeField] private NPCMoveController3D _npcMoveController;
         [SerializeField] private AIStateMode _lookMode;
 
         public override void Enter() {
@@ -39,7 +39,7 @@ namespace Bebis {
             Vector3 currentPosition = _character.MoveController.Body.position;
             Vector3 direction = targetPosition - currentPosition;
             direction.y = 0f;
-            _npcNavigator.RotationInput = direction;
+            _npcMoveController.OverrideRotation(direction.normalized);
         }
     }
 }

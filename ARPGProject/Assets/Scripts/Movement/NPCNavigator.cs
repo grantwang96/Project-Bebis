@@ -2,27 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using System;
 
 namespace Bebis {
     public class NPCNavigator : CharacterComponent {
 
-        private const int RandomLocSearchSegments = 8;
-
-        public Vector3 MoveInput;
-        public Vector3 RotationInput;
+        private const int RandomLocSearchSegments = 16;
+        
         public Vector3 TargetPosition;
 
         [SerializeField] private float _navMeshRadius;
-
-        private NavMeshPath _path;
+        
         private Vector3 _characterPosition => _character.MoveController.Body.position;
-
         private List<Vector3> _radiusDirections = new List<Vector3>();
 
         protected override void Awake() {
             base.Awake();
-            _path = new NavMeshPath();
             BuildRadiusDirections();
         }
 
@@ -33,16 +27,7 @@ namespace Bebis {
                 _radiusDirections.Add(newDir);
             }
         }
-
-        /*
-        public NavMeshPath CalculatePath(Vector3 target) {
-            if(NavMesh.CalculatePath(_characterPosition, target, NavMesh.AllAreas, _path)) {
-                return _path;
-            }
-            return null;
-        }
-        */
-
+        
         public bool CanDirectPathToPoint(Vector3 point) {
             return NavMesh.Raycast(_characterPosition, point, out NavMeshHit hit, NavMesh.AllAreas);
         }

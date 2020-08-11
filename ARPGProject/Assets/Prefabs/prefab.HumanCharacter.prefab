@@ -670,7 +670,7 @@ MonoBehaviour:
     _boolValues: []
   Active: 0
   _npcTargetManager: {fileID: 5244029089961613850}
-  _npcNavigator: {fileID: 3875271714720044895}
+  _npcMoveController: {fileID: 0}
   _lookMode: 0
 --- !u!1 &5108865392849096236
 GameObject:
@@ -857,10 +857,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterGO: {fileID: 5108865392849096236}
-  MoveInput: {x: 0, y: 0, z: 0}
-  RotationInput: {x: 0, y: 0, z: 0}
   TargetPosition: {x: 0, y: 0, z: 0}
-  _navMeshRadius: 1
+  _navMeshRadius: 3
 --- !u!114 &3875271714720044888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1439,7 +1437,7 @@ MonoBehaviour:
     _boolValues: []
   Active: 0
   _npcTargetManager: {fileID: 5244029089961613850}
-  _npcNavigator: {fileID: 3875271714720044895}
+  _npcMoveController: {fileID: 3875271714720044834}
   _lookMode: 0
 --- !u!1 &8051580278849356617
 GameObject:

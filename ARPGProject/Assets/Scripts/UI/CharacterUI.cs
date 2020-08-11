@@ -10,23 +10,20 @@ namespace Bebis {
         [SerializeField] private FillBar _awarenessLevel;
 
         [SerializeField] private RectTransform _rectTransform;
+        [SerializeField] private GameObject _uiParent; // controls display for all UI objects
         [SerializeField] private Canvas _canvas;
 
         private ICharacter _character;
         private NPCTargetManager _npcTargetManager;
         private HostileEntry _playerHostileEntry;
         private Vector3 _offset;
+        private Vector3 _worldSpacePosition => _character.MoveController.Body.position + _offset;
 
         public event Action<ICharacter, CharacterUI> OnDisableAwarenessMeter;
 
         private void Update() {
-            // set the position
-            Vector3 targetPosition = _character.MoveController.Body.position + _offset;
-            Vector2 newPosition = UIUtility.WorldToScreenSpace(
-                _canvas,
-                CameraController.Instance.MainCamera,
-                targetPosition);
-            _rectTransform.anchoredPosition = newPosition;
+            SetUIParentActive(_worldSpacePosition);
+            SetUIPosition();
         }
 
         public bool Initialize(ICharacter character, Canvas canvas) {
@@ -47,6 +44,24 @@ namespace Bebis {
             TryEnableAwarenessMeter();
             OnCurrentHealthChanged(_character.Damageable.Health);
             return true;
+        }
+
+        private void SetUIPosition() {
+            // set the position
+            Vector2 newPosition = UIUtility.WorldToScreenSpace(
+                _canvas,
+                CameraController.Instance.MainCamera,
+                _worldSpacePosition);
+            _rectTransform.anchoredPosition = newPosition;
+        }
+
+        private void SetUIParentActive(Vector3 targetPosition) {
+            _uiParent.SetActive(IsInCameraView(targetPosition));
+        }
+
+        private static bool IsInCameraView(Vector3 targetPosition) {
+            Vector3 viewPos = CameraController.Instance.MainCamera.WorldToViewportPoint(targetPosition);
+            return viewPos.x >= 0f && viewPos.x <= 1f && viewPos.y >= 0f && viewPos.y <= 1f && viewPos.z >= 0f;
         }
 
         private void TryEnableAwarenessMeter() {
