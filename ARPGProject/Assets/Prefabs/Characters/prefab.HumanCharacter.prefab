@@ -670,7 +670,7 @@ MonoBehaviour:
     _boolValues: []
   Active: 0
   _npcTargetManager: {fileID: 5244029089961613850}
-  _npcMoveController: {fileID: 0}
+  _npcMoveController: {fileID: 3875271714720044834}
   _lookMode: 0
 --- !u!1 &5108865392849096236
 GameObject:
