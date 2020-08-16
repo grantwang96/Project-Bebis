@@ -36,6 +36,13 @@ namespace Bebis {
             return success;
         }
 
+        // force clear the action from an external source (ex. getting hit)
+        public void ClearCurrentActionState() {
+            OnActionStatusUpdated?.Invoke(ActionStatus.Completed);
+            CurrentState?.Clear();
+            CurrentState = null;
+        }
+
         private bool InitiateAction(CharacterActionData data, CharacterActionContext context) {
             CharacterActionResponse response = data.Initiate(_character, CurrentState, context);
             if (response.Success) {
@@ -76,8 +83,8 @@ namespace Bebis {
             }
             CurrentState.Status = status;
             OnActionStatusUpdated?.Invoke(status);
-            if (CurrentState.Status.HasFlag(ActionStatus.Completed)) {
-                CurrentState.Clear();
+            if (status.HasFlag(ActionStatus.Completed)) {
+                CurrentState?.Clear();
                 CurrentState = null;
             }
         }

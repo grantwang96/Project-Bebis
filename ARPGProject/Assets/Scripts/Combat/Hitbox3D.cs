@@ -15,6 +15,9 @@ namespace Bebis {
                 return;
             }
             _info = info3D;
+        }
+
+        private void OnEnable() {
             FireInitializedEvent();
         }
 

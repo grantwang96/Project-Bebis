@@ -225,6 +225,15 @@ namespace Bebis {
             return TryPerformAction(actionData, context);
         }
 
+        // force clear the action from an external source (ex. getting hit)
+        public void ClearCurrentActionState() {
+            CurrentState?.Clear();
+            OnActionStatusUpdated?.Invoke(ActionStatus.Completed);
+            _bufferedActionData = null;
+            _hasBufferedAction = false;
+            CurrentState = null;
+        }
+
         // upon successful action, update action and animation state
         private void PerformActionSuccess(ICharacterActionState state) {
             CurrentState?.Clear();
@@ -259,7 +268,7 @@ namespace Bebis {
 
         // upon taking entering hitstun
         private void OnDamageableHitStun(HitEventInfo info) {
-            CurrentState?.Clear();
+            ClearCurrentActionState();
             _playerCharacter.AnimationController.OnAnimationStateUpdated += OnDamageableAnimationCompleted;
             _actionRestrictions++;
         }

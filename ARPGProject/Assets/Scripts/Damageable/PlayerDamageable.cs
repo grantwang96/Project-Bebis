@@ -28,7 +28,6 @@ namespace Bebis {
             OnCurrentHealthChanged?.Invoke(_health);
             _character.MoveController.AddForce(hitEventInfo.KnockBackDirection, hitEventInfo.Force);
             OnHit?.Invoke(hitEventInfo);
-            OnHit?.Invoke(hitEventInfo);
             if (_health > 0) {
                 // temp: all hits deal hitstun
                 ApplyHitStun(hitEventInfo);

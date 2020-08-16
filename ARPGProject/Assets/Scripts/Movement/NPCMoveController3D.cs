@@ -38,7 +38,7 @@ namespace Bebis {
         private bool _overrideRotation;
         private float _currentSpeed;
         private CharacterMoveMode _currentMoveMode;
-        private bool _physicsMode;
+        [SerializeField] private bool _physicsMode;
         private bool _pathing;
         private Vector3 _totalExternalForces;
 
@@ -160,13 +160,11 @@ namespace Bebis {
         }
 
         public void OverrideMovement(Vector3 direction) {
-            // _move = direction;
-            _overrideMovement = true;
+            Move = direction;
         }
 
         public void OverrideRotation(Vector3 direction) {
-            // _rotation = direction;
-            _overrideRotation = true;
+            Body.forward = direction;
         }
 
         public void SetDestination(Vector3 position) {
@@ -174,6 +172,7 @@ namespace Bebis {
                 return;
             }
             _pathing = _navMeshAgent.SetDestination(position);
+            _navMeshAgent.updateRotation = true;
             if (!_pathing) {
                 ClearDestination();
                 OnArriveDestination?.Invoke(false);
@@ -194,7 +193,12 @@ namespace Bebis {
             _navMeshAgent.speed = _currentSpeed;
         }
 
+        public void SetStoppingDistance(float distance) {
+            _navMeshAgent.stoppingDistance = distance;
+        }
+
         public void ClearDestination() {
+            _navMeshAgent.updateRotation = false;
             _navMeshAgent.ResetPath();
         }
 

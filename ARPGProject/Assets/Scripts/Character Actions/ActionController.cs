@@ -10,6 +10,7 @@ namespace Bebis {
         ICharacterActionState CurrentState { get; }
 
         bool PerformAction(CharacterActionData actionData, CharacterActionContext context);
+        void ClearCurrentActionState();
 
         event Action<ActionStatus> OnActionStatusUpdated;
         event Action OnPerformActionSuccess;

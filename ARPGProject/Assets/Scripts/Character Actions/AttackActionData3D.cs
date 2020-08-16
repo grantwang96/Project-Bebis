@@ -65,8 +65,10 @@ namespace Bebis {
         // update the hitboxes on the weapon
         private void SetHitboxInfos() {
             for (int i = 0; i < _data.CombatHitboxDatas.Count; i++) {
+                // add the hitbox by id to reference in case a hit is triggered
                 CombatHitBoxData modifierInfo = _data.CombatHitboxDatas[i].CombatHitboxData;
                 _combatHitBoxData.Add(_data.CombatHitboxDatas[i].Id, modifierInfo);
+                // initialize the hitbox with a combat info
                 CombatHitboxInfo3D newInfo = new CombatHitboxInfo3D(OnHitboxTriggered);
                 _character.HitboxController.SetHitboxInfo(_data.CombatHitboxDatas[i].Id, newInfo);
             }
@@ -146,12 +148,15 @@ namespace Bebis {
         }
 
         private void OnHitboxTriggered(Hitbox hitBox, Collider collider) {
+            // if failed to retrieve hitbox data
             if (!_combatHitBoxData.TryGetValue(hitBox.name, out CombatHitBoxData hitBoxData)) {
                 CustomLogger.Warn(nameof(AttackActionData3D), $"Could not retrieve hitbox data for hitbox {hitBox.name}");
                 return;
             }
-            SetHitEventInfo(hitBoxData);
+            // create and set the hit event info
+            // find out what type of thing we hit
             Hurtbox3D hurtBox = collider.GetComponent<Hurtbox3D>();
+            // if the thing we hit was not a hurtbox
             if (hurtBox == null) {
                 IDamageable damageable = collider.GetComponent<IDamageable>();
                 if (damageable != null && damageable != _character.Damageable) {
@@ -159,11 +164,12 @@ namespace Bebis {
                 }
                 Rigidbody rigidbody = collider.GetComponent<Rigidbody>();
                 if (rigidbody != null) {
-                    Debug.Log(_hitEventInfo.KnockBackDirection);
                     rigidbody.AddForce(_hitEventInfo.KnockBackDirection * _hitEventInfo.Force, ForceMode.Impulse);
                 }
                 return;
             }
+            // if the thing WAS a hurtbox
+            SetHitEventInfo(hitBoxData);
             List<Hurtbox> characterHurtBoxes = new List<Hurtbox>(_character.HurtboxController.Hurtboxes.Values);
             if (characterHurtBoxes.Contains(hurtBox)) {
                 return;

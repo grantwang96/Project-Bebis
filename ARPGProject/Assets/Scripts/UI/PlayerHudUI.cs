@@ -22,7 +22,7 @@ namespace Bebis {
         }
 
         private void OnCurrentHealthChanged(int newHealth) {
-            _playerHealthBar.SetFillPercent(newHealth / PlayerCharacter.Instance.Damageable.MaxHealth);
+            _playerHealthBar.SetFillPercent((float)newHealth / PlayerCharacter.Instance.Damageable.MaxHealth);
             _healthTextDisplay.text = $"{newHealth} / {PlayerCharacter.Instance.Damageable.MaxHealth}";
         }
 

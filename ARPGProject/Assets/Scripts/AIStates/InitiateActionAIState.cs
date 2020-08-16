@@ -32,7 +32,9 @@ namespace Bebis {
 
         public override void Exit(AIState nextState) {
             base.Exit(nextState);
+            _initiated = false;
             _character.ActionController.OnActionStatusUpdated -= OnActionCompleted;
+            _character.ActionController.ClearCurrentActionState();
         }
 
         private void OnActionCompleted(ActionStatus status) {
