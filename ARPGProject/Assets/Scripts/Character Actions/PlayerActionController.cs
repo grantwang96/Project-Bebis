@@ -18,14 +18,16 @@ namespace Bebis {
 
         public ActionPermissions Permissions => CurrentState?.Permissions ?? ActionPermissions.All;
         public ICharacterActionState CurrentState { get; private set; }
+        public IPlayerGameplayActionSet CurrentActionSet { get; private set; }
 
         public event Action<ActionStatus> OnActionStatusUpdated;
         public event Action OnPerformActionSuccess;
 
+        public event Action OnCurrentActionSetUpdated;
+
         private IPlayerGameplayActionSet _normalGameplaySet;
         private IPlayerGameplayActionSet _skillMode1GameplaySet;
         private IPlayerGameplayActionSet _skillMode2GameplaySet;
-        private IPlayerGameplayActionSet _currentActionSet;
 
         private CharacterActionData _bufferedActionData;
         private CharacterActionContext _bufferedActionContext;
@@ -48,7 +50,8 @@ namespace Bebis {
             _normalGameplaySet = new PlayerNormalGameplayActionSet(_playerCharacter, PlayerCharacterManager.Instance.SkillsLoadout);
             _skillMode1GameplaySet = new PlayerSkillsActionSet(true, PlayerCharacterManager.Instance.SkillsLoadout);
             _skillMode2GameplaySet = new PlayerSkillsActionSet(false, PlayerCharacterManager.Instance.SkillsLoadout);
-            _currentActionSet = _normalGameplaySet;
+            CurrentActionSet = _normalGameplaySet;
+            OnCurrentActionSetUpdated?.Invoke();
         }
 
         private void OnSkillsLoadoutUpdated(IPlayerSkillsLoadout skillsLoadout) {
@@ -105,48 +108,60 @@ namespace Bebis {
         #region APPLYING INPUTS TO CHARACTER ACTIONS
 
         private void HandleActionButton1(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = _currentActionSet.Btn1Skill;
+            CharacterActionData actionData = CurrentActionSet.Btn1Skill;
             CharacterActionContext context = GetCharacterActionContext(callbackContext);
             TryPerformAction(actionData, context);
         }
 
         private void HandleActionButton2(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = _currentActionSet.Btn2Skill;
+            CharacterActionData actionData = CurrentActionSet.Btn2Skill;
             CharacterActionContext context = GetCharacterActionContext(callbackContext);
             TryPerformAction(actionData, context);
         }
 
         private void HandleActionButton3(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = _currentActionSet.Btn3Skill;
+            CharacterActionData actionData = CurrentActionSet.Btn3Skill;
             CharacterActionContext context = GetCharacterActionContext(callbackContext);
             TryPerformAction(actionData, context);
         }
 
         private void HandleActionButton4(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = _currentActionSet.Btn4Skill;
+            CharacterActionData actionData = CurrentActionSet.Btn4Skill;
             CharacterActionContext context = GetCharacterActionContext(callbackContext);
             TryPerformAction(actionData, context);
         }
 
         private void HandleSkillsButton1(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = _currentActionSet.SkillMode1;
+            CharacterActionData actionData = CurrentActionSet.SkillMode1;
             CharacterActionContext context = GetCharacterActionContext(callbackContext);
-            switch (context) {
-                case CharacterActionContext.Initiate:
-                    _currentActionSet = _skillMode1GameplaySet;
-                    break;
-                case CharacterActionContext.Release:
-                    _currentActionSet = _normalGameplaySet;
-                    break;
-                default: break;
-            }
+            HandleSkillModeSwitch(_skillMode1GameplaySet, context);
             TryPerformAction(actionData, context);
         }
 
         private void HandleSkillsButton2(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = _currentActionSet.SkillMode2;
+            CharacterActionData actionData = CurrentActionSet.SkillMode2;
             CharacterActionContext context = GetCharacterActionContext(callbackContext);
+            HandleSkillModeSwitch(_skillMode2GameplaySet, context);
             TryPerformAction(actionData, context);
+        }
+
+        private void HandleSkillModeSwitch(IPlayerGameplayActionSet actionSet, CharacterActionContext context) {
+            // if CurrentActionSet is currently being overrwritten
+            if(CurrentActionSet != _normalGameplaySet && CurrentActionSet != actionSet) {
+                return;
+            }
+            // handle overriding the set
+            switch (context) {
+                case CharacterActionContext.Initiate:
+                    CurrentActionSet = actionSet;
+                    OnCurrentActionSetUpdated?.Invoke();
+                    break;
+                case CharacterActionContext.Release:
+                    CurrentActionSet = _normalGameplaySet;
+                    OnCurrentActionSetUpdated?.Invoke();
+                    break;
+                default: break;
+            }
         }
 
         private static CharacterActionContext GetCharacterActionContext(InputAction.CallbackContext callbackContext) {

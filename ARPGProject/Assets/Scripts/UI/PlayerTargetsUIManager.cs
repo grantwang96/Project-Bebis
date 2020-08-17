@@ -54,8 +54,12 @@ namespace Bebis {
                 return;
             }
             CharacterUI characterUI = _characterUIs[0];
+            CharacterUIInitData initData = new CharacterUIInitData {
+                Character = character,
+                Canvas = _displayCanvas
+            };
             // if failed to initialize
-            if(!characterUI.Initialize(character, _displayCanvas)) {
+            if(!characterUI.Initialize(initData)) {
                 CustomLogger.Error(nameof(PlayerTargetsUIManager), $"Failed to initialize {nameof(CharacterUI)}!");
                 return;
             }

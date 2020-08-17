@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 namespace Bebis {
-    public class CharacterUI : MonoBehaviour {
+    public class CharacterUI : MonoBehaviour, UIObject {
 
         [SerializeField] private FillBar _healthBar;
         [SerializeField] private FillBar _awarenessLevel;
@@ -26,7 +26,14 @@ namespace Bebis {
             SetUIPosition();
         }
 
-        public bool Initialize(ICharacter character, Canvas canvas) {
+        public bool Initialize(UIInitData initData) {
+            CharacterUIInitData characterUIInitData = initData as CharacterUIInitData;
+            if(characterUIInitData == null) {
+                CustomLogger.Error(this.name, $"Init data was not of type {nameof(CharacterUIInitData)}");
+                return false;
+            }
+            ICharacter character = characterUIInitData.Character;
+            Canvas canvas = characterUIInitData.Canvas;
             _npcTargetManager = character.TargetManager as NPCTargetManager;
             if(_npcTargetManager == null) {
                 CustomLogger.Error(this.name, $"Character {character.MoveController.Body.name} did not have component of type {nameof(NPCTargetManager)}");
@@ -119,5 +126,10 @@ namespace Bebis {
             _awarenessLevel.gameObject.SetActive(false);
             OnDisableAwarenessMeter?.Invoke(_character, this);
         }
+    }
+
+    public class CharacterUIInitData : UIInitData {
+        public ICharacter Character;
+        public Canvas Canvas;
     }
 }

@@ -684,7 +684,7 @@ MonoBehaviour:
   _moveSpeed: 5
   _airSpeed: 5
   _turnLerpSpeed: 10
-  _linearDrag: 1
+  _linearDrag: 10
   _totalExternalForces: {x: 0, y: 0, z: 0}
   _movementRestrictions: 0
   _rotationRestrictions: 0

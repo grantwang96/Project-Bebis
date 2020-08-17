@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01603433d9510c845b62a9a999746bb1, type: 3}
   m_Name: Humanoid_Unarmed_Jab_3
   m_EditorClassIdentifier: 
+  _id: Humanoid_Unarmed_Jab_3
+  _actionName: Attack
   _cancelable: 0
   _animationData:
     _animationName: 

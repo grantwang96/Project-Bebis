@@ -741,8 +741,8 @@ MonoBehaviour:
   _canMove: 1
   _canRotate: 1
   _moveSpeed: 5
-  _linearDrag: 1
-  _weight: 0
+  _linearDrag: 10
+  _weight: 3
   _bodyRoot: {fileID: 3160255302235909897}
   _bodyCenter: {fileID: 8522025847837994834}
   _characterController: {fileID: 8048001733275572708}

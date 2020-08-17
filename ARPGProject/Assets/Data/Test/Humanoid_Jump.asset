@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecf0343c75c36e2469de85f0fa2af638, type: 3}
   m_Name: Humanoid_Jump
   m_EditorClassIdentifier: 
+  _id: Humanoid_Jump
+  _actionName: Jump
   _cancelable: 0
   _animationData:
     _animationName: Jump

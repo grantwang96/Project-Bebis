@@ -9,12 +9,23 @@ namespace Bebis {
         [SerializeField] private GameObject _hudParent;
         [SerializeField] private FillBar _playerHealthBar;
         [SerializeField] private Text _healthTextDisplay;
+        [SerializeField] private PlayerSkillsView _playerSkillsView;
 
         private void Start() {
+            SetupHealthDisplay();
+            SetupSkillsDisplay();
+        }
+
+        private void SetupHealthDisplay() {
             PlayerCharacter.Instance.Damageable.OnCurrentHealthChanged += OnCurrentHealthChanged;
             PlayerCharacter.Instance.Damageable.OnMaxHealthChanged += OnMaxHealthChanged;
+
             OnCurrentHealthChanged(PlayerCharacter.Instance.Damageable.Health);
             OnMaxHealthChanged(PlayerCharacter.Instance.Damageable.MaxHealth);
+        }
+
+        private void SetupSkillsDisplay() {
+            _playerSkillsView.Initialize(UIInitData.Empty);
         }
 
         public void SetHudEnabled(bool enabled) {

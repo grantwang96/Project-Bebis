@@ -23,12 +23,17 @@ namespace Bebis {
 
     public abstract class CharacterActionData : ScriptableObject {
 
+        [SerializeField] private string _id;
+        [SerializeField] private string _actionName;
+
         [SerializeField] protected bool _cancelable;
         [SerializeField] protected AnimationData _animationData;
         [SerializeField] protected ActionPermissions _permissions;
         [SerializeField] protected int _priority;
         [SerializeField] protected bool _bufferable;
 
+        public string Id => _id;
+        public string ActionName => _actionName;
         public bool Cancelable => _cancelable;
         public AnimationData AnimationData => _animationData;
         public ActionPermissions Permissions => _permissions;
