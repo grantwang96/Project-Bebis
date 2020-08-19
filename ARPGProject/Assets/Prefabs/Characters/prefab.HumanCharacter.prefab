@@ -1098,7 +1098,6 @@ GameObject:
   - component: {fileID: 3875271714720044834}
   - component: {fileID: 3875271714720044892}
   - component: {fileID: 3875271714720044893}
-  - component: {fileID: 3875271714720044894}
   - component: {fileID: 3875271714720044895}
   - component: {fileID: 3875271714720044888}
   - component: {fileID: 1152324737}
@@ -1108,6 +1107,7 @@ GameObject:
   - component: {fileID: 8236606210448094542}
   - component: {fileID: 5197992938091900430}
   - component: {fileID: 4135604381781986210}
+  - component: {fileID: 7312289018679221964}
   m_Layer: 9
   m_Name: prefab.HumanCharacter
   m_TagString: Untagged
@@ -1188,7 +1188,7 @@ MonoBehaviour:
     _intValues: []
     _floatValues: []
     _boolValues: []
-  _hurtBoxController: {fileID: 3875271714720044894}
+  _hurtBoxController: {fileID: 0}
 --- !u!114 &3875271714720044834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1213,6 +1213,7 @@ MonoBehaviour:
   _nonPhysicsModeCollider: {fileID: 5197992938091900430}
   _npcNavigator: {fileID: 3875271714720044895}
   _navMeshAgent: {fileID: 2344829212413287324}
+  _physicsMode: 0
 --- !u!114 &3875271714720044892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1240,21 +1241,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _characterGO: {fileID: 5108865392849096236}
   _hitBoxObjects:
-  - {fileID: 0}
---- !u!114 &3875271714720044894
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5108865392849096236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa9ffd2eb9eeebf44b8cf4029ae3ea95, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _characterGO: {fileID: 5108865392849096236}
-  _hurtBoxObjs:
   - {fileID: 0}
 --- !u!114 &3875271714720044895
 MonoBehaviour:
@@ -1291,7 +1277,7 @@ MonoBehaviour:
   _npcCharacterStatManager: {fileID: 7360653821747455121}
   _npcTargetManager: {fileID: 5244029089961613850}
   _hitboxController: {fileID: 3875271714720044893}
-  _hurtboxController: {fileID: 3875271714720044894}
+  _hurtboxController: {fileID: 0}
 --- !u!114 &1152324737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1338,10 +1324,10 @@ MonoBehaviour:
   _rayOrigin: {fileID: 0}
   _charactersLayers:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 1024
   _scanLayers:
     serializedVersion: 2
-    m_Bits: 513
+    m_Bits: 1025
   _hostilesTags: 3
   _detectionFactor: 0.2
 --- !u!195 &2344829212413287324
@@ -1414,6 +1400,30 @@ MonoBehaviour:
   _helmetSlot: {fileID: 0}
   _torsoSlot: {fileID: 0}
   _leggingsSlot: {fileID: 0}
+--- !u!114 &7312289018679221964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5108865392849096236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3baa32ef92dd3234abe235512d7aaf05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hurtBoxLayers:
+    serializedVersion: 2
+    m_Bits: 512
+  _hurtBoxObjs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _characterGO: {fileID: 5108865392849096236}
 --- !u!1 &5141020784174524507
 GameObject:
   m_ObjectHideFlags: 0
@@ -1710,6 +1720,7 @@ MonoBehaviour:
   _onTargetLostState: {fileID: 3875271716025496056}
   _onArrivedTargetState: {fileID: 7615086326015065597}
   _arrivalRadius: 1
+  _moveMode: 0
 --- !u!1 &6868159982398341059
 GameObject:
   m_ObjectHideFlags: 0

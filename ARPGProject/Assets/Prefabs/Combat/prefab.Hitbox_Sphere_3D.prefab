@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7730545732601509900}
   - component: {fileID: 7730545732601509905}
   - component: {fileID: 7730545732601509902}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: prefab.Hitbox_Sphere_3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,6 +81,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -105,3 +107,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}

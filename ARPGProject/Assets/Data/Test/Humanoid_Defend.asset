@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f49c709944c2063439a4cbe7b495b971, type: 3}
   m_Name: Humanoid_Defend
   m_EditorClassIdentifier: 
+  _id: 
+  _actionName: 
   _cancelable: 0
   _animationData:
     _animationName: 
@@ -22,8 +24,9 @@ MonoBehaviour:
     _boolValues:
     - Key: Defending
       Value: 1
-  _permissions: 0
+  _permissions: 6
   _priority: 50
+  _bufferable: 0
   _onReleaseAnimationData:
     _animationName: 
     _triggers: []

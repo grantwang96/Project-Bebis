@@ -50,4 +50,4 @@ MonoBehaviour:
   _scanRange: 1.5
   _scanLayers:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 1024

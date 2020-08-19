@@ -24,6 +24,19 @@ namespace Bebis {
         
         public void TakeDamage(HitEventInfo hitEventInfo) {
             // perform checks based on hurt box controller's state
+            HurtBoxState hurtBoxState = _character.HurtboxController.HitHurtboxState;
+            switch (hurtBoxState) {
+                case HurtBoxState.Normal:
+                    OnNormalHit(hitEventInfo);
+                    break;
+                case HurtBoxState.Defending:
+                    OnDefendedHit(hitEventInfo);
+                    break;
+            }
+
+        }
+
+        private void OnNormalHit(HitEventInfo hitEventInfo) {
             _health -= hitEventInfo.Power;
             OnCurrentHealthChanged?.Invoke(_health);
             _character.MoveController.AddForce(hitEventInfo.KnockBackDirection, hitEventInfo.Force);
@@ -34,6 +47,11 @@ namespace Bebis {
             } else {
                 OnDefeated?.Invoke();
             }
+        }
+
+        private void OnDefendedHit(HitEventInfo hitEventInfo) {
+            // TODO: calculate reduced damage/stamina
+            Debug.Log("Defended");
         }
 
         private void ApplyHitStun(HitEventInfo hitEventInfo) {

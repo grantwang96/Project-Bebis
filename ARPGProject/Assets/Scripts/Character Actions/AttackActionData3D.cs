@@ -168,13 +168,13 @@ namespace Bebis {
                 }
                 return;
             }
-            // if the thing WAS a hurtbox
-            SetHitEventInfo(hitBoxData);
+            // ensure this isn't the character's own hitbox
             List<Hurtbox> characterHurtBoxes = new List<Hurtbox>(_character.HurtboxController.Hurtboxes.Values);
             if (characterHurtBoxes.Contains(hurtBox)) {
                 return;
             }
-            hurtBox.SendHitEvent(hitBox, OnCharacterHit);
+            SetHitEventInfo(hitBoxData);
+            hurtBox.SendHitEvent(_character, hitBox, OnCharacterHit);
         }
 
         // sets the hit event info for this attack state
@@ -186,6 +186,9 @@ namespace Bebis {
 
         // upon hitting a character
         private void OnCharacterHit(ICharacter otherCharacter) {
+            if(otherCharacter == null) {
+                return;
+            }
             OnDamageableHit(otherCharacter.Damageable);
         }
 
