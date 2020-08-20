@@ -23,7 +23,7 @@ MonoBehaviour:
     _intValues: []
     _floatValues: []
     _boolValues: []
-  _permissions: 4
+  _permissions: 5
   _priority: 0
   _bufferable: 1
   _combatHitBoxDatas:

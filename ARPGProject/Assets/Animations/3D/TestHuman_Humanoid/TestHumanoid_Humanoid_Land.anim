@@ -38147,7 +38147,7 @@ AnimationClip:
     intParameter: 10
     messageOptions: 0
   - time: 0
-    functionName: OnLandingStatusUpdated
+    functionName: SendAnimationMessage
     data: LANDSTART
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
@@ -38161,7 +38161,7 @@ AnimationClip:
     intParameter: 6
     messageOptions: 0
   - time: 0.4
-    functionName: OnLandingStatusUpdated
+    functionName: SendAnimationMessage
     data: LANDEND
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

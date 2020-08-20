@@ -14,6 +14,13 @@ namespace Bebis {
         private const string SkillsButton1Id = "SkillsButton1";
         private const string SkillsButton2Id = "SkillsButton2";
 
+        private InputAction _actionButton1;
+        private InputAction _actionButton2;
+        private InputAction _actionButton3;
+        private InputAction _actionButton4;
+        private InputAction _skills1Button;
+        private InputAction _skills2Button;
+
         [SerializeField] private PlayerCharacter _playerCharacter;
 
         public ActionPermissions Permissions => CurrentState?.Permissions ?? ActionPermissions.All;
@@ -22,8 +29,9 @@ namespace Bebis {
 
         public event Action<ActionStatus> OnActionStatusUpdated;
         public event Action OnPerformActionSuccess;
-
+   
         public event Action OnCurrentActionSetUpdated;
+        public event Action OnUpdate;
 
         private IPlayerGameplayActionSet _normalGameplaySet;
         private IPlayerGameplayActionSet _skillMode1GameplaySet;
@@ -32,17 +40,32 @@ namespace Bebis {
         private CharacterActionData _bufferedActionData;
         private CharacterActionContext _bufferedActionContext;
         private bool _hasBufferedAction = false;
+        private List<CharacterActionData> _currentHoldingActions = new List<CharacterActionData>();
 
-        private int _actionRestrictions;
+        public int ActionRestrictions { get; private set; }
 
         private void Start() {
+            SetInputActionMaps();
             SetGameplayActionSets();
             SubscribeToInputController();
             SubscribeToDamageable();
             SubscribeToAnimationController();
             PlayerCharacterManager.Instance.OnPlayerSkillsLoadoutSet += OnSkillsLoadoutUpdated;
 
-            _actionRestrictions = 0;
+            ActionRestrictions = 0;
+        }
+
+        private void Update() {
+            HandleHoldInputs();
+        }
+        
+        private void SetInputActionMaps() {
+            _actionButton1 = InputController.Instance.PlayerInputActionMap[ActionButton1Id];
+            _actionButton2 = InputController.Instance.PlayerInputActionMap[ActionButton2Id];
+            _actionButton3 = InputController.Instance.PlayerInputActionMap[ActionButton3Id];
+            _actionButton4 = InputController.Instance.PlayerInputActionMap[ActionButton4Id];
+            _skills1Button = InputController.Instance.PlayerInputActionMap[SkillsButton1Id];
+            _skills2Button = InputController.Instance.PlayerInputActionMap[SkillsButton2Id];
         }
 
         // set the player's action sets
@@ -143,6 +166,18 @@ namespace Bebis {
             CharacterActionContext context = GetCharacterActionContext(callbackContext);
             HandleSkillModeSwitch(_skillMode2GameplaySet, context);
             TryPerformAction(actionData, context);
+
+            if (callbackContext.performed && !_currentHoldingActions.Contains(actionData)) {
+                _currentHoldingActions.Add(actionData);
+            } else if (callbackContext.canceled) {
+                _currentHoldingActions.Remove(actionData);
+            }
+        }
+
+        private void HandleHoldInputs() {
+            for(int i = 0; i < _currentHoldingActions.Count; i++) {
+                TryPerformAction(_currentHoldingActions[i], CharacterActionContext.Hold);
+            }
         }
 
         private void HandleSkillModeSwitch(IPlayerGameplayActionSet actionSet, CharacterActionContext context) {
@@ -178,7 +213,7 @@ namespace Bebis {
 
         private bool TryPerformAction(CharacterActionData data, CharacterActionContext context) {
             // do not perform any actions if restricted
-            if (_actionRestrictions > 0) {
+            if (ActionRestrictions > 0) {
                 return false;
             }
             // if the given action is null do not do anything either
@@ -285,7 +320,7 @@ namespace Bebis {
         private void OnDamageableHitStun(HitEventInfo info) {
             ClearCurrentActionState();
             _playerCharacter.AnimationController.OnAnimationStateUpdated += OnDamageableAnimationCompleted;
-            _actionRestrictions++;
+            ActionRestrictions++;
         }
 
         // upon finishing hitstun animation
@@ -294,7 +329,7 @@ namespace Bebis {
                 return;
             }
             _playerCharacter.AnimationController.OnAnimationStateUpdated -= OnDamageableAnimationCompleted;
-            _actionRestrictions = Mathf.Max(0, _actionRestrictions - 1);
+            ActionRestrictions = Mathf.Max(0, ActionRestrictions - 1);
         }
     }
 }

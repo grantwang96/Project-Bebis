@@ -23,6 +23,7 @@ namespace Bebis {
         protected virtual void OnEnable() {
             _hurtBoxes.Clear();
             for (int i = 0; i < _hurtBoxObjs.Count; i++) {
+                Debug.Log($"{name}: {_hurtBoxObjs == null}, {_hurtBoxObjs[i] == null}, {_hurtBoxes == null}");
                 _hurtBoxes.Add(_hurtBoxObjs[i].name, _hurtBoxObjs[i]);
                 _hurtBoxObjs[i].Initialize(_character);
                 _hurtBoxObjs[i].OnHit += OnHurtboxHit;
@@ -47,6 +48,7 @@ namespace Bebis {
         private void OnDestroy() {
             for (int i = 0; i < _hurtBoxObjs.Count; i++) {
                 _hurtBoxObjs[i].OnHit -= OnHurtboxHit;
+                _hurtBoxObjs[i].OnDefend -= OnHurtboxDefend;
             }
         }
 
@@ -69,17 +71,22 @@ namespace Bebis {
         }
 
         protected bool HitDefendingBox(ICharacter otherCharacter, Hurtbox targetHurtbox, Hitbox hitbox) {
+            // perform raycast between attacker and intended hurtbox
             Vector3 start = otherCharacter.MoveController.Center.position;
             Vector3 direction = targetHurtbox.transform.position - start;
             float distance = Vector3.Distance(transform.position, start);
             RaycastHit[] hitInfos = Physics.RaycastAll(start, direction.normalized, distance, _hurtBoxLayers);
             for (int i = 0; i < hitInfos.Length; i++) {
+                // if there is a defending hurtbox in this path, return true
                 RaycastHit hitInfo = hitInfos[i];
                 Hurtbox hurtBox = hitInfo.collider.GetComponent<Hurtbox>();
                 if (hurtBox != null && _hurtBoxObjs.Contains(hurtBox) && hurtBox.HurtBoxState != HurtBoxState.Normal) {
                     return true;
                 }
             }
+            // a defending hurtbox was not hit
+            Debug.DrawRay(start, direction, Color.blue, 100f);
+            Debug.Log("hit hurtbox: " + targetHurtbox.name);
             return false;
         }
 

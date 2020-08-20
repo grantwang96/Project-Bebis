@@ -7,6 +7,9 @@ using System;
 namespace Bebis {
     public class PlayerMoveController : CharacterComponent, IMoveController {
 
+        private const string LandStartId = "LANDSTART";
+        private const string LandEndId = "LANDEND";
+
         public float MoveMagnitude { get; private set; }
         public Vector3 Move => _move;
         public Vector3 Rotation => _rotation;
@@ -21,7 +24,6 @@ namespace Bebis {
         [SerializeField] private Vector3 _rotation;
 
         [SerializeField] private CharacterController _characterController;
-        [SerializeField] private PlayerAnimationController _playerAnimationController;
         [SerializeField] private Transform _bodyRoot;
         [SerializeField] private Transform _bodyCenter;
 
@@ -42,7 +44,7 @@ namespace Bebis {
             _character.ActionController.OnPerformActionSuccess += OnCharacterPerformAction;
             _character.ActionController.OnActionStatusUpdated += OnCharacterActionStatusUpdated;
             _character.Damageable.OnHitStun += OnDamageableHitStun;
-            _playerAnimationController.OnCharacterLandingStatusUpdated += OnCharacterLandingStatusUpdated;
+            _character.AnimationController.OnAnimationMessageSent += OnAnimationMessageSent;
 
             _moveInputAction = InputController.Instance.PlayerInputActionMap["Move"];
             Height = _characterController.height;
@@ -52,6 +54,7 @@ namespace Bebis {
             _character.ActionController.OnPerformActionSuccess -= OnCharacterPerformAction;
             _character.ActionController.OnActionStatusUpdated -= OnCharacterActionStatusUpdated;
             _character.Damageable.OnHitStun -= OnDamageableHitStun;
+            _character.AnimationController.OnAnimationMessageSent -= OnAnimationMessageSent;
         }
 
         public void AddForce(Vector3 direction, float force, bool overrideForce = false) {
@@ -122,10 +125,6 @@ namespace Bebis {
         }
 
         private void HandleMoveInput(Vector2 moveInput) {
-            // if the character can take move inputs
-            if (!CanInputMove()) {
-                return;
-            }
             // set move vector
             Vector2 inputNormalized = moveInput.normalized;
             Vector3 localizedInput = new Vector3();
@@ -134,15 +133,15 @@ namespace Bebis {
             if (IsGrounded) {
                 // directly set the localized input
                 _move = localizedInput;
-                // set move magnitude
-                MoveMagnitude = Mathf.Clamp01(moveInput.magnitude);
             } else if (IsMoving(moveInput)) {
                 _move.x = ExtraMath.Lerp(_move.x, localizedInput.x, 0.1f);
-                _move.z = ExtraMath.Lerp(_move.z, localizedInput.z, 0.11f);
+                _move.z = ExtraMath.Lerp(_move.z, localizedInput.z, 0.1f);
             }
+            // set move magnitude
+            MoveMagnitude = Mathf.Clamp01(_move.magnitude);
         }
 
-        private bool CanInputMove() {
+        private bool CanMove() {
             return _movementRestrictions <= 0 && 
                 _character.ActionController.Permissions.HasFlag(ActionPermissions.Movement) &&
                 !_overrideMovement;
@@ -151,7 +150,7 @@ namespace Bebis {
         private void HandleRotation() {
             // if the character can take rotation inputs (built from move input)
             if (CanRotate()) {
-                _rotation = _move;
+                _rotation = IsMoving(_move) ? _move : _rotation;
             }
         }
         
@@ -159,7 +158,6 @@ namespace Bebis {
         private bool CanRotate() {
             ActionPermissions permissions = _character.ActionController.Permissions;
             return permissions.HasFlag(ActionPermissions.Rotation) &&
-                IsMoving(_move) &&
                 IsGrounded &&
                 !_overrideRotation;
         }
@@ -177,7 +175,11 @@ namespace Bebis {
         private void ProcessMovement() {
             // move the character controller
             float speed = IsGrounded ? _moveSpeed : _airSpeed;
-            Vector3 moveVector = Move * speed * MoveMagnitude;
+            Vector3 moveVector = new Vector3();
+            // if the character can take move inputs
+            if (CanMove()) {
+                moveVector = Move * speed * MoveMagnitude;
+            }
             moveVector += _totalExternalForces;
             _characterController.Move(moveVector * Time.deltaTime);
             _overrideMovement = false;
@@ -193,7 +195,7 @@ namespace Bebis {
 
         // when the character performs an action
         private void OnCharacterPerformAction() {
-            if (!CanInputMove() && IsGrounded) {
+            if (!CanMove() && IsGrounded) {
                 _move = new Vector3(0f, _move.y, 0f);
             }
         }
@@ -205,22 +207,21 @@ namespace Bebis {
         }
 
         private void OnControllerColliderHit(ControllerColliderHit hit) {
-            if (!CanInputMove() && _characterController.collisionFlags == CollisionFlags.Sides) {
+            if (!CanMove() && _characterController.collisionFlags == CollisionFlags.Sides) {
                 _totalExternalForces = new Vector3(0f, _move.y, 0f);
             }
             if (_characterController.collisionFlags.HasFlag(CollisionFlags.Below) && !IsGrounded) {
                 IsGrounded = true;
             }
         }
-
-        // Refactor this??? Could be a circular dependency
+        
         // listen for animation updates when landing
-        private void OnCharacterLandingStatusUpdated(string state) {
-            if(state == "LANDSTART") {
+        private void OnAnimationMessageSent(string state) {
+            if(state == LandStartId) {
                 _movementRestrictions++;
                 _move = new Vector3(0f, _move.y, 0f);
                 OnLanding?.Invoke();
-            } else {
+            } else if(state == LandEndId) {
                 DecrementMovementRestrictions();
             }
         }

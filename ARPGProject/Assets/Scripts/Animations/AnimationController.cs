@@ -8,6 +8,7 @@ namespace Bebis {
 
         event Action<ActionStatus> OnActionStatusUpdated;
         event Action<AnimationState> OnAnimationStateUpdated;
+        event Action<string> OnAnimationMessageSent;
 
         void UpdateAnimationState(AnimationData data);
         void OverrideAnimationController(IReadOnlyList<AnimationClipOverride> overrideClips);

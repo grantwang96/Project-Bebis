@@ -11,7 +11,7 @@ namespace Bebis {
 
         public event Action<ActionStatus> OnActionStatusUpdated;
         public event Action<AnimationState> OnAnimationStateUpdated;
-        public event Action<string> OnCharacterLandingStatusUpdated;
+        public event Action<string> OnAnimationMessageSent;
 
         [SerializeField] protected EquipmentManager _equipmentManager;
         [SerializeField] protected Animator _animator;
@@ -70,8 +70,8 @@ namespace Bebis {
             OnAnimationStateUpdated?.Invoke(state);
         }
 
-        protected void OnLandingStatusUpdated(string state) {
-            OnCharacterLandingStatusUpdated?.Invoke(state);
+        protected void SendAnimationMessage(string message) {
+            OnAnimationMessageSent?.Invoke(message);
         }
 
         protected void OnEquipmentUpdated(IEquipment equipment) {
