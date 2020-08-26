@@ -12,8 +12,8 @@ namespace Bebis {
     public abstract class Hurtbox : MonoBehaviour {
 
         public ICharacter Character { get; private set; }
-        public event Action<ICharacter, Hurtbox, Hitbox, Action<ICharacter>> OnHit;
-        public event Action<ICharacter, Hurtbox, Hitbox, Action<ICharacter>> OnDefend;
+        public event Action<HurtboxInteraction> OnHit;
+        public event Action<HurtboxInteraction> OnDefend;
 
         [SerializeField] private HurtBoxState _hurtBoxState;
         public HurtBoxState HurtBoxState => _hurtBoxState;
@@ -25,16 +25,23 @@ namespace Bebis {
             Character = character;
         }
         
-        public bool SendHitEvent(ICharacter other, Hitbox hitbox, Action<ICharacter> OnHitAction) {
+        public bool SendHitEvent(ICharacter other, Hitbox hitbox, Action<ICharacter> OnInteractionSuccess, Action<ICharacter> OnInteractionFail = null) {
             if (!ShouldHit()) {
                 return false;
             }
+            HurtboxInteraction interaction = new HurtboxInteraction() {
+                OtherCharacter = other,
+                Hurtbox = this,
+                Hitbox = hitbox,
+                OnInteractionSuccess = OnInteractionSuccess,
+                OnInteractionFail = OnInteractionFail
+            };
             switch (_hurtBoxState) {
                 case HurtBoxState.Normal:
-                    OnHit?.Invoke(other, this, hitbox, OnHitAction);
+                    OnHit?.Invoke(interaction);
                     return true;
                 case HurtBoxState.Defending:
-                    OnDefend?.Invoke(other, this, hitbox, OnHitAction);
+                    OnDefend?.Invoke(interaction);
                     return true;
                 default:
                     // do invulnerable hit fx
@@ -45,5 +52,13 @@ namespace Bebis {
         private bool ShouldHit() {
             return enabled;
         }
+    }
+
+    public class HurtboxInteraction {
+        public ICharacter OtherCharacter;
+        public Hurtbox Hurtbox;
+        public Hitbox Hitbox;
+        public Action<ICharacter> OnInteractionSuccess;
+        public Action<ICharacter> OnInteractionFail;
     }
 }

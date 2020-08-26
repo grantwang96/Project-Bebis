@@ -18,6 +18,8 @@ namespace Bebis {
         Movement = 1 << 0,
         Rotation = 1 << 1,
         Animation = 1 << 2,
+        Walk = 1 << 3,
+        Run = 1 << 4,
         All = ~0
     }
 

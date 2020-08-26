@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53858143c9487d64bb1008374811be6a, type: 3}
+  m_Name: Humanoid_Unarmed_FakeRaptorBoost
+  m_EditorClassIdentifier: 
+  _id: 
+  _actionName: Fake Raptor Boost
+  _cancelable: 0
+  _animationData:
+    _animationName: FakeRaptorBoost
+    _triggers: []
+    _resetTriggers: []
+    _intValues: []
+    _floatValues: []
+    _boolValues: []
+  _permissions: 4
+  _priority: 0
+  _bufferable: 0
+  _onTriggerSuccess:
+    _animationName: 
+    _triggers:
+    - ActionTrigger
+    _resetTriggers: []
+    _intValues: []
+    _floatValues: []
+    _boolValues: []
+  _onTriggerFailed:
+    _animationName: 
+    _triggers: []
+    _resetTriggers: []
+    _intValues: []
+    _floatValues: []
+    _boolValues: []
+  _onTriggerInterrupted:
+    _animationName: 
+    _triggers: []
+    _resetTriggers: []
+    _intValues: []
+    _floatValues: []
+    _boolValues: []
+  _triggerBoxDatas:
+  - _id: ExternalHitbox_1
+  - _id: ExternalHitbox_2
+  _affectNormalColliders: 0
+  _beatShields: 0
+  _onHitData:
+    _basePower: 10
+    _powerRange:
+      _min: 3
+      _max: 6
+    _knockbackAngle: {x: 0, y: 1, z: 1}
+    _knockbackForce: 9
+    _overrideForce: 1
+  _onActionStartSubActions:
+  - {fileID: 11400000, guid: 96f491aa6f8ae56438711f3a4dcbb8b0, type: 2}

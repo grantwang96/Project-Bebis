@@ -9,16 +9,10 @@ namespace Bebis {
         [SerializeField] private List<CombatHitboxDataEntry3D> _combatHitBoxDatas = new List<CombatHitboxDataEntry3D>();
 
         // for auto-correcting the character for the attack angle
-        [SerializeField] private bool _autoCorrectForTarget;
-        [SerializeField] private float _scanAngle;
-        [SerializeField] private float _scanRange;
-        [SerializeField] private LayerMask _scanLayers;
+        [SerializeField] private List<SubActionData> _onActionStartSubActions;
 
         public IReadOnlyList<CombatHitboxDataEntry3D> CombatHitboxDatas => _combatHitBoxDatas;
-        public bool AutoCorrectForTarget => _autoCorrectForTarget;
-        public float ScanAngle => _scanAngle;
-        public float ScanRange => _scanRange;
-        public LayerMask ScanLayers => _scanLayers;
+        public IReadOnlyList<SubActionData> OnActionStartSubActions => _onActionStartSubActions;
 
         public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
             if (!CanAttack(character, state)) {
@@ -59,7 +53,8 @@ namespace Bebis {
 
             // update hitboxes
             SetHitboxInfos();
-            TryAutoCorrectForTarget();
+            // perform initial sub actions
+            PerformActionStartSubActions();
         }
 
         // update the hitboxes on the weapon
@@ -74,77 +69,11 @@ namespace Bebis {
             }
         }
 
-        private void TryAutoCorrectForTarget() {
-            ICharacter target = null;
-            if(_character.TargetManager.CurrentTarget != null &&
-                TargetWithinFieldOfView(_character.TargetManager.CurrentTarget, out float yeet) &&
-                TargetVisible(_character.TargetManager.CurrentTarget)) {
-                target = _character.TargetManager.CurrentTarget;
+        private void PerformActionStartSubActions() {
+            for(int i = 0; i < _data.OnActionStartSubActions.Count; i++) {
+                SubActionData subAction = _data.OnActionStartSubActions[i];
+                subAction.PerformAction(subAction.CreateInitData(_character));
             }
-            // if there is no target or not in range
-            if(target == null) {
-                float bestAngle = -1f;
-                Collider[] possibleTargets = Physics.OverlapSphere(_character.MoveController.Center.position, _data.ScanRange, _data.ScanLayers);
-                for (int i = 0; i < possibleTargets.Length; i++) {
-                    ICharacter otherCharacter = possibleTargets[i].GetComponent<ICharacter>();
-                    // ignore if this is not a valid target
-                    if (!IsValidTarget(otherCharacter)) {
-                        continue;
-                    }
-                    // TODO: ADD HOSTILE TAGS CHECK HERE
-                    float angle = 0f;
-                    if (TargetWithinFieldOfView(otherCharacter, out angle) && TargetVisible(otherCharacter)) {
-                        if (target == null || angle < bestAngle) {
-                            bestAngle = angle;
-                            target = otherCharacter;
-                            TryOverrideCurrentTarget(target);
-                        }
-                    }
-                }
-            }
-            // if a target has been found
-            if (target != null) {
-                AutoCorrectForTarget(target);
-            }
-        }
-
-        private bool IsValidTarget(ICharacter target) {
-            return target != null &&
-                target != _character &&
-                !target.Damageable.Dead;
-        }
-
-        private void TryOverrideCurrentTarget(ICharacter target) {
-            _character.TargetManager.OverrideCurrentTarget(target);
-        }
-
-        private bool TargetWithinFieldOfView(ICharacter target, out float angle) {
-            Vector3 direction = (target.MoveController.Body.position - _character.MoveController.Body.position).normalized;
-            angle = Vector3.Angle(_character.MoveController.Body.forward, direction);
-            return angle <= _data.ScanAngle;
-        }
-
-        private bool TargetVisible(ICharacter target) {
-            Vector3 direction = (target.MoveController.Center.position - _character.MoveController.Center.position).normalized;
-            if (Physics.Raycast(
-                _character.MoveController.Center.position, direction,
-                out RaycastHit info,
-                _data.ScanRange,
-                _data.ScanLayers,
-                QueryTriggerInteraction.Ignore)) {
-                Collider collider = info.collider;
-                ICharacter hitCharacter = collider.GetComponent<ICharacter>();
-                if (hitCharacter == target) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private void AutoCorrectForTarget(ICharacter target) {
-            Vector3 direction = target.MoveController.Body.position - _character.MoveController.Body.position;
-            direction.y = 0f;
-            _character.MoveController.OverrideRotation(direction.normalized);
         }
 
         private void OnHitboxTriggered(Hitbox hitBox, Collider collider) {
@@ -174,18 +103,24 @@ namespace Bebis {
                 return;
             }
             SetHitEventInfo(hitBoxData);
-            hurtBox.SendHitEvent(_character, hitBox, OnCharacterHit);
+            hurtBox.SendHitEvent(_character, hitBox, OnCharacterHitSuccess);
         }
 
         // sets the hit event info for this attack state
         private void SetHitEventInfo(CombatHitBoxData hitBoxData) {
             int power = CalculatePower(_character.CharacterStatManager, hitBoxData.BasePower, hitBoxData.PowerRange);
             Vector3 direction = CalculateRelativeDirection(_character.MoveController.Body, hitBoxData.KnockbackAngle);
-            _hitEventInfo = new HitEventInfo(power, direction, hitBoxData.KnockbackForce, hitBoxData.OverrideForce, _character);
+            _hitEventInfo = new HitEventInfo() {
+                Power = power,
+                KnockBackDirection = direction,
+                Force = hitBoxData.KnockbackForce,
+                OverrideForce = hitBoxData.OverrideForce,
+                Attacker = _character
+            };
         }
 
         // upon hitting a character
-        private void OnCharacterHit(ICharacter otherCharacter) {
+        private void OnCharacterHitSuccess(ICharacter otherCharacter) {
             if(otherCharacter == null) {
                 return;
             }

@@ -13,7 +13,8 @@ namespace Bebis {
 
         protected bool _receivedHit;
         protected readonly List<Hitbox> _registeredHitboxes = new List<Hitbox>();
-        protected Action<ICharacter> _onHitAction;
+        protected Action<ICharacter> _onInteractionSuccess;
+        protected Action<ICharacter> _onInteractionInterrupted;
 
         public IReadOnlyDictionary<string, Hurtbox> Hurtboxes => _hurtBoxes;
         public IReadOnlyList<Hitbox> RegisteredHitboxes => _registeredHitboxes;
@@ -23,7 +24,6 @@ namespace Bebis {
         protected virtual void OnEnable() {
             _hurtBoxes.Clear();
             for (int i = 0; i < _hurtBoxObjs.Count; i++) {
-                Debug.Log($"{name}: {_hurtBoxObjs == null}, {_hurtBoxObjs[i] == null}, {_hurtBoxes == null}");
                 _hurtBoxes.Add(_hurtBoxObjs[i].name, _hurtBoxObjs[i]);
                 _hurtBoxObjs[i].Initialize(_character);
                 _hurtBoxObjs[i].OnHit += OnHurtboxHit;
@@ -52,22 +52,26 @@ namespace Bebis {
             }
         }
 
-        protected virtual void OnHurtboxHit(ICharacter otherCharacter, Hurtbox hurtBox, Hitbox hitbox, Action<ICharacter> onHitAction) {
+        protected virtual void OnHurtboxHit(HurtboxInteraction interaction) {
             // ignore hitbox if it was defended against
-            if (_registeredHitboxes.Contains(hitbox)) {
+            if (_registeredHitboxes.Contains(interaction.Hitbox)) {
                 return;
             }
-            if(HitDefendingBox(otherCharacter, hurtBox, hitbox)) {
-                OnHurtboxDefend(otherCharacter, hurtBox, hitbox, onHitAction);
+            if(HitDefendingBox(interaction.OtherCharacter, interaction.Hurtbox, interaction.Hitbox)) {
+                OnHurtboxDefend(interaction);
                 return;
             }
-            _registeredHitboxes.Add(hitbox);
-            hitbox.OnHitboxInitialized += OnRegisteredHitboxInitialized;
+            _registeredHitboxes.Add(interaction.Hitbox);
+            interaction.Hitbox.OnHitboxInitialized += OnRegisteredHitboxInitialized;
             // TODO: take into account hitbox state
             _receivedHit = true;
-            // TODO: have comparison take into account various hits on the same frame and have one take priority
+            // if there is already a registered hit, override it
+            if(_onInteractionSuccess != null) {
+                _onInteractionInterrupted?.Invoke(_character);
+            }
             HitHurtboxState = HurtBoxState.Normal;
-            _onHitAction = onHitAction;
+            _onInteractionSuccess = interaction.OnInteractionSuccess;
+            _onInteractionInterrupted = interaction.OnInteractionFail;
         }
 
         protected bool HitDefendingBox(ICharacter otherCharacter, Hurtbox targetHurtbox, Hitbox hitbox) {
@@ -84,35 +88,38 @@ namespace Bebis {
                     return true;
                 }
             }
-            // a defending hurtbox was not hit
-            Debug.DrawRay(start, direction, Color.blue, 100f);
-            Debug.Log("hit hurtbox: " + targetHurtbox.name);
             return false;
         }
 
-        protected virtual void OnHurtboxDefend(ICharacter otherCharacter, Hurtbox hurtBox, Hitbox hitbox, Action<ICharacter> onHitAction) {
+        protected virtual void OnHurtboxDefend(HurtboxInteraction interaction) {
             // add this hitbox to list that cannot process hit
-            if (!_registeredHitboxes.Contains(hitbox)) {
+            if (!_registeredHitboxes.Contains(interaction.Hitbox)) {
                 return;
             }
+            ICharacter otherCharacter = interaction.OtherCharacter;
             // override shield direction
             if(_character != null) {
                 Vector3 direction = (otherCharacter.MoveController.Body.position - _character.MoveController.Body.position).normalized;
                 _character.MoveController.OverrideRotation(direction);
             }
             // register that this hitbox has been hit
-            _registeredHitboxes.Add(hitbox);
-            hitbox.OnHitboxInitialized += OnRegisteredHitboxInitialized;
-            // for now, allow hitbox to process how to handle defending hitbox
+            _registeredHitboxes.Add(interaction.Hitbox);
+            interaction.Hitbox.OnHitboxInitialized += OnRegisteredHitboxInitialized;
             _receivedHit = true;
+            if (_onInteractionSuccess != null) {
+                _onInteractionInterrupted?.Invoke(_character);
+            }
+            // for now, allow hitbox to process how to handle defending hurtbox
             HitHurtboxState = HurtBoxState.Defending;
-            _onHitAction = onHitAction;
+            _onInteractionSuccess = interaction.OnInteractionSuccess;
+            _onInteractionInterrupted = interaction.OnInteractionFail;
         }
 
         protected void ProcessHit() {
             _receivedHit = false;
-            _onHitAction?.Invoke(_character);
-            HitHurtboxState = HurtBoxState.Normal;
+            _onInteractionSuccess?.Invoke(_character);
+            _onInteractionSuccess = null;
+            _onInteractionInterrupted = null;
         }
 
         protected void OnRegisteredHitboxInitialized(Hitbox hitbox) {

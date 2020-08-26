@@ -51,6 +51,10 @@ namespace Bebis {
             CheckIsGrounded();
         }
 
+        private void LateUpdate() {
+            ProcessOverrideRotation();
+        }
+
         private void CheckIsGrounded() {
             if (!IsGrounded && !_physicsMode) {
                 SetPhysicsMode(true);
@@ -95,6 +99,13 @@ namespace Bebis {
                 _totalExternalForces.x = ExtraMath.Lerp(_totalExternalForces.x, 0f, _linearDrag * Time.deltaTime);
                 _totalExternalForces.z = ExtraMath.Lerp(_totalExternalForces.z, 0f, _linearDrag * Time.deltaTime);
             }
+        }
+
+        private void ProcessOverrideRotation() {
+            if (_overrideRotation) {
+                Body.forward = Rotation;
+            }
+            _overrideRotation = false;
         }
 
         private void CheckExternalForces() {
@@ -164,7 +175,9 @@ namespace Bebis {
         }
 
         public void OverrideRotation(Vector3 direction) {
-            Body.forward = direction;
+            Rotation = direction;
+            _navMeshAgent.updateRotation = false;
+            _overrideRotation = true;
         }
 
         public void SetDestination(Vector3 position) {

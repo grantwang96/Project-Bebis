@@ -217,7 +217,8 @@ MonoBehaviour:
       type: 2}
     _skillSet1Btn1Skill: {fileID: 11400000, guid: 89dc558c452e96c43b955fe13f06af0c,
       type: 2}
-    _skillSet1Btn2Skill: {fileID: 0}
+    _skillSet1Btn2Skill: {fileID: 11400000, guid: 7222da7118628d946b570881aae452f0,
+      type: 2}
     _skillSet1Btn3Skill: {fileID: 0}
     _skillSet1Btn4Skill: {fileID: 0}
     _skillSet2Btn1Skill: {fileID: 0}
@@ -1044,7 +1045,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 546280820}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.52, y: 0.5, z: 9.33}
+  m_LocalPosition: {x: 1.566, y: 0.5, z: 10.395}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1116,6 +1117,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ExamplePerson
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 2d780636fecb8544595074d0383952d5,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4301067470410203380, guid: 2d780636fecb8544595074d0383952d5,
         type: 3}
@@ -3492,7 +3498,7 @@ MonoBehaviour:
   _mainCamera: {fileID: 519420031}
   _cameraXUpperLimit: 75
   _cameraXLowerLimit: 295
-  _cameraTurnSpeed: 35
+  _cameraTurnSpeed: 80
 --- !u!1 &1891245569
 GameObject:
   m_ObjectHideFlags: 0

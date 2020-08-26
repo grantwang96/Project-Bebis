@@ -45,9 +45,5 @@ MonoBehaviour:
       _knockbackAngle: {x: 0, y: 0, z: 1}
       _knockbackForce: 0
       _overrideForce: 0
-  _autoCorrectForTarget: 1
-  _scanAngle: 120
-  _scanRange: 1.5
-  _scanLayers:
-    serializedVersion: 2
-    m_Bits: 1024
+  _onActionStartSubActions:
+  - {fileID: 11400000, guid: 4932f0bf4a1a2224c905dea06df0026d, type: 2}

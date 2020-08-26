@@ -692,7 +692,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.4
+  m_Radius: 0.35
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
@@ -843,7 +843,7 @@ NavMeshAgent:
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 180
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -1291,7 +1291,7 @@ MonoBehaviour:
   _npcMoveController: {fileID: 5165652471940804798}
   _onTargetLostState: {fileID: 5161776129405628199}
   _onArrivedTargetState: {fileID: 4487615728123767466}
-  _arrivalRadius: 1
+  _arrivalRadius: 1.5
   _moveMode: 2
 --- !u!1001 &5927087310963220285
 PrefabInstance:
