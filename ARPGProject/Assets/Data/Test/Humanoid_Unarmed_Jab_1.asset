@@ -35,7 +35,7 @@ MonoBehaviour:
         _max: 5
       _knockbackAngle: {x: 0, y: 0, z: 1}
       _knockbackForce: 0
-      _overrideForce: 0
+      _overrideForce: 1
   - _id: Hitbox_LeftElbow_Sphere_1
     _combatHitboxData:
       _basePower: 1
@@ -44,6 +44,6 @@ MonoBehaviour:
         _max: 5
       _knockbackAngle: {x: 0, y: 0, z: 1}
       _knockbackForce: 0
-      _overrideForce: 0
+      _overrideForce: 1
   _onActionStartSubActions:
   - {fileID: 11400000, guid: 4932f0bf4a1a2224c905dea06df0026d, type: 2}

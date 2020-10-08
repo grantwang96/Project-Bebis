@@ -3498,7 +3498,7 @@ MonoBehaviour:
   _mainCamera: {fileID: 519420031}
   _cameraXUpperLimit: 75
   _cameraXLowerLimit: 295
-  _cameraTurnSpeed: 80
+  _cameraTurnSpeed: 40
 --- !u!1 &1891245569
 GameObject:
   m_ObjectHideFlags: 0
