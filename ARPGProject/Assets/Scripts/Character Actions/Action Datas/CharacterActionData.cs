@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Resources;
+using TMPro;
 
 namespace Bebis {
 
@@ -23,47 +26,112 @@ namespace Bebis {
         All = ~0
     }
 
-    public abstract class CharacterActionData : ScriptableObject {
+    public interface ICharacterActionData
+    {
+
+        string Id { get; }
+        int Priority { get; }
+
+        CharacterActionResponse Initiate(ICharacter character, ICharacterActionState foundActionState, CharacterActionContext context);
+        CharacterActionResponse Hold(ICharacter character, ICharacterActionState foundActionState, CharacterActionContext context);
+        CharacterActionResponse Release(ICharacter character, ICharacterActionState foundActionState, CharacterActionContext context);
+    }
+
+    public abstract class CharacterActionData : ScriptableObject, ICharacterActionData {
 
         [SerializeField] private string _id;
         [SerializeField] private string _actionName;
 
         [SerializeField] protected bool _cancelable;
-        [SerializeField] protected AnimationData _animationData;
-        [SerializeField] protected ActionPermissions _permissions;
         [SerializeField] protected int _priority;
         [SerializeField] protected bool _bufferable;
 
         public string Id => _id;
         public string ActionName => _actionName;
         public bool Cancelable => _cancelable;
-        public AnimationData AnimationData => _animationData;
-        public ActionPermissions Permissions => _permissions;
         public int Priority => _priority;
         public bool Bufferable => _bufferable;
 
-        public virtual CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            CharacterActionResponse response = new CharacterActionResponse(false, false, state);
+        public virtual CharacterActionResponse Initiate(ICharacter character, ICharacterActionState foundActionState, CharacterActionContext context) {
+            ICharacterActionState currentAction = character.ActionController.CurrentState;
+            CharacterActionResponse response = new CharacterActionResponse();
+            // exit early if there is a current action and it has priority
+            if (!CanPerformAction(character, foundActionState)) {
+                response.Success = false;
+                response.State = currentAction;
+                return response;
+            }
+            // if there is no corresponding state in the action controller, create one
+            if (foundActionState == null) {
+                foundActionState = CreateActionState(character);
+            }
+            // create a successful action use response
+            response.Success = true;
+            response.State = foundActionState;
+            foundActionState.Initiate();
             return response;
         }
 
-        public virtual CharacterActionResponse Hold(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            CharacterActionResponse response = new CharacterActionResponse(false, false, state);
+        public virtual CharacterActionResponse Hold(ICharacter character, ICharacterActionState foundActionState, CharacterActionContext context) {
+            ICharacterActionState currentAction = character.ActionController.CurrentState;
+            CharacterActionResponse response = new CharacterActionResponse();
+            // exit early if there is a current action and it has priority
+            if (!CanPerformAction(character, foundActionState)) {
+                response.Success = false;
+                response.State = currentAction;
+                return response;
+            }
+            // if there is no corresponding state in the action controller, create one
+            if (foundActionState == null) {
+                foundActionState = CreateActionState(character);
+            }
+            // create a successful action use response
+            response.Success = true;
+            response.State = foundActionState;
+            foundActionState.Hold();
             return response;
         }
 
-        public virtual CharacterActionResponse Release(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            CharacterActionResponse response = new CharacterActionResponse(false, false, state);
+        public virtual CharacterActionResponse Release(ICharacter character, ICharacterActionState foundActionState, CharacterActionContext context) {
+            ICharacterActionState currentAction = character.ActionController.CurrentState;
+            CharacterActionResponse response = new CharacterActionResponse();
+            // exit early if there is a current action and it has priority
+            if (!CanPerformAction(character, foundActionState)) {
+                response.Success = false;
+                response.State = currentAction;
+                return response;
+            }
+            // if there is no corresponding state in the action controller, create one
+            if (foundActionState == null) {
+                foundActionState = CreateActionState(character);
+            }
+            // create a successful action use response
+            response.Success = true;
+            response.State = foundActionState;
+            foundActionState.Release();
             return response;
         }
+
+        protected virtual bool CanPerformAction(ICharacter character, ICharacterActionState foundActionState) {
+            return true;
+        }
+
+        protected CharacterActionResponse FailedActionResponse(ICharacter character) {
+            return new CharacterActionResponse(false, false, character.ActionController.CurrentState);
+        }
+
+        protected abstract ICharacterActionState CreateActionState(ICharacter character);
     }
 
     public interface ICharacterActionState {
         CharacterActionData Data { get; }
-        AnimationData AnimationData { get; }
         bool Cancelable { get; }
         ActionStatus Status { get; set; }
-        ActionPermissions Permissions { get; }
+        void Initiate();
+        void Hold();
+        void Release();
+
+        event Action<ICharacterActionState, ActionStatus> OnActionStatusUpdated;
 
         void Clear();
     }
@@ -71,38 +139,38 @@ namespace Bebis {
     public class CharacterActionState : ICharacterActionState {
 
         public CharacterActionData Data { get; }
-        public AnimationData AnimationData { get; }
         public bool Cancelable { get; }
         public ActionStatus Status { get; set; }
-        public ActionPermissions Permissions { get; }
+
+        public event Action<ICharacterActionState, ActionStatus> OnActionStatusUpdated;
 
         protected ICharacter _character;
 
         public CharacterActionState(CharacterActionData data, ICharacter character) {
             Data = data;
-            AnimationData = data.AnimationData;
             Cancelable = data.Cancelable;
-            Permissions = data.Permissions;
 
             _character = character;
-            _character.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
         }
+
+        public virtual void Initiate() { }
+        public virtual void Hold() { }
+        public virtual void Release() { }
 
         public virtual void Clear() {
-            _character.ActionController.OnActionStatusUpdated -= OnActionStatusUpdated;
+
         }
 
-        protected virtual void OnActionStatusUpdated(ActionStatus status) {
-            if (status == ActionStatus.Completed) {
-                Clear();
-            }
+        protected void UpdateActionStatus(ActionStatus status) {
+            Status = status;
+            OnActionStatusUpdated?.Invoke(this, status);
         }
     }
 
-    public class CharacterActionResponse {
-        public readonly bool Success;
-        public readonly bool Bufferable;
-        public readonly ICharacterActionState State;
+    public struct CharacterActionResponse {
+        public bool Success;
+        public bool Bufferable;
+        public ICharacterActionState State;
 
         public CharacterActionResponse(bool success, bool bufferable, ICharacterActionState state) {
             Success = success;

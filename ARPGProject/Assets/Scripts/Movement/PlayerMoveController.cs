@@ -17,6 +17,8 @@ namespace Bebis {
         public Transform Center => _bodyCenter;
         public bool IsGrounded { get; private set; }
         public float Height { get; private set; }
+        public RestrictionController MoveRestrictions { get; } = new RestrictionController();
+        public RestrictionController LookRestrictions { get; } = new RestrictionController();
 
         public event Action OnLanding;
 
@@ -33,26 +35,20 @@ namespace Bebis {
         [SerializeField] private float _linearDrag;
         [SerializeField] private Vector3 _currentVelocity;
 
-        [SerializeField] private int _movementRestrictions;
-        [SerializeField] private bool _rotationRestrictions;
-
-        private InputAction _moveInputAction;
         private bool _overrideMovement;
         private bool _overrideRotation;
 
-        private void Start() {
-            _character.ActionController.OnPerformActionSuccess += OnCharacterPerformAction;
-            _character.ActionController.OnActionStatusUpdated += OnCharacterActionStatusUpdated;
+        private IMoveControllerInfoProvider _moveInfoProvider;
+
+        public void Initialize(IMoveControllerInfoProvider moveInfoProvider) {
+            _moveInfoProvider = moveInfoProvider;
             _character.Damageable.OnHitStun += OnDamageableHitStun;
             _character.AnimationController.OnAnimationMessageSent += OnAnimationMessageSent;
 
-            _moveInputAction = InputController.Instance.PlayerInputActionMap["Move"];
             Height = _characterController.height;
         }
 
         private void OnDestroy() {
-            _character.ActionController.OnPerformActionSuccess -= OnCharacterPerformAction;
-            _character.ActionController.OnActionStatusUpdated -= OnCharacterActionStatusUpdated;
             _character.Damageable.OnHitStun -= OnDamageableHitStun;
             _character.AnimationController.OnAnimationMessageSent -= OnAnimationMessageSent;
         }
@@ -82,7 +78,7 @@ namespace Bebis {
         }
 
         private void Update() {
-            HandleMoveInput(_moveInputAction.ReadValue<Vector2>());
+            HandleMoveInput();
             HandleRotation();
         }
 
@@ -124,7 +120,8 @@ namespace Bebis {
             }
         }
 
-        private void HandleMoveInput(Vector2 moveInput) {
+        private void HandleMoveInput() {
+            Vector2 moveInput = _moveInfoProvider.IntendedMoveDirection;
             // set move vector
             Vector2 inputNormalized = moveInput.normalized;
             Vector3 localizedInput = new Vector3();
@@ -136,9 +133,8 @@ namespace Bebis {
         }
 
         private bool CanMove() {
-            return _movementRestrictions <= 0 && 
+            return !MoveRestrictions.Restricted && 
                 IsGrounded &&
-                _character.ActionController.Permissions.HasFlag(ActionPermissions.Movement) &&
                 !_overrideMovement;
         }
 
@@ -151,9 +147,8 @@ namespace Bebis {
         
         // can this character change rotation
         private bool CanRotate() {
-            ActionPermissions permissions = _character.ActionController.Permissions;
-            return permissions.HasFlag(ActionPermissions.Rotation) &&
-                IsGrounded &&
+            return IsGrounded &&
+                !LookRestrictions.Restricted &&
                 !_overrideRotation;
         }
 
@@ -188,19 +183,6 @@ namespace Bebis {
             _overrideRotation = false;
         }
 
-        // when the character performs an action
-        private void OnCharacterPerformAction() {
-            if (!CanMove() && IsGrounded) {
-                _move = new Vector3(0f, _move.y, 0f);
-            }
-        }
-
-        private void OnCharacterActionStatusUpdated(ActionStatus status) {
-            if(status.HasFlag(ActionStatus.Completed)) {
-                DecrementMovementRestrictions();
-            }
-        }
-
         private void OnControllerColliderHit(ControllerColliderHit hit) {
             if (!CanMove() && _characterController.collisionFlags == CollisionFlags.Sides) {
                 _currentVelocity = new Vector3(0f, _move.y, 0f);
@@ -213,17 +195,19 @@ namespace Bebis {
         // listen for animation updates when landing
         private void OnAnimationMessageSent(string state) {
             if(state == LandStartId) {
-                _movementRestrictions++;
-                _move = new Vector3(0f, _move.y, 0f);
+                MoveRestrictions.AddRestriction("Landing");
+                _currentVelocity = new Vector3(0f, _currentVelocity.y, 0f);
+                _move = Vector3.zero;
                 OnLanding?.Invoke();
             } else if(state == LandEndId) {
-                DecrementMovementRestrictions();
+                MoveRestrictions.RemoveRestriction("Landing");
             }
         }
 
         // upon entering hitstun
         private void OnDamageableHitStun(HitEventInfo hitEventInfo) {
-            _movementRestrictions++;
+            MoveRestrictions.AddRestriction("TakeDamage");
+            LookRestrictions.AddRestriction("TakeDamage");
             _move = new Vector3(0f, _move.y, 0f);
             _character.AnimationController.OnAnimationStateUpdated += OnDamageableAnimationCompleted;
         }
@@ -233,11 +217,8 @@ namespace Bebis {
                 return;
             }
             _character.AnimationController.OnAnimationStateUpdated -= OnDamageableAnimationCompleted;
-            DecrementMovementRestrictions();
-        }
-
-        private void DecrementMovementRestrictions() {
-            _movementRestrictions = Mathf.Max(0, _movementRestrictions - 1);
+            MoveRestrictions.RemoveRestriction("TakeDamage");
+            LookRestrictions.RemoveRestriction("TakeDamage");
         }
     }
 }

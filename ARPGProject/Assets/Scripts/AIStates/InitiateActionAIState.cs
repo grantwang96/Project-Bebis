@@ -5,6 +5,8 @@ using UnityEngine;
 namespace Bebis {
     public class InitiateActionAIState : AIState {
 
+        [SerializeField] private NPCActionInfoProvider _npcActionInfoProvider;
+        [SerializeField] private string _actionId;
         [SerializeField] private CharacterActionData _characterActionData;
         [SerializeField] private AIState _onActionCompletedState;
 
@@ -24,20 +26,19 @@ namespace Bebis {
         }
 
         private void TryInitiateAction() {
-            _initiated = _character.ActionController.PerformAction(_characterActionData, CharacterActionContext.Initiate);
+            _npcActionInfoProvider.AttemptAction(_actionId, CharacterActionContext.Initiate);
             if (_initiated) {
-                _character.ActionController.OnActionStatusUpdated += OnActionCompleted;
+                _character.ActionController.CurrentState.OnActionStatusUpdated += OnActionCompleted;
             }
         }
 
         public override void Exit(AIState nextState) {
             base.Exit(nextState);
             _initiated = false;
-            _character.ActionController.OnActionStatusUpdated -= OnActionCompleted;
-            _character.ActionController.ClearCurrentActionState();
+            _character.ActionController.CurrentState.OnActionStatusUpdated -= OnActionCompleted;
         }
 
-        private void OnActionCompleted(ActionStatus status) {
+        private void OnActionCompleted(ICharacterActionState state, ActionStatus status) {
             if(status.HasFlag(ActionStatus.CanTransition) || status.HasFlag(ActionStatus.Completed)) {
                 FireReadyToChangeState(_onActionCompletedState);
             }

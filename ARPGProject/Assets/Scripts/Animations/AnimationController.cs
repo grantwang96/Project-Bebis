@@ -35,6 +35,7 @@ namespace Bebis {
     public enum AnimationState {
         Started,
         InProgress,
+        CanTransition,
         Completed
     }
 }

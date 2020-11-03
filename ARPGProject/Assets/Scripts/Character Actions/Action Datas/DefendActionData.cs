@@ -6,36 +6,18 @@ namespace Bebis {
     [CreateAssetMenu(menuName = "Character Actions/Defend")]
     public class DefendActionData : CharacterActionData {
 
+        [SerializeField] private AnimationData _startDefendingAnimationData;
         [SerializeField] private AnimationData _onReleaseAnimationData;
+        public AnimationData StartDefendingAnimationData => _startDefendingAnimationData;
         public AnimationData OnReleaseAnimationData => _onReleaseAnimationData;
 
-        public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            if (state != null && state.Data != this) {
-                return base.Initiate(character, state, context);
-            }
-            DefendActionState defendActionState = new DefendActionState(this, character);
-            CharacterActionResponse response = new CharacterActionResponse(true, true, defendActionState);
-            return response;
+        protected override bool CanPerformAction(ICharacter character, ICharacterActionState foundActionState) {
+            ICharacterActionState currentState = character.ActionController.CurrentState;
+            return currentState == null || currentState.Data == this;
         }
 
-        public override CharacterActionResponse Hold(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            if (state != null && state.Data != this) {
-                return base.Hold(character, state, context);
-            }
-            ICharacterActionState defendState = state;
-            if(state == null) {
-                defendState = new DefendActionState(this, character);
-            }
-            CharacterActionResponse response = new CharacterActionResponse(true, true, defendState);
-            return response;
-        }
-
-        public override CharacterActionResponse Release(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            CharacterActionResponse response = new CharacterActionResponse(true, true, state);
-            if(state != null && state.Data == this) {
-                state.Status = ActionStatus.Completed;
-            }
-            return response;
+        protected override ICharacterActionState CreateActionState(ICharacter character) {
+            return new DefendActionState(this, character);
         }
     }
 
@@ -47,9 +29,23 @@ namespace Bebis {
             _data = data;
         }
 
+        public override void Initiate() {
+            base.Initiate();
+            _character.AnimationController.UpdateAnimationState(_data.StartDefendingAnimationData);
+            _character.MoveController.OverrideMovement(Vector3.zero);
+            _character.MoveController.MoveRestrictions.AddRestriction(nameof(DefendActionState));
+        }
+
+        public override void Release() {
+            base.Release();
+            UpdateActionStatus(ActionStatus.Completed);
+            Debug.Log("Release");
+        }
+
         public override void Clear() {
             base.Clear();
             _character.AnimationController.UpdateAnimationState(_data.OnReleaseAnimationData);
+            _character.MoveController.MoveRestrictions.RemoveRestriction(nameof(DefendActionState));
         }
     }
 }

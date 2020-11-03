@@ -38140,13 +38140,6 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: UpdateActionStatus
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 10
-    messageOptions: 0
-  - time: 0
     functionName: SendAnimationMessage
     data: LANDSTART
     objectReferenceParameter: {fileID: 0}
@@ -38154,11 +38147,11 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.4
-    functionName: UpdateActionStatus
+    functionName: SendAnimationEvent
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
-    intParameter: 6
+    intParameter: 3
     messageOptions: 0
   - time: 0.4
     functionName: SendAnimationMessage

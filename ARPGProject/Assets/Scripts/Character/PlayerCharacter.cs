@@ -10,6 +10,7 @@ namespace Bebis {
 
         [SerializeField] protected HitboxController _hitboxController;
         [SerializeField] protected HurtboxController _hurtboxController;
+        [SerializeField] protected PlayerController _playerController;
 
         public abstract IDamageable Damageable { get; }
         public abstract IMoveController MoveController { get; }
@@ -23,6 +24,8 @@ namespace Bebis {
 
         public HitboxController HitboxController => _hitboxController;
         public HurtboxController HurtboxController => _hurtboxController;
+        public IMoveControllerInfoProvider MoveInfoProvider => _playerController;
+        public IActionControllerInfoProvider ActionInfoProvider => _playerController;
 
         // temp
         public HackPlayerConfig HackConfig;

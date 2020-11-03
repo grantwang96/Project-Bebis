@@ -16,6 +16,8 @@ namespace Bebis {
         public Transform Center => _bodyCenter;
         public bool IsGrounded => IsCharacterGrounded();
         public float Height => _characterController.height;
+        public RestrictionController MoveRestrictions { get; private set; } = new RestrictionController();
+        public RestrictionController LookRestrictions { get; private set; } = new RestrictionController();
 
         public NavMeshPathStatus PathStatus => _navMeshAgent.path?.status ?? NavMeshPathStatus.PathInvalid;
         

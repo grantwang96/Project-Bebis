@@ -6,6 +6,8 @@ namespace Bebis {
     public class HoldActionAIState : AIState {
         
         [SerializeField] private CharacterActionData _characterActionData;
+        [SerializeField] private string _actionId;
+        [SerializeField] private NPCActionInfoProvider _npcActionInfoProvider;
         [SerializeField] private AIState _onActionReadyState;
 
         private bool _initiated;
@@ -13,7 +15,7 @@ namespace Bebis {
         public override void Enter() {
             base.Enter();
             _initiated = false;
-            TryInitiateAction();
+            _npcActionInfoProvider.AttemptAction(_actionId, CharacterActionContext.Initiate);
         }
 
         public override void Execute() {
@@ -27,22 +29,24 @@ namespace Bebis {
         }
 
         private void TryInitiateAction() {
-            _initiated = _character.ActionController.PerformAction(_characterActionData, CharacterActionContext.Initiate);
-            if (_initiated) {
-                _character.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
-            }
+            _character.ActionController.OnCurrentActionUpdated += OnCurrentActionUpdated;
+        }
+
+        private void OnCurrentActionUpdated() {
+            
+            _character.ActionController.CurrentState.OnActionStatusUpdated += OnActionStatusUpdated;
         }
 
         private void TryHoldAction() {
-            _character.ActionController.PerformAction(_characterActionData, CharacterActionContext.Hold);
+            _npcActionInfoProvider.AttemptAction(_actionId, CharacterActionContext.Hold);
         }
 
         public override void Exit(AIState nextState) {
             base.Exit(nextState);
-            _character.ActionController.OnActionStatusUpdated -= OnActionStatusUpdated;
+            _character.ActionController.CurrentState.OnActionStatusUpdated -= OnActionStatusUpdated;
         }
 
-        private void OnActionStatusUpdated(ActionStatus status) {
+        private void OnActionStatusUpdated(ICharacterActionState state, ActionStatus status) {
             if (status.HasFlag(ActionStatus.Ready)) {
                 FireReadyToChangeState(_onActionReadyState);
             }

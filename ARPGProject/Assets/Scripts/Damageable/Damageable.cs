@@ -6,7 +6,7 @@ namespace Bebis {
         int MaxHealth { get; }
         bool Dead { get; }
 
-        void TakeDamage(HitEventInfo hitEventInfo);
+        void ReceiveHit(HitEventInfo hitEventInfo);
         event Action<int> OnCurrentHealthChanged;
         event Action<int> OnMaxHealthChanged;
         event Action<HitEventInfo> OnHit;

@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bebis {
-    public class ActionSet {
-
-    }
 
     public interface IPlayerGameplayActionSet {
 
@@ -41,7 +38,7 @@ namespace Bebis {
         // only utilize the "normal" skills in this action set
         public PlayerNormalGameplayActionSet(PlayerCharacter player, IPlayerSkillsLoadout playerSkillsLoadout) {
             _player = player;
-            _player.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
+            _player.ActionController.OnCurrentActionUpdated += OnCurrentActionUpdated;
             Override(playerSkillsLoadout);
         }
 
@@ -57,11 +54,25 @@ namespace Bebis {
             SkillMode2 = playerSkillsLoadout.LeftTriggerSkill;
         }
 
-        private void OnActionStatusUpdated(ActionStatus status) {
-            if (status == ActionStatus.Started
-                && _player.ActionController.CurrentState != null 
+        private void OnCurrentActionUpdated() {
+            if(_player.ActionController.CurrentState == null) {
+                _currentAttackIndex = 0;
+            } else if(_player.ActionController.CurrentState.Data == _groundedNormalAttacks[_currentAttackIndex]) {
+                _player.ActionController.CurrentState.OnActionStatusUpdated += OnActionStatusUpdated;
+            }
+        }
+
+        private void OnActionStatusUpdated(ICharacterActionState state, ActionStatus status) {
+            if (_player.ActionController.CurrentState != null
                 && _player.ActionController.CurrentState.Data == _groundedNormalAttacks[_currentAttackIndex]) {
-                IncrementAttackIndex();
+                switch (status) {
+                    case ActionStatus.Started:
+                        IncrementAttackIndex();
+                        break;
+                    case ActionStatus.Completed:
+                        state.OnActionStatusUpdated -= OnActionStatusUpdated;
+                        break;
+                }
             }
         }
 
@@ -114,6 +125,7 @@ namespace Bebis {
 
         public PlayerSkillsActionSet(bool skillSet1, IPlayerSkillsLoadout skillsLoadout) {
             _skillSet1 = skillSet1;
+            Override(skillsLoadout);
         }
 
         public void Override(IPlayerSkillsLoadout skillsLoadout) {

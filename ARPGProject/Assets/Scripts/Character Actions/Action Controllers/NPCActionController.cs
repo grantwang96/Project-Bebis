@@ -9,83 +9,79 @@ namespace Bebis {
     }
 
     public class NPCActionController : CharacterComponent, INPCActionController {
-        
-        public ActionPermissions Permissions => CurrentState?.Permissions ?? ActionPermissions.All;
+
         public ICharacterActionState CurrentState { get; private set; }
 
-        public event Action<ActionStatus> OnActionStatusUpdated;
-        public event Action OnPerformActionSuccess;
+        public event Action OnCurrentActionUpdated;
 
-        private void Start() {
-            _character.AnimationController.OnActionStatusUpdated += OnCharacterAnimationStatusSent;
+        [SerializeField] private NPCCharacter _npcCharacter;
+
+        private IActionControllerInfoProvider _actionControllerInfoProvider;
+        private readonly Dictionary<ICharacterActionData, ICharacterActionState> _currentActionStates = new Dictionary<ICharacterActionData, ICharacterActionState>();
+
+        // initialization
+        public void Initialize(IActionControllerInfoProvider infoProvider) {
+
+            if (_actionControllerInfoProvider != null) {
+                _actionControllerInfoProvider.OnActionAttempted -= OnActionAttempted;
+            }
+
+            _actionControllerInfoProvider = infoProvider;
+            _actionControllerInfoProvider.OnActionAttempted += OnActionAttempted;
         }
 
-        public bool PerformAction(CharacterActionData data, CharacterActionContext context) {
-            bool success = false;
+        // when an action is attempted
+        private void OnActionAttempted(ICharacterActionData data, CharacterActionContext context) {
+            // check if we have a state registered for this data
+            bool containsState = _currentActionStates.TryGetValue(data, out ICharacterActionState characterActionState);
+            CharacterActionResponse response = new CharacterActionResponse();
+            // process the interaction with the action data
             switch (context) {
                 case CharacterActionContext.Initiate:
-                    success = InitiateAction(data, context);
+                    response = data.Initiate(_npcCharacter, characterActionState, context);
                     break;
                 case CharacterActionContext.Hold:
-                    success = HoldAction(data, context);
+                    response = data.Hold(_npcCharacter, characterActionState, context);
                     break;
                 case CharacterActionContext.Release:
-                    success = ReleaseAction(data, context);
+                    response = data.Release(_npcCharacter, characterActionState, context);
+                    break;
+                default:
+                    Debug.Log($"[{name}]: Invalid interaction {context}");
                     break;
             }
-            return success;
-        }
-
-        // force clear the action from an external source (ex. getting hit)
-        public void ClearCurrentActionState() {
-            OnActionStatusUpdated?.Invoke(ActionStatus.Completed);
-            CurrentState?.Clear();
-            CurrentState = null;
-        }
-
-        private bool InitiateAction(CharacterActionData data, CharacterActionContext context) {
-            CharacterActionResponse response = data.Initiate(_character, CurrentState, context);
-            if (response.Success) {
-                PerformActionSuccess(response.State);
-            }
-            return response.Success;
-        }
-
-        private bool HoldAction(CharacterActionData data, CharacterActionContext context) {
-            CharacterActionResponse response = data.Hold(_character, CurrentState, context);
-            if (response.Success) {
-                PerformActionSuccess(response.State);
-            }
-            return response.Success;
-        }
-
-        private bool ReleaseAction(CharacterActionData data, CharacterActionContext context) {
-            CharacterActionResponse response = data.Release(_character, CurrentState, context);
-            if (response.Success) {
-                PerformActionSuccess(response.State);
-            }
-            return response.Success;
-        }
-
-        private void PerformActionSuccess(ICharacterActionState state) {
-            CurrentState?.Clear();
-            if (state != null) {
-                CurrentState = state;
-                _character.AnimationController.UpdateAnimationState(CurrentState?.AnimationData);
-                OnPerformActionSuccess?.Invoke();
-                OnCharacterAnimationStatusSent(CurrentState.Status);
-            }
-        }
-
-        private void OnCharacterAnimationStatusSent(ActionStatus status) {
-            if (CurrentState == null) {
+            // if we didn't successfully perform the action
+            if (!response.Success) {
                 return;
             }
-            CurrentState.Status = status;
-            OnActionStatusUpdated?.Invoke(status);
-            if (status.HasFlag(ActionStatus.Completed)) {
-                CurrentState?.Clear();
+            // if we didn't have a state for this data
+            if (!containsState) {
+                _currentActionStates.Add(data, response.State);
+                response.State.OnActionStatusUpdated += OnActionStatusUpdated;
+            }
+            // if this is a different action state
+            if (response.State != CurrentState && response.State.Status != ActionStatus.Completed) {
+                CurrentState = response.State;
+                OnCurrentActionUpdated?.Invoke();
+            }
+        }
+
+        // when an action has been completed, remove it from the registry
+        private void OnActionStatusUpdated(ICharacterActionState characterActionState, ActionStatus status) {
+            switch (status) {
+                case ActionStatus.Completed:
+                    OnActionCompleted(characterActionState);
+                    break;
+            }
+        }
+
+        private void OnActionCompleted(ICharacterActionState characterActionState) {
+            characterActionState.OnActionStatusUpdated -= OnActionStatusUpdated;
+            characterActionState.Clear();
+            _currentActionStates.Remove(characterActionState.Data);
+            if (CurrentState == characterActionState) {
                 CurrentState = null;
+                OnCurrentActionUpdated?.Invoke();
             }
         }
     }

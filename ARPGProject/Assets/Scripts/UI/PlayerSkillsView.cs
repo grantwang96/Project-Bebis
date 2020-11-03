@@ -25,21 +25,23 @@ namespace Bebis {
                 CustomLogger.Error(nameof(PlayerSkillsView), $"Could not set {nameof(PlayerActionController)}!");
                 return false;
             }
-            _playerActionController.OnCurrentActionSetUpdated += OnCurrentActionSetUpdated;
+            // _playerActionController.OnCurrentActionSetUpdated += OnCurrentActionSetUpdated;
             return true;
         }
 
         public void Dispose() {
-            _playerActionController.OnCurrentActionSetUpdated -= OnCurrentActionSetUpdated;
+            // _playerActionController.OnCurrentActionSetUpdated -= OnCurrentActionSetUpdated;
         }
 
         private void OnCurrentActionSetUpdated() {
+            /*
             IPlayerGameplayActionSet _currentActionSet = _playerActionController.CurrentActionSet;
             // TODO: set the images
             SetSkillEntry(_currentActionSet.Btn1Skill, _skill1Text, _skill1Image);
             SetSkillEntry(_currentActionSet.Btn2Skill, _skill2Text, _skill2Image);
             SetSkillEntry(_currentActionSet.Btn3Skill, _skill3Text, _skill3Image);
             SetSkillEntry(_currentActionSet.Btn4Skill, _skill4Text, _skill4Image);
+            */
         }
 
         private void SetSkillEntry(CharacterActionData data, Text text, Image icon) {

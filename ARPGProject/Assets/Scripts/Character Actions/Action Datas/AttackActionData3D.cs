@@ -6,27 +6,26 @@ namespace Bebis {
     [CreateAssetMenu(menuName = "Character Actions/3D/Attack3D")]
     public class AttackActionData3D : CharacterActionData {
 
-        [SerializeField] private List<CombatHitboxDataEntry3D> _combatHitBoxDatas = new List<CombatHitboxDataEntry3D>();
+        [SerializeField] private AttackData _attackData;
+        public AttackData AttackData => _attackData;
 
-        // for auto-correcting the character for the attack angle
-        [SerializeField] private List<SubActionData> _onActionStartSubActions;
-
-        public IReadOnlyList<CombatHitboxDataEntry3D> CombatHitboxDatas => _combatHitBoxDatas;
-        public IReadOnlyList<SubActionData> OnActionStartSubActions => _onActionStartSubActions;
-
-        public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            if (!CanAttack(character, state)) {
-                bool bufferable = state.Data != this;
-                return new CharacterActionResponse(false, bufferable, state);
-            }
-            AttackActionState3D newState = new AttackActionState3D(this, character);
-            return new CharacterActionResponse(true, Bufferable, newState);
+        protected override bool CanPerformAction(ICharacter character, ICharacterActionState foundActionState) {
+            ICharacterActionState currentAction = character.ActionController.CurrentState;
+            bool canPerform = currentAction == null || currentAction.Status == ActionStatus.CanTransition ||
+                Priority > currentAction.Data.Priority;
+            return canPerform;
         }
 
-        protected virtual bool CanAttack(ICharacter character, ICharacterActionState state) {
-            return state == null ||
-                state.Status.HasFlag(ActionStatus.CanTransition) ||
-                state.Status.HasFlag(ActionStatus.Completed);
+        public override CharacterActionResponse Hold(ICharacter character, ICharacterActionState foundActionState, CharacterActionContext context) {
+            return FailedActionResponse(character);
+        }
+
+        public override CharacterActionResponse Release(ICharacter character, ICharacterActionState foundActionState, CharacterActionContext context) {
+            return FailedActionResponse(character);
+        }
+
+        protected override ICharacterActionState CreateActionState(ICharacter character) {
+            return new AttackActionState3D(this, character);
         }
     }
 
@@ -42,7 +41,9 @@ namespace Bebis {
     public class AttackActionState3D : CharacterActionState {
 
         private AttackActionData3D _data;
-        private Dictionary<string, CombatHitBoxData> _combatHitBoxData = new Dictionary<string, CombatHitBoxData>();
+        private readonly Dictionary<string, CombatHitBoxData> _combatHitBoxData = new Dictionary<string, CombatHitBoxData>();
+        private AnimationData _animationData;
+        // private IReadOnlyList<AttackData> AttackData => _data.AttackDatas;
 
         private HitEventInfo _hitEventInfo;
 
@@ -50,28 +51,58 @@ namespace Bebis {
             // initialize data
             _data = data;
             Status = ActionStatus.Started;
+        }
 
-            // update hitboxes
-            SetHitboxInfos();
-            // perform initial sub actions
-            PerformActionStartSubActions();
+        public override void Initiate() {
+            base.Initiate();
+            PerformAttack(_data.AttackData);
+        }
+
+        public override void Clear() {
+            base.Clear();
+            _character.AnimationController.OnAnimationStateUpdated -= OnAnimationStateUpdated;
+            _character.ActionController.OnCurrentActionUpdated -= OnCurrentActionUpdated;
+            _character.MoveController.MoveRestrictions.RemoveRestriction(nameof(AttackActionState3D));
+            _character.MoveController.LookRestrictions.RemoveRestriction(nameof(AttackActionState3D));
+        }
+
+        private void PerformAttack(AttackData attackData) {
+            // set datas for this attack
+            _animationData = attackData.AnimationData;
+            SetHitboxInfos(attackData.HitboxDatas);
+
+            // correct the character's intended attack direction
+            Vector3 intendedLook = _character.MoveController.Rotation;
+            if(intendedLook.magnitude > 0f) {
+                _character.MoveController.OverrideRotation(intendedLook);
+            }
+            PerformActionStartSubActions(attackData.OnActionStartSubActions);
+
+            // add movement restrictions
+            _character.MoveController.MoveRestrictions.AddRestriction(nameof(AttackActionState3D));
+            _character.MoveController.LookRestrictions.AddRestriction(nameof(AttackActionState3D));
+            // update animations
+            _character.AnimationController.UpdateAnimationState(_animationData);
+            _character.AnimationController.OnAnimationStateUpdated += OnAnimationStateUpdated;
+            _character.ActionController.OnCurrentActionUpdated += OnCurrentActionUpdated;
         }
 
         // update the hitboxes on the weapon
-        private void SetHitboxInfos() {
-            for (int i = 0; i < _data.CombatHitboxDatas.Count; i++) {
+        private void SetHitboxInfos(IReadOnlyList<CombatHitboxDataEntry3D> hitboxDatas) {
+            _combatHitBoxData.Clear();
+            for (int i = 0; i < hitboxDatas.Count; i++) {
                 // add the hitbox by id to reference in case a hit is triggered
-                CombatHitBoxData modifierInfo = _data.CombatHitboxDatas[i].CombatHitboxData;
-                _combatHitBoxData.Add(_data.CombatHitboxDatas[i].Id, modifierInfo);
+                CombatHitBoxData modifierInfo = hitboxDatas[i].CombatHitboxData;
+                _combatHitBoxData.Add(hitboxDatas[i].Id, modifierInfo);
                 // initialize the hitbox with a combat info
                 CombatHitboxInfo3D newInfo = new CombatHitboxInfo3D(OnHitboxTriggered);
-                _character.HitboxController.SetHitboxInfo(_data.CombatHitboxDatas[i].Id, newInfo);
+                _character.HitboxController.SetHitboxInfo(hitboxDatas[i].Id, newInfo);
             }
         }
 
-        private void PerformActionStartSubActions() {
-            for(int i = 0; i < _data.OnActionStartSubActions.Count; i++) {
-                SubActionData subAction = _data.OnActionStartSubActions[i];
+        private void PerformActionStartSubActions(IReadOnlyList<SubActionData> subActions) {
+            for(int i = 0; i < subActions.Count; i++) {
+                SubActionData subAction = subActions[i];
                 subAction.PerformAction(subAction.CreateInitData(_character));
             }
         }
@@ -103,7 +134,7 @@ namespace Bebis {
                 return;
             }
             SetHitEventInfo(hitBoxData);
-            hurtBox.SendHitEvent(_character, hitBox, OnCharacterHitSuccess);
+            hurtBox.SendHitEvent(_character, hitBox, OnCharacterHit);
         }
 
         // sets the hit event info for this attack state
@@ -120,7 +151,7 @@ namespace Bebis {
         }
 
         // upon hitting a character
-        private void OnCharacterHitSuccess(ICharacter otherCharacter) {
+        private void OnCharacterHit(ICharacter otherCharacter) {
             if(otherCharacter == null) {
                 return;
             }
@@ -129,7 +160,31 @@ namespace Bebis {
 
         // upon hitting a damageable object
         private void OnDamageableHit(IDamageable damageable) {
-            damageable.TakeDamage(_hitEventInfo);
+            damageable.ReceiveHit(_hitEventInfo);
+        }
+
+        private void OnCurrentActionUpdated() {
+            // mark this completed if another action has taken over
+            if (_character.ActionController.CurrentState != this) {
+                UpdateActionStatus(ActionStatus.Completed);
+            }
+        }
+
+        private void OnAnimationStateUpdated(AnimationState animationState) {
+            switch (animationState) {
+                case AnimationState.Started:
+                    UpdateActionStatus(ActionStatus.Started);
+                    break;
+                case AnimationState.InProgress:
+                    UpdateActionStatus(ActionStatus.InProgress);
+                    break;
+                case AnimationState.CanTransition:
+                    UpdateActionStatus(ActionStatus.CanTransition);
+                    break;
+                case AnimationState.Completed:
+                    UpdateActionStatus(ActionStatus.Completed);
+                    break;
+            }
         }
 
         // calculate total damage
@@ -149,6 +204,20 @@ namespace Bebis {
         private Vector3 GetRelativeDirection(Vector3 angle) {
             return _character.MoveController.Body.TransformDirection(angle);
         }
+    }
+
+    [System.Serializable]
+    public class AttackData
+    {
+        [SerializeField] protected AnimationData _animationData;
+        [SerializeField] private List<CombatHitboxDataEntry3D> _combatHitBoxDatas = new List<CombatHitboxDataEntry3D>();
+        // for stuff like auto-correcting the character for the attack angle
+        [SerializeField] private List<SubActionData> _onActionStartSubActions;
+
+
+        public AnimationData AnimationData => _animationData;
+        public IReadOnlyList<CombatHitboxDataEntry3D> HitboxDatas => _combatHitBoxDatas;
+        public IReadOnlyList<SubActionData> OnActionStartSubActions => _onActionStartSubActions;
     }
 }
 

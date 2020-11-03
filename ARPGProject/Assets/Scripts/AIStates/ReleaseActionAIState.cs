@@ -4,7 +4,9 @@ using UnityEngine;
 
 namespace Bebis {
     public class ReleaseActionAIState : AIState {
-        
+
+        [SerializeField] private NPCActionInfoProvider _npcActionInfoProvider;
+        [SerializeField] private string _actionId;
         [SerializeField] private CharacterActionData _characterActionData;
         [SerializeField] private AIState _onActionCompleteState;
 
@@ -25,18 +27,18 @@ namespace Bebis {
         }
 
         private void TryReleaseAction() {
-            _character.ActionController.PerformAction(_characterActionData, CharacterActionContext.Release);
+            _npcActionInfoProvider.AttemptAction(_actionId, CharacterActionContext.Release);
             if (_released) {
-                _character.ActionController.OnActionStatusUpdated += OnActionStatusUpdated;
+                _character.ActionController.CurrentState.OnActionStatusUpdated += OnActionStatusUpdated;
             }
         }
 
         public override void Exit(AIState nextState) {
             base.Exit(nextState);
-            _character.ActionController.OnActionStatusUpdated -= OnActionStatusUpdated;
+            _character.ActionController.CurrentState.OnActionStatusUpdated -= OnActionStatusUpdated;
         }
 
-        private void OnActionStatusUpdated(ActionStatus status) {
+        private void OnActionStatusUpdated(ICharacterActionState state, ActionStatus status) {
             if (status.HasFlag(ActionStatus.CanTransition) || status.HasFlag(ActionStatus.Completed)) {
                 FireReadyToChangeState(_onActionCompleteState);
             }

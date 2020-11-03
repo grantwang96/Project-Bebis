@@ -16,6 +16,8 @@ namespace Bebis {
         public Transform Body => _rigidbody2D.transform;
         public Transform Center => transform;
         public float Height { get; }
+        public RestrictionController MoveRestrictions { get; } = new RestrictionController();
+        public RestrictionController LookRestrictions { get; } = new RestrictionController();
 
         [SerializeField] private Rigidbody2D _rigidbody2D;
 

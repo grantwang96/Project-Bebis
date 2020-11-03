@@ -15,39 +15,45 @@ MonoBehaviour:
   _id: Humanoid_Unarmed_SecondaryAerialAttack
   _actionName: Heavy Kick
   _cancelable: 0
-  _animationData:
-    _animationName: 
-    _triggers:
-    - SecondaryAttack
-    _resetTriggers: []
-    _intValues: []
-    _floatValues: []
-    _boolValues: []
-  _permissions: 5
-  _priority: 0
+  _priority: 100
   _bufferable: 1
-  _combatHitBoxDatas:
-  - _id: Hitbox_RightFoot_Sphere_1
-    _combatHitboxData:
-      _basePower: 9
-      _powerRange:
-        _min: 2
-        _max: 5
-      _knockbackAngle: {x: 0, y: 1, z: 1}
-      _knockbackForce: 2
-      _overrideForce: 1
-  - _id: Hitbox_RightKnee_Sphere_1
-    _combatHitboxData:
-      _basePower: 8
-      _powerRange:
-        _min: 1
-        _max: 3
-      _knockbackAngle: {x: 0, y: 1, z: 1}
-      _knockbackForce: 3
-      _overrideForce: 0
-  _autoCorrectForTarget: 1
-  _scanAngle: 120
-  _scanRange: 2
-  _scanLayers:
-    serializedVersion: 2
-    m_Bits: 1024
+  _attackDatas: []
+  _aerialAttackData:
+    _animationData:
+      _animationName: 
+      _triggers: []
+      _resetTriggers: []
+      _intValues: []
+      _floatValues: []
+      _boolValues: []
+    _combatHitBoxDatas: []
+    _onActionStartSubActions: []
+  _attackData:
+    _animationData:
+      _animationName: 
+      _triggers:
+      - SecondaryAttack
+      _resetTriggers: []
+      _intValues: []
+      _floatValues: []
+      _boolValues: []
+    _combatHitBoxDatas:
+    - _id: Hitbox_RightFoot_Sphere_1
+      _combatHitboxData:
+        _basePower: 9
+        _powerRange:
+          _min: 0
+          _max: 5
+        _knockbackAngle: {x: 0, y: 0.1, z: 1}
+        _knockbackForce: 12
+        _overrideForce: 0
+    - _id: Hitbox_RightKnee_Sphere_1
+      _combatHitboxData:
+        _basePower: 5
+        _powerRange:
+          _min: 0
+          _max: 3
+        _knockbackAngle: {x: 0, y: 0.1, z: 1}
+        _knockbackForce: 7
+        _overrideForce: 0
+    _onActionStartSubActions: []

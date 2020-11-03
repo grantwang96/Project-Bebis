@@ -105,11 +105,11 @@ MonoBehaviour:
   _hackSkillsLoadout:
     _normalBtn1Skill: {fileID: 11400000, guid: 3c3eb2f02669fe14ea7ed80e422de32a, type: 2}
     _normalAttackSkills:
-    - {fileID: 11400000, guid: 8ceea8382ac8e6b4282261926c6107b4, type: 2}
-    - {fileID: 11400000, guid: 9af6a3f55ac37c642935269dc95f713e, type: 2}
-    - {fileID: 11400000, guid: 2f489d09de5920f4383b64df3fb7d5ac, type: 2}
-    - {fileID: 11400000, guid: 78b9f4ecd2f78f54f8603526c5a94f58, type: 2}
-    _normalAerialAttackSkill: {fileID: 11400000, guid: 4978424c71bfa7742b1e85372c791fc1,
+    - {fileID: 11400000, guid: 2a2f88ebf88e0c34f819da20a07c5348, type: 2}
+    - {fileID: 11400000, guid: fb0b9e4a07eb66c429bd68cdde56a49f, type: 2}
+    - {fileID: 11400000, guid: 237f52f0b3ab3154ea4450079f233a68, type: 2}
+    - {fileID: 11400000, guid: 12dcd47c37710634a8059bed7a19af0a, type: 2}
+    _normalAerialAttackSkill: {fileID: 11400000, guid: 4ee1e1adba78a404c9a9914e28b239ef,
       type: 2}
     _secondaryAttackSkill: {fileID: 11400000, guid: c00e83776275da540b62a17e37799705,
       type: 2}

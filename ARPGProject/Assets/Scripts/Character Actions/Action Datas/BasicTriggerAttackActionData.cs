@@ -11,19 +11,15 @@ namespace Bebis {
         public CombatHitBoxData OnHitData => _onHitData;
         public IReadOnlyList<SubActionData> OnActionStartSubActions => _onActionStartSubActions;
 
-        public override CharacterActionResponse Initiate(ICharacter character, ICharacterActionState state, CharacterActionContext context) {
-            if(!CanPerform(character, state)) {
-                return base.Initiate(character, state, context);
-            }
-            BasicTriggerAttackState triggerActionState = new BasicTriggerAttackState(this, character);
-            CharacterActionResponse response = new CharacterActionResponse(true, Bufferable, triggerActionState);
-            return response;
+        private bool CanPerform(ICharacter character, ICharacterActionState state) {
+            ICharacterActionState currentState = character.ActionController.CurrentState;
+            return currentState == null ||
+                currentState.Status.HasFlag(ActionStatus.CanTransition) ||
+                currentState.Status.HasFlag(ActionStatus.Completed);
         }
 
-        private bool CanPerform(ICharacter character, ICharacterActionState state) {
-            return state == null ||
-                state.Status.HasFlag(ActionStatus.CanTransition) ||
-                state.Status.HasFlag(ActionStatus.Completed);
+        protected override ICharacterActionState CreateActionState(ICharacter character) {
+            return new BasicTriggerAttackState(this, character);
         }
     }
 
@@ -33,6 +29,10 @@ namespace Bebis {
 
         public BasicTriggerAttackState(BasicTriggerAttackActionData data, ICharacter character) : base(data, character) {
             _data = data;
+        }
+
+        public override void Initiate() {
+            base.Initiate();
             PerformActionStartSubAction();
         }
 
@@ -52,7 +52,7 @@ namespace Bebis {
                 OverrideForce = hitBoxData.OverrideForce,
                 Attacker = _character
             };
-            _target.Damageable.TakeDamage(hitEventInfo);
+            _target.Damageable.ReceiveHit(hitEventInfo);
         }
 
         // calculate total damage

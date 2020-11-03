@@ -24,5 +24,7 @@ namespace Bebis {
         public float Force;
         public bool OverrideForce;
         public ICharacter Attacker;
+        public Hitbox Hitbox;
+        public Hurtbox Hurtbox;
     }
 }

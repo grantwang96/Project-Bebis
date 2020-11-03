@@ -7,20 +7,7 @@ using UnityEngine.InputSystem;
 namespace Bebis {
     public class PlayerActionController : MonoBehaviour, IActionController {
 
-        private const string ActionButton1Id = "ActionButton1";
-        private const string ActionButton2Id = "ActionButton2";
-        private const string ActionButton3Id = "ActionButton3";
-        private const string ActionButton4Id = "ActionButton4";
-        private const string SkillsButton1Id = "SkillsButton1";
-        private const string SkillsButton2Id = "SkillsButton2";
-
-        private InputAction _actionButton1;
-        private InputAction _actionButton2;
-        private InputAction _actionButton3;
-        private InputAction _actionButton4;
-        private InputAction _skills1Button;
-        private InputAction _skills2Button;
-
+        /*
         [SerializeField] private PlayerCharacter _playerCharacter;
 
         public ActionPermissions Permissions => CurrentState?.Permissions ?? ActionPermissions.All;
@@ -33,21 +20,17 @@ namespace Bebis {
         public event Action OnCurrentActionSetUpdated;
         public event Action OnUpdate;
 
-        private IPlayerGameplayActionSet _normalGameplaySet;
-        private IPlayerGameplayActionSet _skillMode1GameplaySet;
-        private IPlayerGameplayActionSet _skillMode2GameplaySet;
-
         private CharacterActionData _bufferedActionData;
         private CharacterActionContext _bufferedActionContext;
         private bool _hasBufferedAction = false;
         private List<CharacterActionData> _currentHoldingActions = new List<CharacterActionData>();
 
+        private PlayerActionInfoProvider _playerActionInfoProvider;
+
         public int ActionRestrictions { get; private set; }
 
         private void Start() {
-            SetInputActionMaps();
             SetGameplayActionSets();
-            SubscribeToInputController();
             SubscribeToDamageable();
             SubscribeToAnimationController();
             PlayerCharacterManager.Instance.OnPlayerSkillsLoadoutSet += OnSkillsLoadoutUpdated;
@@ -55,61 +38,25 @@ namespace Bebis {
             ActionRestrictions = 0;
         }
 
-        private void Update() {
-            HandleHoldInputs();
-        }
-        
-        private void SetInputActionMaps() {
-            _actionButton1 = InputController.Instance.PlayerInputActionMap[ActionButton1Id];
-            _actionButton2 = InputController.Instance.PlayerInputActionMap[ActionButton2Id];
-            _actionButton3 = InputController.Instance.PlayerInputActionMap[ActionButton3Id];
-            _actionButton4 = InputController.Instance.PlayerInputActionMap[ActionButton4Id];
-            _skills1Button = InputController.Instance.PlayerInputActionMap[SkillsButton1Id];
-            _skills2Button = InputController.Instance.PlayerInputActionMap[SkillsButton2Id];
+        public void Initialized() {
+            SetGameplayActionSets();
+            SubscribeToDamageable();
+            SubscribeToAnimationController();
+            PlayerCharacterManager.Instance.OnPlayerSkillsLoadoutSet += OnSkillsLoadoutUpdated;
+
+            ActionRestrictions = 0;
         }
 
         // set the player's action sets
         private void SetGameplayActionSets() {
-            _normalGameplaySet = new PlayerNormalGameplayActionSet(_playerCharacter, PlayerCharacterManager.Instance.SkillsLoadout);
-            _skillMode1GameplaySet = new PlayerSkillsActionSet(true, PlayerCharacterManager.Instance.SkillsLoadout);
-            _skillMode2GameplaySet = new PlayerSkillsActionSet(false, PlayerCharacterManager.Instance.SkillsLoadout);
-            CurrentActionSet = _normalGameplaySet;
             OnCurrentActionSetUpdated?.Invoke();
         }
 
         private void OnSkillsLoadoutUpdated(IPlayerSkillsLoadout skillsLoadout) {
-            _normalGameplaySet.Override(skillsLoadout);
-            _skillMode1GameplaySet.Override(skillsLoadout);
-            _skillMode2GameplaySet.Override(skillsLoadout);
+
         }
 
         #region SUBCRIBING/UNSUBSCRIBING TO EVENTS
-
-        private void SubscribeToInputController() {
-            InputController.Instance.PlayerInputActionMap[ActionButton1Id].started += HandleActionButton1;
-            InputController.Instance.PlayerInputActionMap[ActionButton1Id].performed += HandleActionButton1;
-            InputController.Instance.PlayerInputActionMap[ActionButton1Id].canceled += HandleActionButton1;
-
-            InputController.Instance.PlayerInputActionMap[ActionButton2Id].started += HandleActionButton2;
-            InputController.Instance.PlayerInputActionMap[ActionButton2Id].performed += HandleActionButton2;
-            InputController.Instance.PlayerInputActionMap[ActionButton2Id].canceled += HandleActionButton2;
-
-            InputController.Instance.PlayerInputActionMap[ActionButton3Id].started += HandleActionButton3;
-            InputController.Instance.PlayerInputActionMap[ActionButton3Id].performed += HandleActionButton3;
-            InputController.Instance.PlayerInputActionMap[ActionButton3Id].canceled += HandleActionButton3;
-
-            InputController.Instance.PlayerInputActionMap[ActionButton4Id].started += HandleActionButton4;
-            InputController.Instance.PlayerInputActionMap[ActionButton4Id].performed += HandleActionButton4;
-            InputController.Instance.PlayerInputActionMap[ActionButton4Id].canceled += HandleActionButton4;
-
-            InputController.Instance.PlayerInputActionMap[SkillsButton1Id].started += HandleSkillsButton1;
-            InputController.Instance.PlayerInputActionMap[SkillsButton1Id].performed += HandleSkillsButton1;
-            InputController.Instance.PlayerInputActionMap[SkillsButton1Id].canceled += HandleSkillsButton1;
-
-            InputController.Instance.PlayerInputActionMap[SkillsButton2Id].started += HandleSkillsButton2;
-            InputController.Instance.PlayerInputActionMap[SkillsButton2Id].performed += HandleSkillsButton2;
-            InputController.Instance.PlayerInputActionMap[SkillsButton2Id].canceled += HandleSkillsButton2;
-        }
 
         private void SubscribeToAnimationController() {
             _playerCharacter.AnimationController.OnActionStatusUpdated += OnCharacterAnimationStatusSent;
@@ -125,89 +72,6 @@ namespace Bebis {
 
         private void UnsubscribeToDamageable() {
             _playerCharacter.Damageable.OnHit -= OnDamageableHitStun;
-        }
-        #endregion
-
-        #region APPLYING INPUTS TO CHARACTER ACTIONS
-
-        private void HandleActionButton1(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = CurrentActionSet.Btn1Skill;
-            CharacterActionContext context = GetCharacterActionContext(callbackContext);
-            TryPerformAction(actionData, context);
-        }
-
-        private void HandleActionButton2(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = CurrentActionSet.Btn2Skill;
-            CharacterActionContext context = GetCharacterActionContext(callbackContext);
-            TryPerformAction(actionData, context);
-        }
-
-        private void HandleActionButton3(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = CurrentActionSet.Btn3Skill;
-            CharacterActionContext context = GetCharacterActionContext(callbackContext);
-            TryPerformAction(actionData, context);
-        }
-
-        private void HandleActionButton4(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = CurrentActionSet.Btn4Skill;
-            CharacterActionContext context = GetCharacterActionContext(callbackContext);
-            TryPerformAction(actionData, context);
-        }
-
-        private void HandleSkillsButton1(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = CurrentActionSet.SkillMode1;
-            CharacterActionContext context = GetCharacterActionContext(callbackContext);
-            HandleSkillModeSwitch(_skillMode1GameplaySet, context);
-            TryPerformAction(actionData, context);
-        }
-
-        private void HandleSkillsButton2(InputAction.CallbackContext callbackContext) {
-            CharacterActionData actionData = CurrentActionSet.SkillMode2;
-            CharacterActionContext context = GetCharacterActionContext(callbackContext);
-            HandleSkillModeSwitch(_skillMode2GameplaySet, context);
-            TryPerformAction(actionData, context);
-
-            if (callbackContext.performed && !_currentHoldingActions.Contains(actionData)) {
-                _currentHoldingActions.Add(actionData);
-            } else if (callbackContext.canceled) {
-                _currentHoldingActions.Remove(actionData);
-            }
-        }
-
-        private void HandleHoldInputs() {
-            for(int i = 0; i < _currentHoldingActions.Count; i++) {
-                TryPerformAction(_currentHoldingActions[i], CharacterActionContext.Hold);
-            }
-        }
-
-        private void HandleSkillModeSwitch(IPlayerGameplayActionSet actionSet, CharacterActionContext context) {
-            // if CurrentActionSet is currently being overrwritten
-            if(CurrentActionSet != _normalGameplaySet && CurrentActionSet != actionSet) {
-                return;
-            }
-            // handle overriding the set
-            switch (context) {
-                case CharacterActionContext.Initiate:
-                    CurrentActionSet = actionSet;
-                    OnCurrentActionSetUpdated?.Invoke();
-                    break;
-                case CharacterActionContext.Release:
-                    CurrentActionSet = _normalGameplaySet;
-                    OnCurrentActionSetUpdated?.Invoke();
-                    break;
-                default: break;
-            }
-        }
-
-        private static CharacterActionContext GetCharacterActionContext(InputAction.CallbackContext callbackContext) {
-            if (callbackContext.started) {
-                return CharacterActionContext.Initiate;
-            } else if (callbackContext.performed) {
-                return CharacterActionContext.Hold;
-            } else if (callbackContext.canceled) {
-                return CharacterActionContext.Release;
-            }
-            return CharacterActionContext.Invalid;
         }
         #endregion
 
@@ -330,6 +194,86 @@ namespace Bebis {
             }
             _playerCharacter.AnimationController.OnAnimationStateUpdated -= OnDamageableAnimationCompleted;
             ActionRestrictions = Mathf.Max(0, ActionRestrictions - 1);
+        }
+        */
+
+        public ICharacterActionState CurrentState { get; private set; }
+
+        public event Action OnCurrentActionUpdated;
+
+        [SerializeField] private PlayerCharacter _playerCharacter;
+
+        private IActionControllerInfoProvider _actionControllerInfoProvider;
+        private readonly Dictionary<ICharacterActionData, ICharacterActionState> _currentActionStates = new Dictionary<ICharacterActionData, ICharacterActionState>();
+
+        // initialization
+        public void Initialize(IActionControllerInfoProvider infoProvider) {
+
+            if (_actionControllerInfoProvider != null) {
+                _actionControllerInfoProvider.OnActionAttempted -= OnActionAttempted;
+            }
+
+            _actionControllerInfoProvider = infoProvider;
+            _actionControllerInfoProvider.OnActionAttempted += OnActionAttempted;
+        }
+
+        // when an action is attempted
+        private void OnActionAttempted(ICharacterActionData data, CharacterActionContext context) {
+            if(data == null) {
+                Debug.LogWarning($"[{name}]: Attempted action data was null!");
+                return;
+            }
+            // check if we have a state registered for this data
+            bool containsState = _currentActionStates.TryGetValue(data, out ICharacterActionState characterActionState);
+            CharacterActionResponse response = new CharacterActionResponse();
+            // process the interaction with the action data
+            switch (context) {
+                case CharacterActionContext.Initiate:
+                    response = data.Initiate(_playerCharacter, characterActionState, context);
+                    break;
+                case CharacterActionContext.Hold:
+                    response = data.Hold(_playerCharacter, characterActionState, context);
+                    break;
+                case CharacterActionContext.Release:
+                    response = data.Release(_playerCharacter, characterActionState, context);
+                    break;
+                default:
+                    Debug.Log($"[{name}]: Invalid interaction {context}");
+                    break;
+            }
+            // if we didn't successfully perform the action
+            if (!response.Success) {
+                return;
+            }
+            // if we didn't have a state for this data
+            if (!containsState) {
+                _currentActionStates.Add(data, response.State);
+                response.State.OnActionStatusUpdated += OnActionStatusUpdated;
+            }
+            // if this is a different action state
+            if (response.State != CurrentState && response.State.Status != ActionStatus.Completed) {
+                CurrentState = response.State;
+                OnCurrentActionUpdated?.Invoke();
+            }
+        }
+
+        // when an action has been completed, remove it from the registry
+        private void OnActionStatusUpdated(ICharacterActionState characterActionState, ActionStatus status) {
+            switch (status) {
+                case ActionStatus.Completed:
+                    OnActionCompleted(characterActionState);
+                    break;
+            }
+        }
+
+        private void OnActionCompleted(ICharacterActionState characterActionState) {
+            characterActionState.Clear();
+            characterActionState.OnActionStatusUpdated -= OnActionStatusUpdated;
+            _currentActionStates.Remove(characterActionState.Data);
+            if (CurrentState == characterActionState) {
+                CurrentState = null;
+                OnCurrentActionUpdated?.Invoke();
+            }
         }
     }
 }

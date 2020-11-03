@@ -13,6 +13,8 @@ namespace Bebis {
         bool IsGrounded { get; }
         Transform Body { get; }
         Transform Center { get; }
+        RestrictionController MoveRestrictions { get; }
+        RestrictionController LookRestrictions { get; }
 
         float Height { get; }
 
@@ -20,5 +22,11 @@ namespace Bebis {
         void AddForce(Vector3 totalForce, bool overrideForce = false);
         void OverrideMovement(Vector3 direction);
         void OverrideRotation(Vector3 direction);
+    }
+
+    public interface IMoveControllerInfoProvider
+    {
+        Vector3 IntendedMoveDirection { get; }
+        Vector3 IntendedLookDirection { get; }
     }
 }

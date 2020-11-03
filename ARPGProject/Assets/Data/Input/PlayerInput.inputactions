@@ -22,52 +22,148 @@
                     "interactions": ""
                 },
                 {
-                    "name": "ActionButton1",
+                    "name": "ActionSouthPressed",
                     "type": "Button",
                     "id": "85babac0-5f44-4033-95d7-8cf6be1df9a5",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press"
                 },
                 {
-                    "name": "ActionButton2",
+                    "name": "ActionSouthHeld",
+                    "type": "Button",
+                    "id": "044abdb3-d913-40e5-8f02-b944c6d5e8ae",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold"
+                },
+                {
+                    "name": "ActionSouthReleased",
+                    "type": "Button",
+                    "id": "bd321720-44bc-4657-af45-c91fa33d23ed",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
+                },
+                {
+                    "name": "ActionWestPressed",
                     "type": "Button",
                     "id": "2e3374be-a6f5-499d-89de-ee5725add989",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press"
                 },
                 {
-                    "name": "ActionButton3",
+                    "name": "ActionWestHeld",
+                    "type": "Button",
+                    "id": "2510d0a4-11bd-45fb-82e8-917fa26d599c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold"
+                },
+                {
+                    "name": "ActionWestReleased",
+                    "type": "Button",
+                    "id": "834886b6-a36a-4a01-a683-17553707a650",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
+                },
+                {
+                    "name": "ActionNorthPressed",
                     "type": "Button",
                     "id": "56d886fd-6cc1-471b-8bc7-f7804c23460d",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press"
                 },
                 {
-                    "name": "ActionButton4",
+                    "name": "ActionNorthHeld",
+                    "type": "Button",
+                    "id": "d53f8254-5592-4a85-a59a-3f30c6aa5231",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold"
+                },
+                {
+                    "name": "ActionNorthReleased",
+                    "type": "Button",
+                    "id": "d5833730-1de6-4932-91ad-6a1df8b4aba1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
+                },
+                {
+                    "name": "ActionEastPressed",
                     "type": "Button",
                     "id": "b62d06bb-174f-4b82-a02c-b3171231a44a",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press"
                 },
                 {
-                    "name": "SkillsButton1",
+                    "name": "ActionEastHeld",
+                    "type": "Button",
+                    "id": "7c1d7d5c-d26e-4887-aba6-99a66dc56251",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold"
+                },
+                {
+                    "name": "ActionEastReleased",
+                    "type": "Button",
+                    "id": "4a20e879-8c81-4c70-9c1a-ba019f759403",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
+                },
+                {
+                    "name": "SkillsButton1Pressed",
                     "type": "Button",
                     "id": "e2180464-8580-4400-a707-dd0d0e330e78",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press"
                 },
                 {
-                    "name": "SkillsButton2",
+                    "name": "SkillsButton1Held",
+                    "type": "Button",
+                    "id": "57c8fcb8-ab19-4bcc-8ed6-eec7596b1afb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold"
+                },
+                {
+                    "name": "SkillsButton1Released",
+                    "type": "Button",
+                    "id": "5b18dc47-b79e-4f05-819a-3fb2ef0f750c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
+                },
+                {
+                    "name": "SkillsButton2Pressed",
                     "type": "Button",
                     "id": "3b794c87-fa67-483f-a24f-fb3bb998eec3",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press"
+                },
+                {
+                    "name": "SkillsButton2Held",
+                    "type": "Button",
+                    "id": "592767ab-e36b-4ea0-a9ba-8d883e2f39c0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Hold"
+                },
+                {
+                    "name": "SkillsButton2Released",
+                    "type": "Button",
+                    "id": "9ab11c9e-d50f-41e7-a295-64b12641fa50",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
                 }
             ],
             "bindings": [
@@ -243,7 +339,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "ActionButton1",
+                    "action": "ActionSouthPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -254,7 +350,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "ActionButton1",
+                    "action": "ActionSouthPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -265,7 +361,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Touch",
-                    "action": "ActionButton1",
+                    "action": "ActionSouthPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -276,7 +372,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Joystick",
-                    "action": "ActionButton1",
+                    "action": "ActionSouthPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -287,7 +383,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",
-                    "action": "ActionButton1",
+                    "action": "ActionSouthPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -298,7 +394,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "ActionButton2",
+                    "action": "ActionWestPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -309,7 +405,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "ActionButton2",
+                    "action": "ActionWestPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -320,7 +416,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "ActionButton3",
+                    "action": "ActionNorthPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -331,7 +427,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "ActionButton3",
+                    "action": "ActionNorthPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -342,7 +438,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "ActionButton4",
+                    "action": "ActionEastPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -353,7 +449,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "ActionButton4",
+                    "action": "ActionEastPressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -364,7 +460,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "SkillsButton1",
+                    "action": "SkillsButton1Pressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -375,7 +471,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "SkillsButton1",
+                    "action": "SkillsButton1Pressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -386,7 +482,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "SkillsButton2",
+                    "action": "SkillsButton2Pressed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -397,7 +493,337 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "SkillsButton2",
+                    "action": "SkillsButton2Pressed",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6cb40349-c1ae-47fa-aa87-3ca954edaedd",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "ActionSouthHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "028aeed2-779d-48ed-bdd6-167a0b8136ed",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ActionSouthHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "82a16b4d-33a9-45bd-b1fa-32b52756cbdd",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "ActionSouthHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "61de890c-2574-41f1-b79f-66b73ccc693a",
+                    "path": "<Joystick>/trigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "ActionSouthHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e4f49b9b-174a-47a7-9cf4-100b46108193",
+                    "path": "<XRController>/{PrimaryAction}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "XR",
+                    "action": "ActionSouthHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "971ed291-7ee1-401a-9d1d-1f6ebd7ac8b7",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "ActionSouthReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dd590de0-357d-4b04-a160-a836758c2185",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "ActionSouthReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0304d9a2-f71e-432e-9f10-7c7ed5ec9f85",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "ActionSouthReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "963cdf5b-d8eb-4777-9ded-19f192d9d5d0",
+                    "path": "<Joystick>/trigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "ActionSouthReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8dd944c7-3325-451b-95d9-8696ce868dbe",
+                    "path": "<XRController>/{PrimaryAction}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "XR",
+                    "action": "ActionSouthReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "651f2c76-0d9d-44c2-8222-a79b2b4c1ac8",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "ActionWestHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1aafa2b6-f904-4639-89b7-fb140dc715fe",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ActionWestHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "52f6921e-652d-4e54-9e71-b7ff67a66447",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "ActionWestReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4c061960-9b60-4bdb-86bb-095f8b6aca12",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ActionWestReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fbeea7f3-82bd-46b3-b996-1c368e087d4b",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "ActionNorthHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c1fa110c-816d-4071-90d9-5ac2b5a63a68",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ActionNorthHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4208c9d3-38b9-415b-be19-3771719d35f5",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "ActionNorthReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ccf044bf-cee3-4d58-8885-113f4c182159",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ActionNorthReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4aca7d14-6655-4a55-b8f6-fd7beddbac78",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "ActionEastHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "783ebf10-1f0a-48f7-b9f2-6da8ae0e0e6f",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ActionEastHeld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "06d92a64-e7aa-48a9-b37e-2e12ebb64c72",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "ActionEastReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "465724cc-5168-450c-ba8d-497177eaf742",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ActionEastReleased",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a959bf77-ab94-410e-8d0f-e3759bc2bc09",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "SkillsButton1Held",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3b22a59d-bcef-4c72-a7c0-04fbe0f66abd",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "SkillsButton1Held",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "173a3942-388d-45f9-b9ae-e03731666897",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "SkillsButton1Released",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4c1a43c6-78f3-423f-9e11-24d76f02102d",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "SkillsButton1Released",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "02f705cd-9232-4281-bae0-263e145d1764",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "SkillsButton2Held",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c8d98b5e-0ceb-4951-839c-c755e44ec38c",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "SkillsButton2Held",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a14e993d-d940-4da9-8e3a-38be30ed98da",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "SkillsButton2Released",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5d0414b0-e886-48ab-8519-94636ccc3098",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "SkillsButton2Released",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

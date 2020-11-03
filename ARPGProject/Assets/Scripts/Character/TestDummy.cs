@@ -12,6 +12,8 @@ namespace Bebis {
         [SerializeField] private HitboxController _hitboxController;
         [SerializeField] private HurtboxController _hurtboxController;
         [SerializeField] private NPCTargetManager _npcTargetManager;
+        [SerializeField] private NPCMoveInfoProvider _npcMoveInfoProvider;
+        [SerializeField] private NPCActionInfoProvider _npcActionInfoProvider;
 
         public IDamageable Damageable { get; private set; }
         public IMoveController MoveController { get; private set; }
@@ -21,6 +23,9 @@ namespace Bebis {
         public ITargetManager TargetManager => _npcTargetManager;
         public HitboxController HitboxController => _hitboxController;
         public HurtboxController HurtboxController => _hurtboxController;
+        public IMoveControllerInfoProvider MoveInfoProvider => _npcMoveInfoProvider;
+        public IActionControllerInfoProvider ActionInfoProvider => _npcActionInfoProvider;
+
         public void SetActive(bool active) {
             gameObject.SetActive(active);
         }

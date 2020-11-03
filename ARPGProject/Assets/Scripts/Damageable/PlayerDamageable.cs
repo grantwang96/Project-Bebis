@@ -22,7 +22,7 @@ namespace Bebis {
 
         [SerializeField] private HurtboxController _hurtBoxController;
         
-        public void TakeDamage(HitEventInfo hitEventInfo) {
+        public void ReceiveHit(HitEventInfo hitEventInfo) {
             // perform checks based on hurt box controller's state
             HurtBoxState hurtBoxState = _character.HurtboxController.HitHurtboxState;
             switch (hurtBoxState) {

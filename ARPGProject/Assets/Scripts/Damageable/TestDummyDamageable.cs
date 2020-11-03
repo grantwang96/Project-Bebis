@@ -27,7 +27,7 @@ namespace Bebis {
             _moveController = _moveControllerGO.GetComponent<IMoveController>();
         }
 
-        public void TakeDamage(HitEventInfo info) {
+        public void ReceiveHit(HitEventInfo info) {
             switch (_hurtboxController.HitHurtboxState) {
                 case HurtBoxState.Normal:
                     CustomLogger.Log(nameof(TestDummyDamageable), $"Got hit for {info.Power} damage!");

@@ -1,0 +1,214 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01603433d9510c845b62a9a999746bb1, type: 3}
+  m_Name: Humanoid_Unarmed_NormalAttack_3
+  m_EditorClassIdentifier: 
+  _id: UnarmedJab
+  _actionName: UnarmedJab
+  _cancelable: 0
+  _priority: 100
+  _bufferable: 0
+  _attackDatas:
+  - _animationData:
+      _animationName: 
+      _triggers:
+      - NormalAttack
+      _resetTriggers: []
+      _intValues: []
+      _floatValues: []
+      _boolValues: []
+    _combatHitBoxDatas:
+    - _id: Hitbox_LeftHand_Sphere_1
+      _combatHitboxData:
+        _basePower: 2
+        _powerRange:
+          _min: 4
+          _max: 6
+        _knockbackAngle: {x: 0, y: 0, z: 0}
+        _knockbackForce: 0
+        _overrideForce: 1
+    - _id: Hitbox_LeftElbow_Sphere_1
+      _combatHitboxData:
+        _basePower: 1
+        _powerRange:
+          _min: 1
+          _max: 2
+        _knockbackAngle: {x: 0, y: 0, z: 0}
+        _knockbackForce: 0
+        _overrideForce: 1
+    _onActionStartSubActions:
+    - {fileID: 11400000, guid: 4932f0bf4a1a2224c905dea06df0026d, type: 2}
+  - _animationData:
+      _animationName: 
+      _triggers:
+      - NormalAttack
+      _resetTriggers: []
+      _intValues: []
+      _floatValues: []
+      _boolValues: []
+    _combatHitBoxDatas:
+    - _id: Hitbox_LeftHand_Sphere_1
+      _combatHitboxData:
+        _basePower: 1
+        _powerRange:
+          _min: 2
+          _max: 4
+        _knockbackAngle: {x: 0, y: 0, z: 0}
+        _knockbackForce: 0
+        _overrideForce: 1
+    - _id: Hitbox_LeftElbow_Sphere_1
+      _combatHitboxData:
+        _basePower: 2
+        _powerRange:
+          _min: 2
+          _max: 3
+        _knockbackAngle: {x: 0, y: 0, z: 0}
+        _knockbackForce: 0
+        _overrideForce: 1
+    - _id: Hitbox_RightHand_Sphere_1
+      _combatHitboxData:
+        _basePower: 2
+        _powerRange:
+          _min: 3
+          _max: 4
+        _knockbackAngle: {x: 0, y: 0, z: 0}
+        _knockbackForce: 0
+        _overrideForce: 1
+    - _id: Hitbox_RightElbow_Sphere_1
+      _combatHitboxData:
+        _basePower: 3
+        _powerRange:
+          _min: 1
+          _max: 3
+        _knockbackAngle: {x: 0, y: 0, z: 0}
+        _knockbackForce: 0
+        _overrideForce: 1
+    _onActionStartSubActions:
+    - {fileID: 11400000, guid: 4932f0bf4a1a2224c905dea06df0026d, type: 2}
+  - _animationData:
+      _animationName: 
+      _triggers:
+      - NormalAttack
+      _resetTriggers: []
+      _intValues: []
+      _floatValues: []
+      _boolValues: []
+    _combatHitBoxDatas:
+    - _id: Hitbox_LeftFoot_Sphere_1
+      _combatHitboxData:
+        _basePower: 4
+        _powerRange:
+          _min: 3
+          _max: 6
+        _knockbackAngle: {x: 0, y: 0, z: 0}
+        _knockbackForce: 0
+        _overrideForce: 1
+    - _id: Hitbox_LeftKnee_Sphere_1
+      _combatHitboxData:
+        _basePower: 3
+        _powerRange:
+          _min: 1
+          _max: 3
+        _knockbackAngle: {x: 0, y: 0, z: 0}
+        _knockbackForce: 0
+        _overrideForce: 1
+    _onActionStartSubActions:
+    - {fileID: 11400000, guid: 4932f0bf4a1a2224c905dea06df0026d, type: 2}
+  - _animationData:
+      _animationName: 
+      _triggers:
+      - NormalAttack
+      _resetTriggers: []
+      _intValues: []
+      _floatValues: []
+      _boolValues: []
+    _combatHitBoxDatas:
+    - _id: Hitbox_RightFoot_Sphere_1
+      _combatHitboxData:
+        _basePower: 6
+        _powerRange:
+          _min: 4
+          _max: 7
+        _knockbackAngle: {x: 0, y: 0.5, z: 1}
+        _knockbackForce: 15
+        _overrideForce: 0
+    - _id: Hitbox_RightKnee_Sphere_1
+      _combatHitboxData:
+        _basePower: 4
+        _powerRange:
+          _min: 3
+          _max: 5
+        _knockbackAngle: {x: 0, y: 0.5, z: 1}
+        _knockbackForce: 10
+        _overrideForce: 0
+    _onActionStartSubActions:
+    - {fileID: 11400000, guid: 4932f0bf4a1a2224c905dea06df0026d, type: 2}
+  _aerialAttackData:
+    _animationData:
+      _animationName: 
+      _triggers:
+      - NormalAttack
+      _resetTriggers: []
+      _intValues: []
+      _floatValues: []
+      _boolValues: []
+    _combatHitBoxDatas:
+    - _id: Hitbox_LeftFoot_Sphere_1
+      _combatHitboxData:
+        _basePower: 4
+        _powerRange:
+          _min: 1
+          _max: 4
+        _knockbackAngle: {x: 0, y: 0.25, z: 1}
+        _knockbackForce: 15
+        _overrideForce: 0
+    - _id: Hitbox_LeftKnee_Sphere_1
+      _combatHitboxData:
+        _basePower: 3
+        _powerRange:
+          _min: 1
+          _max: 3
+        _knockbackAngle: {x: 0, y: 0.25, z: 1}
+        _knockbackForce: 10
+        _overrideForce: 0
+    _onActionStartSubActions:
+    - {fileID: 11400000, guid: 4932f0bf4a1a2224c905dea06df0026d, type: 2}
+  _attackData:
+    _animationData:
+      _animationName: 
+      _triggers:
+      - NormalAttack
+      _resetTriggers: []
+      _intValues: []
+      _floatValues: []
+      _boolValues: []
+    _combatHitBoxDatas:
+    - _id: Hitbox_LeftFoot_Sphere_1
+      _combatHitboxData:
+        _basePower: 2
+        _powerRange:
+          _min: 0
+          _max: 4
+        _knockbackAngle: {x: 0, y: 0, z: 0}
+        _knockbackForce: 0
+        _overrideForce: 1
+    - _id: Hitbox_LeftKnee_Sphere_1
+      _combatHitboxData:
+        _basePower: 1
+        _powerRange:
+          _min: 0
+          _max: 3
+        _knockbackAngle: {x: 0, y: 0, z: 0}
+        _knockbackForce: 0
+        _overrideForce: 1
+    _onActionStartSubActions:
+    - {fileID: 11400000, guid: 4932f0bf4a1a2224c905dea06df0026d, type: 2}

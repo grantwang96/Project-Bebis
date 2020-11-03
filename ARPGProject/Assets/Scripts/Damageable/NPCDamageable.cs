@@ -22,7 +22,7 @@ namespace Bebis {
 
         [SerializeField] private HurtboxController _hurtBoxController;
 
-        public void TakeDamage(HitEventInfo hitEventInfo) {
+        public void ReceiveHit(HitEventInfo hitEventInfo) {
             // do nothing if this character is already dead
             if(_health <= 0) {
                 return;

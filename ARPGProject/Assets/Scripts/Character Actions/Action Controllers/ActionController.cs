@@ -6,14 +6,15 @@ using System;
 namespace Bebis {
 
     public interface IActionController {
-        ActionPermissions Permissions { get; }
         ICharacterActionState CurrentState { get; }
 
-        bool PerformAction(CharacterActionData actionData, CharacterActionContext context);
-        void ClearCurrentActionState();
+        event Action OnCurrentActionUpdated;
+    }
 
-        event Action<ActionStatus> OnActionStatusUpdated;
-        event Action OnPerformActionSuccess;
+    public interface IActionControllerInfoProvider
+    {
+
+        event Action<ICharacterActionData, CharacterActionContext> OnActionAttempted;
     }
 
     public enum ActionStatus {

@@ -26,6 +26,11 @@ namespace Bebis {
             InitializeCharacterComponents();
         }
 
+        private void Start() {
+            _playerMoveController.Initialize(_playerController);
+            _playerActionController.Initialize(_playerController);
+        }
+
         private void InitializeConfig() {
             // TODO: implement when we have proper serialized data to controller to UI infrastructure
             UseFakeConfig();
