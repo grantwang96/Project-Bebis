@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Winston;
 
 namespace Bebis {
     public abstract class PlayerCharacter : MonoBehaviour, ICharacter {
@@ -25,6 +26,19 @@ namespace Bebis {
 
         // temp
         public HackPlayerConfig HackConfig;
+
+        public void SetActive(bool active) {
+            gameObject.SetActive(active);
+        }
+
+        public IPooledObject Spawn() {
+            return Instantiate(this, PooledObjectRoot.Instance.transform);
+        }
+
+        public void Despawn() {
+            gameObject.SetActive(false);
+            Destroy(this.gameObject);
+        }
 
         private void Awake() {
             InitializeConfig();

@@ -1,5 +1,7 @@
-﻿namespace Bebis {
-    public interface ICharacter {
+﻿using Winston;
+
+namespace Bebis {
+    public interface ICharacter : IPooledObject{
         IDamageable Damageable { get; }
         IMoveController MoveController { get; }
         IActionController ActionController { get; }

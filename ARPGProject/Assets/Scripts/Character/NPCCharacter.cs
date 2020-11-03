@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Winston;
 
 namespace Bebis {
     public class NPCCharacter : MonoBehaviour, ICharacter {
@@ -27,6 +28,19 @@ namespace Bebis {
 
         public CharacterStats BaseStats { get; protected set; }
         public CharacterStats FinalStats { get; protected set; }
+
+        public void SetActive(bool active) {
+            gameObject.SetActive(active);
+        }
+
+        public IPooledObject Spawn() {
+            return Instantiate(this, PooledObjectRoot.Instance.transform);
+        }
+
+        public void Despawn() {
+            gameObject.SetActive(false);
+            Destroy(this.gameObject);
+        }
 
         private void Awake() {
             InitializeCharacterComponents();

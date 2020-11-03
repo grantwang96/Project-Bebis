@@ -56,6 +56,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -80,6 +82,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &207298009
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -163,6 +166,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -187,6 +192,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &828724966
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -270,6 +276,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -294,6 +302,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &951125620
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -557,6 +566,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -581,6 +592,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &2930401231003327873
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -676,6 +688,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -700,6 +714,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &3184066589836108528
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -753,6 +768,8 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 3
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -868,6 +885,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -892,6 +911,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &2477759153645039282
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1189,6 +1209,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1213,6 +1235,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &4386209577772961229
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1294,6 +1317,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1318,6 +1343,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &6995215320816673695
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1475,6 +1501,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1499,6 +1527,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &802797904521890513
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1562,7 +1591,6 @@ GameObject:
   - component: {fileID: 7587060686279252800}
   - component: {fileID: 558627492581422650}
   - component: {fileID: 3184066589739200589}
-  - component: {fileID: 3184066589739200597}
   - component: {fileID: 3184066589739200598}
   - component: {fileID: 3184066589739200599}
   - component: {fileID: 3184066589739200592}
@@ -1631,24 +1659,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &3184066589739200597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6850536505322465619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa9ffd2eb9eeebf44b8cf4029ae3ea95, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _characterGO: {fileID: 6850536505322465619}
-  _hurtBoxObjs:
-  - {fileID: 8441690706796251173}
-  - {fileID: 828724965}
-  - {fileID: 207298008}
-  - {fileID: 951125619}
 --- !u!114 &3184066589739200598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1698,7 +1708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hitboxController: {fileID: 3184066589739200598}
-  _hurtboxController: {fileID: 3184066589739200597}
+  _hurtboxController: {fileID: 0}
   HackConfig:
     InteractAction: {fileID: 0}
     JumpAction: {fileID: 11400000, guid: 3c3eb2f02669fe14ea7ed80e422de32a, type: 2}
@@ -1722,6 +1732,7 @@ MonoBehaviour:
   _equipmentManager: {fileID: 3184066589739200591}
   _playerAnimationController: {fileID: 3184066589739200593}
   _playerCharacterStatManager: {fileID: 3184066589739200599}
+  _playerTargetManager: {fileID: 0}
 --- !u!114 &3184066589739200593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1769,9 +1780,10 @@ MonoBehaviour:
   _bodyRoot: {fileID: 7587060686279252800}
   _bodyCenter: {fileID: 8714204730985072005}
   _moveSpeed: 8
+  _airSpeed: 0
   _turnLerpSpeed: 30
   _linearDrag: 1
-  _forceVector: {x: 0, y: 0, z: 0}
+  _currentVelocity: {x: 0, y: 0, z: 0}
   _movementRestrictions: 0
   _rotationRestrictions: 0
 --- !u!114 &3184066589739200588
@@ -1797,7 +1809,7 @@ MonoBehaviour:
     _intValues: []
     _floatValues: []
     _boolValues: []
-  _hurtBoxController: {fileID: 3184066589739200597}
+  _hurtBoxController: {fileID: 0}
 --- !u!114 &3184066589739200591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1937,6 +1949,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1961,6 +1975,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &4928750548808874211
 MeshFilter:
   m_ObjectHideFlags: 0

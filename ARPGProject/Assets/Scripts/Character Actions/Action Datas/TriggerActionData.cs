@@ -73,12 +73,14 @@ namespace Bebis {
             }
             Hurtbox hurtBox = collider.GetComponent<Hurtbox>();
             // if there is no hurtbox and this attack can affect normal colliders
-            if(hurtBox == null && _triggerActionData.AffectNormalColliders) {
-                IDamageable damageable = collider.GetComponent<IDamageable>();
-                HitDamageable(damageable, collider, triggerBoxData);
+            if(hurtBox != null) {
+                HitHurtbox(hitBox, hurtBox, triggerBoxData);
                 return;
             }
-            HitHurtbox(hitBox, hurtBox, triggerBoxData);
+            if (_triggerActionData.AffectNormalColliders) {
+                IDamageable damageable = collider.GetComponent<IDamageable>();
+                HitDamageable(damageable, collider, triggerBoxData);
+            }
         }
 
         protected bool ShouldTrigger(HurtBoxState hurtBoxState) {

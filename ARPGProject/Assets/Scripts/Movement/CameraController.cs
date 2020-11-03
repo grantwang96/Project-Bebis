@@ -11,7 +11,7 @@ namespace Bebis {
         public Transform CameraRoot { get; private set; }
         public Camera MainCamera => _mainCamera;
 
-        [SerializeField] private PlayerCharacter _playerCharacter;
+        private ICharacter _playerCharacter;
 
         [SerializeField] private Transform _cameraPivotX;
         [SerializeField] private Transform _cameraPivotY;
@@ -21,16 +21,15 @@ namespace Bebis {
         [SerializeField] private float _cameraXLowerLimit;
         [SerializeField] private float _cameraTurnSpeed;
 
-        private CharacterController _characterController;
         private InputAction _lookInputAction;
 
         private void Awake() {
             Instance = this;
             CameraRoot = _cameraPivotX;
-            _characterController = _playerCharacter.GetComponent<CharacterController>();
         }
 
         private void Start() {
+            _playerCharacter = PlayerCharacter.Instance;
             _lookInputAction = InputController.Instance.PlayerInputActionMap["Look"];
         }
 
@@ -43,7 +42,7 @@ namespace Bebis {
         }
 
         private void FollowCharacter() {
-            _cameraPivotX.position = _playerCharacter.transform.position;
+            _cameraPivotX.position = _playerCharacter.MoveController.Body.position;
         }
 
         private void HandleLookInput(Vector2 lookInput) {

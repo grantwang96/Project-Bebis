@@ -99,7 +99,6 @@ namespace Bebis {
         }
 
         private void OnCurrentTargetUpdated() {
-            Debug.Log("Current target updated");
             // attempt to retrieve player's entry
             _npcTargetManager.RegisteredHostiles.TryGetValue(PlayerCharacter.Instance, out _playerHostileEntry);
             if(ShouldShowAwarenessMeter(_npcTargetManager.RegisteredHostiles.Count)) {

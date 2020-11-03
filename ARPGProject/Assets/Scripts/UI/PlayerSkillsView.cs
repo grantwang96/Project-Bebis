@@ -26,7 +26,6 @@ namespace Bebis {
                 return false;
             }
             _playerActionController.OnCurrentActionSetUpdated += OnCurrentActionSetUpdated;
-            OnCurrentActionSetUpdated();
             return true;
         }
 

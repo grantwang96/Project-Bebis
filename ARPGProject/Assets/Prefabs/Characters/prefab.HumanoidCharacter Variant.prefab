@@ -199,7 +199,7 @@ MonoBehaviour:
     _floatValues: []
     _boolValues: []
   Active: 0
-  _onTakeDamageHostileFound: {fileID: 6937876382990888284}
+  _onTakeDamageHostileFound: {fileID: 1904586336087550010}
   _onTakeDamageHostileHidden: {fileID: 5161776129405628199}
   _hostileHiddenStartingDetection: 0.5
   _npcTargetManager: {fileID: 5585075145879131855}
@@ -282,8 +282,7 @@ MonoBehaviour:
   _aiStateMachine: {fileID: 6210978977097192754}
   _animationData:
     _animationName: HitStun
-    _triggers:
-    - HitStun
+    _triggers: []
     _resetTriggers: []
     _intValues: []
     _floatValues: []
@@ -1318,7 +1317,7 @@ PrefabInstance:
     - target: {fileID: 6394150503743316308, guid: 3961fe5bd900b9c4f8fc61b975002fd5,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8762392946724106292, guid: 3961fe5bd900b9c4f8fc61b975002fd5,
         type: 3}

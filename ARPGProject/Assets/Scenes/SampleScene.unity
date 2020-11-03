@@ -171,7 +171,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &108561824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1640,7 +1640,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: ae6b58834915fff458d568ac0da5483c,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -893573880736502080, guid: ae6b58834915fff458d568ac0da5483c,
         type: 3}
@@ -2257,7 +2257,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1015815909
 Transform:
   m_ObjectHideFlags: 0
@@ -4508,7 +4508,8 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3184066589739200597, guid: 60806f9ea66d7f74fad42fa70dfb51dd, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 60806f9ea66d7f74fad42fa70dfb51dd, type: 3}
 --- !u!1001 &3875271714953005340
 PrefabInstance:
@@ -4951,6 +4952,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: prefab.PlayerCharacter_Humanoid
       objectReference: {fileID: 0}
+    - target: {fileID: 5746905580517589543, guid: 3961fe5bd900b9c4f8fc61b975002fd5,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6222617374569186786, guid: 3961fe5bd900b9c4f8fc61b975002fd5,
         type: 3}
       propertyPath: m_LocalRotation.x
@@ -5248,7 +5254,7 @@ PrefabInstance:
     - target: {fileID: 2125737149717683482, guid: 2918cca06252cdf469130c16317b1ff0,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3006789590291122799, guid: 2918cca06252cdf469130c16317b1ff0,
         type: 3}

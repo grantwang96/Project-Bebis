@@ -31,7 +31,7 @@ namespace Bebis {
         [SerializeField] private float _airSpeed;
         [SerializeField] private float _turnLerpSpeed;
         [SerializeField] private float _linearDrag;
-        [SerializeField] private Vector3 _totalExternalForces;
+        [SerializeField] private Vector3 _currentVelocity;
 
         [SerializeField] private int _movementRestrictions;
         [SerializeField] private bool _rotationRestrictions;
@@ -59,16 +59,16 @@ namespace Bebis {
 
         public void AddForce(Vector3 direction, float force, bool overrideForce = false) {
             if (overrideForce) {
-                _totalExternalForces = Vector3.zero;
+                _currentVelocity = Vector3.zero;
             }
-            _totalExternalForces += direction * force;
+            _currentVelocity += direction * force;
         }
 
         public void AddForce(Vector3 totalForce, bool overrideForce = false) {
             if (overrideForce) {
-                _totalExternalForces = Vector3.zero;
+                _currentVelocity = Vector3.zero;
             }
-            _totalExternalForces += totalForce;
+            _currentVelocity += totalForce;
         }
 
         public void OverrideRotation(Vector3 direction) {
@@ -101,8 +101,8 @@ namespace Bebis {
 
         // apply gravity to downward velocity each frame as needed
         private void ProcessGravity() {
-            if (_totalExternalForces.y > Physics.gravity.y) {
-                _totalExternalForces.y += Physics.gravity.y * Time.deltaTime;
+            if (_currentVelocity.y > Physics.gravity.y) {
+                _currentVelocity.y += Physics.gravity.y * Time.deltaTime;
             }
         }
 
@@ -115,12 +115,12 @@ namespace Bebis {
 
         // handles ground friction when an active force is applied to a character
         private void ProcessDrag() {
-            if (Mathf.Approximately(_totalExternalForces.x, 0f) && Mathf.Approximately(_totalExternalForces.z, 0f)) {
+            if (Mathf.Approximately(_currentVelocity.x, 0f) && Mathf.Approximately(_currentVelocity.z, 0f)) {
                 return;
             }
             if (_characterController.isGrounded) {
-                _totalExternalForces.x = ExtraMath.Lerp(_totalExternalForces.x, 0f, _linearDrag * Time.deltaTime);
-                _totalExternalForces.z = ExtraMath.Lerp(_totalExternalForces.z, 0f, _linearDrag * Time.deltaTime);
+                _currentVelocity.x = ExtraMath.Lerp(_currentVelocity.x, 0f, _linearDrag * Time.deltaTime);
+                _currentVelocity.z = ExtraMath.Lerp(_currentVelocity.z, 0f, _linearDrag * Time.deltaTime);
             }
         }
 
@@ -130,19 +130,14 @@ namespace Bebis {
             Vector3 localizedInput = new Vector3();
             localizedInput += CameraController.Instance.CameraRoot.right * inputNormalized.x;
             localizedInput += CameraController.Instance.CameraRoot.forward * inputNormalized.y;
-            if (IsGrounded) {
-                // directly set the localized input
-                _move = localizedInput;
-            } else if (IsMoving(moveInput)) {
-                _move.x = ExtraMath.Lerp(_move.x, localizedInput.x, 0.1f);
-                _move.z = ExtraMath.Lerp(_move.z, localizedInput.z, 0.1f);
-            }
+            _move = localizedInput;
             // set move magnitude
             MoveMagnitude = Mathf.Clamp01(_move.magnitude);
         }
 
         private bool CanMove() {
             return _movementRestrictions <= 0 && 
+                IsGrounded &&
                 _character.ActionController.Permissions.HasFlag(ActionPermissions.Movement) &&
                 !_overrideMovement;
         }
@@ -180,7 +175,7 @@ namespace Bebis {
             if (CanMove()) {
                 moveVector = Move * speed * MoveMagnitude;
             }
-            moveVector += _totalExternalForces;
+            moveVector += _currentVelocity;
             _characterController.Move(moveVector * Time.deltaTime);
             _overrideMovement = false;
         }
@@ -208,7 +203,7 @@ namespace Bebis {
 
         private void OnControllerColliderHit(ControllerColliderHit hit) {
             if (!CanMove() && _characterController.collisionFlags == CollisionFlags.Sides) {
-                _totalExternalForces = new Vector3(0f, _move.y, 0f);
+                _currentVelocity = new Vector3(0f, _move.y, 0f);
             }
             if (_characterController.collisionFlags.HasFlag(CollisionFlags.Below) && !IsGrounded) {
                 IsGrounded = true;

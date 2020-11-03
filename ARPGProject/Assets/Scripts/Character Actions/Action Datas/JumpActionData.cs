@@ -38,8 +38,8 @@ namespace Bebis {
         }
 
         private static Vector3 CalculateDirection(JumpActionData data, ICharacter character) {
-            Vector3 jumpForce = data.JumpDirection * data.JumpForce;
-            // jumpForce += character.AnimationController.DeltaPosition() / Time.deltaTime;
+            Vector3 direction = data.JumpDirection + character.MoveController.Move;
+            Vector3 jumpForce = direction.normalized * data.JumpForce;
             return jumpForce;
         }
     }
