@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Bebis {
     public abstract class TriggerActionData : CharacterActionData {
 
+        [SerializeField] protected AnimationData _initialActionAnimationData;
         [SerializeField] protected AnimationData _onTriggerSuccess;
         [SerializeField] protected AnimationData _onTriggerFailed;
         [SerializeField] protected AnimationData _onTriggerInterrupted;
@@ -13,6 +14,7 @@ namespace Bebis {
         [SerializeField] protected bool _affectNormalColliders;
         [SerializeField] protected bool _beatShields;
 
+        public AnimationData InitialActionAnimationData => _initialActionAnimationData;
         public AnimationData OnTriggerSuccess => _onTriggerSuccess;
         public AnimationData OnTriggerFailed => _onTriggerFailed;
         public AnimationData OnTriggerInterrupted => _onTriggerInterrupted;
@@ -47,11 +49,18 @@ namespace Bebis {
 
         public TriggerActionState(TriggerActionData data, ICharacter character) : base(data, character) {
             _triggerActionData = data;
-            _character.AnimationController.OnAnimationMessageSent += OnAnimationMessageSent;
+        }
+
+        // children will call this depending on which interaction triggers the action
+        protected virtual void PerformTriggerAction() {
             SetTriggerBoxInfos();
+            _character.AnimationController.OnAnimationMessageSent += OnAnimationMessageSent;
+            _character.AnimationController.OnAnimationStateUpdated += OnAnimationStateUpdated;
+            _character.AnimationController.UpdateAnimationState(_triggerActionData.InitialActionAnimationData);
         }
 
         protected void SetTriggerBoxInfos() {
+            _triggerBoxDatas.Clear();
             for(int i = 0; i < _triggerActionData.TriggerBoxDatas.Count; i++) {
                 // save the entry to the dictionary
                 TriggerBoxDataEntry triggerBoxDataEntry = _triggerActionData.TriggerBoxDatas[i];
@@ -119,9 +128,27 @@ namespace Bebis {
             }
         }
 
+        protected void OnAnimationStateUpdated(AnimationState animationState) {
+            switch (animationState) {
+                case AnimationState.Started:
+                    UpdateActionStatus(ActionStatus.Started);
+                    break;
+                case AnimationState.InProgress:
+                    UpdateActionStatus(ActionStatus.InProgress);
+                    break;
+                case AnimationState.CanTransition:
+                    UpdateActionStatus(ActionStatus.CanTransition);
+                    break;
+                case AnimationState.Completed:
+                    UpdateActionStatus(ActionStatus.Completed);
+                    break;
+            }
+        }
+
         public override void Clear() {
             base.Clear();
             _character.AnimationController.OnAnimationMessageSent -= OnAnimationMessageSent;
+            _character.AnimationController.OnAnimationStateUpdated -= OnAnimationStateUpdated;
         }
 
         // this trigger action has been successfully...triggered...

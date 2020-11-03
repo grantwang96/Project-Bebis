@@ -39,7 +39,6 @@ namespace Bebis {
         public override void Release() {
             base.Release();
             UpdateActionStatus(ActionStatus.Completed);
-            Debug.Log("Release");
         }
 
         public override void Clear() {

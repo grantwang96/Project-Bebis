@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 
 namespace Bebis {
@@ -18,6 +19,10 @@ namespace Bebis {
                 currentState.Status.HasFlag(ActionStatus.Completed);
         }
 
+        protected override bool CanPerformAction(ICharacter character, ICharacterActionState foundActionState) {
+            return CanPerform(character, foundActionState);
+        }
+
         protected override ICharacterActionState CreateActionState(ICharacter character) {
             return new BasicTriggerAttackState(this, character);
         }
@@ -34,6 +39,7 @@ namespace Bebis {
         public override void Initiate() {
             base.Initiate();
             PerformActionStartSubAction();
+            PerformTriggerAction();
         }
 
         private void PerformActionStartSubAction() {
@@ -53,6 +59,18 @@ namespace Bebis {
                 Attacker = _character
             };
             _target.Damageable.ReceiveHit(hitEventInfo);
+        }
+
+        protected override void PerformTriggerAction() {
+            base.PerformTriggerAction();
+            _character.MoveController.MoveRestrictions.AddRestriction(_data.ActionName);
+            _character.MoveController.LookRestrictions.AddRestriction(_data.ActionName);
+        }
+
+        public override void Clear() {
+            base.Clear();
+            _character.MoveController.MoveRestrictions.RemoveRestriction(_data.ActionName);
+            _character.MoveController.LookRestrictions.RemoveRestriction(_data.ActionName);
         }
 
         // calculate total damage

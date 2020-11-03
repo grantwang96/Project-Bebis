@@ -15,16 +15,15 @@ MonoBehaviour:
   _id: 
   _actionName: Fake Raptor Boost
   _cancelable: 0
-  _animationData:
+  _priority: 0
+  _bufferable: 0
+  _initialActionAnimationData:
     _animationName: FakeRaptorBoost
     _triggers: []
     _resetTriggers: []
     _intValues: []
     _floatValues: []
     _boolValues: []
-  _permissions: 4
-  _priority: 0
-  _bufferable: 0
   _onTriggerSuccess:
     _animationName: 
     _triggers:

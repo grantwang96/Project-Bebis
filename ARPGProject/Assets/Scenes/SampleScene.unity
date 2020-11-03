@@ -201,12 +201,11 @@ MonoBehaviour:
   _hackSkillsLoadout:
     _normalBtn1Skill: {fileID: 11400000, guid: 3c3eb2f02669fe14ea7ed80e422de32a, type: 2}
     _normalAttackSkills:
-    - {fileID: 11400000, guid: 8ceea8382ac8e6b4282261926c6107b4, type: 2}
-    - {fileID: 11400000, guid: 9af6a3f55ac37c642935269dc95f713e, type: 2}
-    - {fileID: 11400000, guid: 2f489d09de5920f4383b64df3fb7d5ac, type: 2}
-    - {fileID: 11400000, guid: 78b9f4ecd2f78f54f8603526c5a94f58, type: 2}
-    _normalAerialAttackSkill: {fileID: 11400000, guid: 4978424c71bfa7742b1e85372c791fc1,
-      type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    _normalAerialAttackSkill: {fileID: 0}
     _secondaryAttackSkill: {fileID: 11400000, guid: c00e83776275da540b62a17e37799705,
       type: 2}
     _secondaryAerialAttackSkill: {fileID: 11400000, guid: 7fc0145b269c0f549989210d11ee7346,
@@ -2563,6 +2562,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: prefab.ui_PlayerHud
       objectReference: {fileID: 0}
+    - target: {fileID: 7453597081231549541, guid: fc37c64d8045f724b81db641bc0a0b79,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7453597081231549542, guid: fc37c64d8045f724b81db641bc0a0b79,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3156,18 +3160,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1622947505 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4386771273745259308, guid: 3961fe5bd900b9c4f8fc61b975002fd5,
-    type: 3}
-  m_PrefabInstance: {fileID: 4386771273021305891}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3c767e225aee654f8ee0fa90080af0c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1632276823
 GameObject:
   m_ObjectHideFlags: 0
@@ -3545,7 +3537,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 416fecb8aa473b24eb293d0a902cb2d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerCharacter: {fileID: 1622947505}
   _cameraPivotX: {fileID: 1876575267}
   _cameraPivotY: {fileID: 768866494}
   _mainCamera: {fileID: 519420031}
@@ -5842,6 +5833,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: prefab.ui_PlayerTargets
+      objectReference: {fileID: 0}
+    - target: {fileID: 6981144583675416860, guid: 941952dc21a96be40b7b1fcbeb7c5bea,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 941952dc21a96be40b7b1fcbeb7c5bea, type: 3}

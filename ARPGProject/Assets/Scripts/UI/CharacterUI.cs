@@ -26,7 +26,7 @@ namespace Bebis {
             SetUIPosition();
         }
 
-        public bool Initialize(UIInitData initData) {
+        public bool Initialize(UIObjectInitData initData) {
             CharacterUIInitData characterUIInitData = initData as CharacterUIInitData;
             if(characterUIInitData == null) {
                 CustomLogger.Error(this.name, $"Init data was not of type {nameof(CharacterUIInitData)}");
@@ -127,7 +127,7 @@ namespace Bebis {
         }
     }
 
-    public class CharacterUIInitData : UIInitData {
+    public class CharacterUIInitData : UIObjectInitData {
         public ICharacter Character;
         public Canvas Canvas;
     }

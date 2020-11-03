@@ -33,19 +33,20 @@ namespace Bebis {
         
         // action controller implementations
         public event Action<ICharacterActionData, CharacterActionContext> OnActionAttempted;
+        public event Action OnCurrentActionSetUpdated;
 
         // private IPlayerActionSetProvider _playerActionSetProvider;
         private PlayerCharacter _playerCharacter;
         private IPlayerGameplayActionSet _normalActionSet;
         private IPlayerGameplayActionSet _skills1ActionSet;
         private IPlayerGameplayActionSet _skills2ActionSet;
-        private IPlayerGameplayActionSet _currentActionSet;
+        public IPlayerGameplayActionSet CurrentActionSet { get; private set; }
 
         public PlayerActionInfoProvider(PlayerCharacter character) {
             _playerCharacter = character;
             PlayerCharacterManager.Instance.OnPlayerSkillsLoadoutSet += UpdateLoadout;
             UpdateLoadout(PlayerCharacterManager.Instance.SkillsLoadout);
-            _currentActionSet = _normalActionSet;
+            CurrentActionSet = _normalActionSet;
             SubscribeToInputEvents();
         }
 
@@ -108,7 +109,7 @@ namespace Bebis {
         }
 
         private void OnAction1Pressed(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.Btn1Skill, CharacterActionContext.Initiate);
+            AttemptAction(CurrentActionSet.Btn1Skill, CharacterActionContext.Initiate);
         }
 
         private void OnAction1Held(InputAction.CallbackContext callbackContext) {
@@ -116,16 +117,16 @@ namespace Bebis {
         }
 
         private void Action1Hold() {
-            AttemptAction(_currentActionSet.Btn1Skill, CharacterActionContext.Hold);
+            AttemptAction(CurrentActionSet.Btn1Skill, CharacterActionContext.Hold);
         }
 
         private void OnAction1Released(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.Btn1Skill, CharacterActionContext.Release);
+            AttemptAction(CurrentActionSet.Btn1Skill, CharacterActionContext.Release);
             MonoBehaviourMaster.Instance.OnFixedUpdate -= Action1Hold;
         }
 
         private void OnAction2Pressed(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.Btn2Skill, CharacterActionContext.Initiate);
+            AttemptAction(CurrentActionSet.Btn2Skill, CharacterActionContext.Initiate);
         }
 
         private void OnAction2Held(InputAction.CallbackContext callbackContext) {
@@ -133,16 +134,16 @@ namespace Bebis {
         }
 
         private void Action2Hold() {
-            AttemptAction(_currentActionSet.Btn2Skill, CharacterActionContext.Hold);
+            AttemptAction(CurrentActionSet.Btn2Skill, CharacterActionContext.Hold);
         }
 
         private void OnAction2Released(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.Btn2Skill, CharacterActionContext.Release);
+            AttemptAction(CurrentActionSet.Btn2Skill, CharacterActionContext.Release);
             MonoBehaviourMaster.Instance.OnFixedUpdate -= Action2Hold;
         }
 
         private void OnAction3Pressed(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.Btn3Skill, CharacterActionContext.Initiate);
+            AttemptAction(CurrentActionSet.Btn3Skill, CharacterActionContext.Initiate);
         }
 
         private void OnAction3Held(InputAction.CallbackContext callbackContext) {
@@ -150,16 +151,16 @@ namespace Bebis {
         }
 
         private void Action3Hold() {
-            AttemptAction(_currentActionSet.Btn3Skill, CharacterActionContext.Hold);
+            AttemptAction(CurrentActionSet.Btn3Skill, CharacterActionContext.Hold);
         }
 
         private void OnAction3Released(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.Btn3Skill, CharacterActionContext.Release);
+            AttemptAction(CurrentActionSet.Btn3Skill, CharacterActionContext.Release);
             MonoBehaviourMaster.Instance.OnFixedUpdate -= Action3Hold;
         }
 
         private void OnAction4Pressed(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.Btn4Skill, CharacterActionContext.Initiate);
+            AttemptAction(CurrentActionSet.Btn4Skill, CharacterActionContext.Initiate);
         }
 
         private void OnAction4Held(InputAction.CallbackContext callbackContext) {
@@ -167,11 +168,11 @@ namespace Bebis {
         }
 
         private void Action4Hold() {
-            AttemptAction(_currentActionSet.Btn3Skill, CharacterActionContext.Hold);
+            AttemptAction(CurrentActionSet.Btn3Skill, CharacterActionContext.Hold);
         }
 
         private void OnAction4Released(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.Btn4Skill, CharacterActionContext.Release);
+            AttemptAction(CurrentActionSet.Btn4Skill, CharacterActionContext.Release);
             MonoBehaviourMaster.Instance.OnFixedUpdate -= Action4Hold;
         }
 
@@ -180,9 +181,10 @@ namespace Bebis {
         }
 
         private void OnSkillSet1Pressed(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.SkillMode1, CharacterActionContext.Initiate);
-            if(_currentActionSet == _normalActionSet) {
-                _currentActionSet = _skills1ActionSet;
+            AttemptAction(CurrentActionSet.SkillMode1, CharacterActionContext.Initiate);
+            if(CurrentActionSet == _normalActionSet) {
+                CurrentActionSet = _skills1ActionSet;
+                OnCurrentActionSetUpdated?.Invoke();
             }
         }
 
@@ -191,24 +193,27 @@ namespace Bebis {
         }
 
         private void SkillSet1Held() {
-            AttemptAction(_currentActionSet.SkillMode1, CharacterActionContext.Hold);
-            if (_currentActionSet == _normalActionSet) {
-                _currentActionSet = _skills1ActionSet;
+            AttemptAction(CurrentActionSet.SkillMode1, CharacterActionContext.Hold);
+            if (CurrentActionSet == _normalActionSet) {
+                CurrentActionSet = _skills1ActionSet;
+                OnCurrentActionSetUpdated?.Invoke();
             }
         }
 
         private void OnSkillSet1Released(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.SkillMode1, CharacterActionContext.Release);
-            if (_currentActionSet == _skills1ActionSet) {
-                _currentActionSet = _normalActionSet;
+            AttemptAction(CurrentActionSet.SkillMode1, CharacterActionContext.Release);
+            if (CurrentActionSet == _skills1ActionSet) {
+                CurrentActionSet = _normalActionSet;
+                OnCurrentActionSetUpdated?.Invoke();
             }
             MonoBehaviourMaster.Instance.OnFixedUpdate -= SkillSet1Held;
         }
 
         private void OnSkillSet2Pressed(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.SkillMode2, CharacterActionContext.Initiate);
-            if (_currentActionSet == _normalActionSet) {
-                _currentActionSet = _skills2ActionSet;
+            AttemptAction(CurrentActionSet.SkillMode2, CharacterActionContext.Initiate);
+            if (CurrentActionSet == _normalActionSet) {
+                CurrentActionSet = _skills2ActionSet;
+                OnCurrentActionSetUpdated?.Invoke();
             }
         }
 
@@ -217,16 +222,18 @@ namespace Bebis {
         }
 
         private void SkillSet2Held() {
-            AttemptAction(_currentActionSet.SkillMode2, CharacterActionContext.Hold);
-            if (_currentActionSet == _normalActionSet) {
-                _currentActionSet = _skills2ActionSet;
+            AttemptAction(CurrentActionSet.SkillMode2, CharacterActionContext.Hold);
+            if (CurrentActionSet == _normalActionSet) {
+                CurrentActionSet = _skills2ActionSet;
+                OnCurrentActionSetUpdated?.Invoke();
             }
         }
 
         private void OnSkillSet2Released(InputAction.CallbackContext callbackContext) {
-            AttemptAction(_currentActionSet.SkillMode2, CharacterActionContext.Release);
-            if (_currentActionSet == _skills2ActionSet) {
-                _currentActionSet = _normalActionSet;
+            AttemptAction(CurrentActionSet.SkillMode2, CharacterActionContext.Release);
+            if (CurrentActionSet == _skills2ActionSet) {
+                CurrentActionSet = _normalActionSet;
+                OnCurrentActionSetUpdated?.Invoke();
             }
             MonoBehaviourMaster.Instance.OnFixedUpdate -= SkillSet2Held;
         }

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using Winston;
 
 namespace Bebis {
     public class PlayerController : MonoBehaviour, IMoveControllerInfoProvider, IActionControllerInfoProvider {
 
         private const string KeyBoardMouse = "Keyboard&Mouse";
+        private const string PlayerHudUIId = "PlayerHud";
 
         // move controller implementations
         public Vector3 IntendedMoveDirection => _intendedMoveDirection;
@@ -24,11 +26,14 @@ namespace Bebis {
         [SerializeField] private PlayerCharacter _playerCharacter;
         
         private PlayerActionInfoProvider _playerActionInfoProvider;
+        private IUIDisplay _playerHudDisplay;
 
         // Start is called before the first frame update
         private void Start() {
             CreateActionInfoProviderInternal();
             SubscribeToEvents();
+            CreatePlayerHud();
+            SetPlayerHudEnabled(true);
         }
 
         private void OnDestroy() {
@@ -50,6 +55,21 @@ namespace Bebis {
 
         private void UnsubscribeToEvents() {
             _playerActionInfoProvider.OnActionAttempted -= ActionAttempted;
+        }
+
+        private void CreatePlayerHud() {
+            _playerHudDisplay = ManagerMaster.UIManager.CreateUIDisplay(PlayerHudUIId, UILayerId.Background);
+            if(_playerHudDisplay == null) {
+                Debug.LogError($"[{nameof(PlayerController)}]: Could not create player hud display with id \"{PlayerHudUIId}\"!");
+                return;
+            }
+            _playerHudDisplay.Initialize(new PlayerHudInitializationData() {
+                PlayerActionInfoProvider = _playerActionInfoProvider
+            });
+        }
+
+        private void SetPlayerHudEnabled(bool enabled) {
+
         }
 
         private void ProcessInput() {

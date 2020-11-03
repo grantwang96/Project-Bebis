@@ -270,7 +270,9 @@ MonoBehaviour:
     _go: {fileID: 5746905580517589543, guid: 3961fe5bd900b9c4f8fc61b975002fd5, type: 3}
   - _prefabId: TestNPC
     _go: {fileID: 2125737149717683482, guid: 2918cca06252cdf469130c16317b1ff0, type: 3}
-  _uiDisplayPrefabEntries: []
+  _uiDisplayPrefabEntries:
+  - _prefabId: PlayerHud
+    _go: {fileID: 7453597081231549541, guid: fc37c64d8045f724b81db641bc0a0b79, type: 3}
 --- !u!1 &9086396308428073281
 GameObject:
   m_ObjectHideFlags: 0

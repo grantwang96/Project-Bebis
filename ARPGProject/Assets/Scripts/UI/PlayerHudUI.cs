@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Winston;
 
 namespace Bebis {
-    public class PlayerHudUI : MonoBehaviour {
+    public class PlayerHudUI : MonoBehaviour, IUIDisplay {
 
         [SerializeField] private GameObject _hudParent;
         [SerializeField] private FillBar _playerHealthBar;
         [SerializeField] private Text _healthTextDisplay;
         [SerializeField] private PlayerSkillsView _playerSkillsView;
-
-        private void Start() {
-            SetupHealthDisplay();
-            SetupSkillsDisplay();
-        }
 
         private void SetupHealthDisplay() {
             PlayerCharacter.Instance.Damageable.OnCurrentHealthChanged += OnCurrentHealthChanged;
@@ -24,8 +20,8 @@ namespace Bebis {
             OnMaxHealthChanged(PlayerCharacter.Instance.Damageable.MaxHealth);
         }
 
-        private void SetupSkillsDisplay() {
-            _playerSkillsView.Initialize(UIInitData.Empty);
+        private void SetupSkillsDisplay(PlayerActionInfoProvider playerActionInfoProvider) {
+            _playerSkillsView.Initialize(playerActionInfoProvider);
         }
 
         public void SetHudEnabled(bool enabled) {
@@ -40,5 +36,27 @@ namespace Bebis {
         private void OnMaxHealthChanged(int newMaxHealth) {
             _healthTextDisplay.text = $"{PlayerCharacter.Instance.Damageable.Health} / {newMaxHealth}";
         }
+
+        public void Initialize(UIDisplayInitializationData initializationData) {
+            PlayerHudInitializationData playerHudInitData = initializationData as PlayerHudInitializationData;
+            if(playerHudInitData == null) {
+                return;
+            }
+            SetupHealthDisplay();
+            SetupSkillsDisplay(playerHudInitData.PlayerActionInfoProvider);
+        }
+
+        public void OnHide() {
+
+        }
+
+        public void Destroy() {
+
+        }
+    }
+
+    public class PlayerHudInitializationData : UIDisplayInitializationData
+    {
+        public PlayerActionInfoProvider PlayerActionInfoProvider;
     }
 }
