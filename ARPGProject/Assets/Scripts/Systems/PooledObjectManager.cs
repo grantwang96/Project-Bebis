@@ -116,6 +116,7 @@ namespace Winston
                 // clone required amount
                 for (int i = 0; i < count; i++) {
                     IPooledObject clonedPO = Base.Spawn();
+                    clonedPO.SetActive(false);
                     _availablePooledObjects.Add(clonedPO);
                 }
             }

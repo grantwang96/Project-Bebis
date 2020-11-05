@@ -219,7 +219,7 @@ namespace Bebis {
 
         // when an action is attempted
         private void OnActionAttempted(ICharacterActionData data, CharacterActionContext context) {
-            if(data == null) {
+            if (data == null) {
                 Debug.LogWarning($"[{name}]: Attempted action data was null!");
                 return;
             }
@@ -238,7 +238,7 @@ namespace Bebis {
                     response = data.Release(_playerCharacter, characterActionState, context);
                     break;
                 default:
-                    Debug.Log($"[{name}]: Invalid interaction {context}");
+                    Debug.LogError($"[{name}]: Invalid interaction {context}");
                     break;
             }
             // if we didn't successfully perform the action

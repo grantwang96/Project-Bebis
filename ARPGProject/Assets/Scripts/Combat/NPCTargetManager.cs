@@ -73,17 +73,10 @@ namespace Bebis {
             };
             _registeredHostiles.Add(character, newEntry);
             OnNewHostileRegistered?.Invoke(newEntry);
-            if(character == PlayerCharacter.Instance) {
-                RegisterPlayer();
-            }
             // if this entry has reached threshold level, set as current target
             if(newEntry.DetectionValue >= 1f && CurrentTarget == null) {
                 SetCurrentTarget(character);
             }
-        }
-
-        private void RegisterPlayer() {
-            PlayerTargetsUIManager.Instance.RegisterPlayer(_character);
         }
 
         // scans the surrounding area and updates list of aware hostiles

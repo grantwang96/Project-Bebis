@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Winston;
 
 namespace Bebis {
-    public class PlayerTargetsUIManager : MonoBehaviour {
+    public class PlayerTargetsUIManager : MonoBehaviour, IUIDisplay {
 
-        public static PlayerTargetsUIManager Instance { get; private set; }
+        private const string CharacterUIPrefabId = "CharacterUI";
 
-        [SerializeField] private CharacterUI _characterPrefab; // TODO: replace this with asset management system
         [SerializeField] private int _poolSize;
 
         [SerializeField] private Transform _characterUILayer;
@@ -17,16 +17,19 @@ namespace Bebis {
         private readonly List<CharacterUI> _characterUIs = new List<CharacterUI>();
         private readonly Dictionary<ICharacter, CharacterUI> _activeCharacterUIs = new Dictionary<ICharacter, CharacterUI>();
 
-        private void Awake() {
-            Instance = this;
-        }
-
-        // Start is called before the first frame update
-        private void Start() {
+        public void Initialize(UIDisplayInitializationData initializationData) {
             RegisterCharacterPrefabs();
 
             PlayerTargetManager.Instance.OnRegisterCharacter += OnCharacterRegistered;
             PlayerTargetManager.Instance.OnDeregisterCharacter += OnCharacterDeregistered;
+        }
+
+        public void OnHide() {
+            
+        }
+
+        public void Destroy() {
+            
         }
 
         // called by NPCs when they detect the player
@@ -38,11 +41,7 @@ namespace Bebis {
         }
 
         private void RegisterCharacterPrefabs() {
-            for(int i = 0; i < _poolSize; i++) {
-                CharacterUI ui = Instantiate(_characterPrefab, _characterUILayer);
-                ui.gameObject.SetActive(false);
-                _characterUIs.Add(ui);
-            }
+            ManagerMaster.PooledObjectManager.RegisterPooledObject(CharacterUIPrefabId, _poolSize);
         }
 
         private void OnCharacterRegistered(ICharacter character) {
@@ -89,5 +88,6 @@ namespace Bebis {
             // TODO: allow for some time before this UI object gets removed. For now insta-remove
             OnCharacterDeregistered(character);
         }
+
     }
 }

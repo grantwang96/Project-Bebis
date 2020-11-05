@@ -266,7 +266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _pooledObjectEntries:
-  - _prefabId: Player
+  - _prefabId: PlayerCharacter
     _go: {fileID: 5746905580517589543, guid: 3961fe5bd900b9c4f8fc61b975002fd5, type: 3}
   - _prefabId: TestNPC
     _go: {fileID: 2125737149717683482, guid: 2918cca06252cdf469130c16317b1ff0, type: 3}
@@ -382,26 +382,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7025171368256735693, guid: adf0a5b820fb5b448a1671c1e44e6542,
-        type: 3}
-      propertyPath: _pooledObjectsToSpawn.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7025171368256735693, guid: adf0a5b820fb5b448a1671c1e44e6542,
-        type: 3}
-      propertyPath: _pooledObjectsToSpawn.Array.data[0].Id
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 7025171368256735693, guid: adf0a5b820fb5b448a1671c1e44e6542,
-        type: 3}
-      propertyPath: _pooledObjectsToSpawn.Array.data[1].Id
-      value: TestNPC
-      objectReference: {fileID: 0}
-    - target: {fileID: 7025171368256735693, guid: adf0a5b820fb5b448a1671c1e44e6542,
-        type: 3}
-      propertyPath: _pooledObjectsToSpawn.Array.data[0].Count
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: adf0a5b820fb5b448a1671c1e44e6542, type: 3}

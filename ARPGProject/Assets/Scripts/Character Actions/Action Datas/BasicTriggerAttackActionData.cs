@@ -12,11 +12,19 @@ namespace Bebis {
         public CombatHitBoxData OnHitData => _onHitData;
         public IReadOnlyList<SubActionData> OnActionStartSubActions => _onActionStartSubActions;
 
+        public override CharacterActionResponse Hold(ICharacter character, ICharacterActionState foundActionState, CharacterActionContext context) {
+            return FailedActionResponse(character);
+        }
+
+        public override CharacterActionResponse Release(ICharacter character, ICharacterActionState foundActionState, CharacterActionContext context) {
+            return FailedActionResponse(character);
+        }
+
         private bool CanPerform(ICharacter character, ICharacterActionState state) {
             ICharacterActionState currentState = character.ActionController.CurrentState;
             return currentState == null ||
                 currentState.Status.HasFlag(ActionStatus.CanTransition) ||
-                currentState.Status.HasFlag(ActionStatus.Completed);
+                currentState.Status.HasFlag(ActionStatus.Completed); 
         }
 
         protected override bool CanPerformAction(ICharacter character, ICharacterActionState foundActionState) {

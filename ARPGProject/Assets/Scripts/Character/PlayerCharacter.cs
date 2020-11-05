@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 using Winston;
 
@@ -11,6 +12,8 @@ namespace Bebis {
         [SerializeField] protected HitboxController _hitboxController;
         [SerializeField] protected HurtboxController _hurtboxController;
         [SerializeField] protected PlayerController _playerController;
+
+        public string UniqueId { get; private set; }
 
         public abstract IDamageable Damageable { get; }
         public abstract IMoveController MoveController { get; }
@@ -43,7 +46,14 @@ namespace Bebis {
             Destroy(this.gameObject);
         }
 
-        private void Awake() {
+        public void Initialize(PooledObjectInitializationData initializationData) {
+            PlayerCharacterInitializationData initData = initializationData as PlayerCharacterInitializationData;
+            if(initData == null) {
+                return;
+            }
+            UniqueId = initData.UniqueId;
+            MoveController.Body.position = initData.SpawnLocation;
+            Instance = this;
             InitializeConfig();
             InitializeCharacterComponents();
         }
@@ -60,5 +70,10 @@ namespace Bebis {
         private void InitializeCharacterComponents() {
 
         }
+    }
+
+    public class PlayerCharacterInitializationData : CharacterInitializationData
+    {
+
     }
 }

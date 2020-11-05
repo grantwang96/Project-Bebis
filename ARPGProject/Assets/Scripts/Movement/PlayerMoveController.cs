@@ -37,6 +37,7 @@ namespace Bebis {
 
         private bool _overrideMovement;
         private bool _overrideRotation;
+        private bool _isLanding;
 
         private IMoveControllerInfoProvider _moveInfoProvider;
 
@@ -198,9 +199,11 @@ namespace Bebis {
                 MoveRestrictions.AddRestriction("Landing");
                 _currentVelocity = new Vector3(0f, _currentVelocity.y, 0f);
                 _move = Vector3.zero;
+                _isLanding = true;
                 OnLanding?.Invoke();
             } else if(state == LandEndId) {
                 MoveRestrictions.RemoveRestriction("Landing");
+                _isLanding = false;
             }
         }
 

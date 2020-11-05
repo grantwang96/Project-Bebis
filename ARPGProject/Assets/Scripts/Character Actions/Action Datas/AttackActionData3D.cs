@@ -11,8 +11,11 @@ namespace Bebis {
 
         protected override bool CanPerformAction(ICharacter character, ICharacterActionState foundActionState) {
             ICharacterActionState currentAction = character.ActionController.CurrentState;
-            bool canPerform = currentAction == null || currentAction.Status == ActionStatus.CanTransition ||
-                Priority > currentAction.Data.Priority;
+            bool canPerform = currentAction == null;
+            if(currentAction != null) {
+                canPerform |= currentAction.Status == ActionStatus.CanTransition;
+                canPerform |= Priority > currentAction.Data.Priority;
+            }
             return canPerform;
         }
 
@@ -43,7 +46,6 @@ namespace Bebis {
         private AttackActionData3D _data;
         private readonly Dictionary<string, CombatHitBoxData> _combatHitBoxData = new Dictionary<string, CombatHitBoxData>();
         private AnimationData _animationData;
-        // private IReadOnlyList<AttackData> AttackData => _data.AttackDatas;
 
         private HitEventInfo _hitEventInfo;
 

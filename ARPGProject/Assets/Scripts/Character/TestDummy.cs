@@ -15,6 +15,8 @@ namespace Bebis {
         [SerializeField] private NPCMoveInfoProvider _npcMoveInfoProvider;
         [SerializeField] private NPCActionInfoProvider _npcActionInfoProvider;
 
+        public string UniqueId { get; private set; }
+
         public IDamageable Damageable { get; private set; }
         public IMoveController MoveController { get; private set; }
         public IActionController ActionController { get; private set; }
@@ -37,6 +39,14 @@ namespace Bebis {
         public void Despawn() {
             gameObject.SetActive(false);
             Destroy(this.gameObject);
+        }
+        public void Initialize(PooledObjectInitializationData initializationData) {
+            NPCCharacterInitData initData = initializationData as NPCCharacterInitData;
+            if (initData == null) {
+                return;
+            }
+            UniqueId = initData.UniqueId;
+            MoveController.Body.position = initData.SpawnLocation;
         }
 
         private void Awake() {

@@ -16,9 +16,9 @@ namespace Winston {
         // set up the state
         protected override void Enter() {
             Debug.Log($"[{name}]: Entered game state {StateId}!");
-            base.Enter();
-            SpawnPooledObjects();
+            GeneratePooledObjects();
             CreateUIDisplays();
+            base.Enter();
         }
 
         protected override bool IsReadyToEnter() {
@@ -48,18 +48,13 @@ namespace Winston {
             Debug.Log($"[{name}]: Exited game state {StateId}!");
             base.Exit();
             RemoveUIDisplays();
-            DespawnPooledObjects();
+            RemovePooledObjects();
         }
 
-        private void SpawnPooledObjects() {
+        private void GeneratePooledObjects() {
             for(int i = 0; i < _pooledObjectsToSpawn.Count; i++) {
                 PooledObjectCountEntry entry = _pooledObjectsToSpawn[i];
                 ManagerMaster.PooledObjectManager.RegisterPooledObject(entry.Id, entry.Count);
-                for(int j = 0; j < entry.Count; j++) {
-                    IPooledObject pooledObject = ManagerMaster.PooledObjectManager.UsePooledObject(entry.Id);
-                    pooledObject.SetActive(true); // TEMP: this should be set false later on to allow external managers to properly initialize on a specific pooled object basis
-                    _spawnedPooledObjects.Add(pooledObject);
-                }
             }
         }
 
@@ -75,12 +70,11 @@ namespace Winston {
             }
         }
 
-        private void DespawnPooledObjects() {
+        private void RemovePooledObjects() {
             for(int i = 0; i < _pooledObjectsToSpawn.Count; i++) {
                 PooledObjectCountEntry entry = _pooledObjectsToSpawn[i];
                 ManagerMaster.PooledObjectManager.UnregisterPooledObject(entry.Id);
             }
-            _spawnedPooledObjects.Clear();
         }
 
         private void RemoveUIDisplays() {
