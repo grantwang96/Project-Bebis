@@ -23,5 +23,6 @@ namespace Bebis {
     {
         public string UniqueId;
         public Vector3 SpawnLocation;
+        public Quaternion SpawnRotation;
     }
 }

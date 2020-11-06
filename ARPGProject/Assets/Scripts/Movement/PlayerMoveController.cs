@@ -37,7 +37,6 @@ namespace Bebis {
 
         private bool _overrideMovement;
         private bool _overrideRotation;
-        private bool _isLanding;
 
         private IMoveControllerInfoProvider _moveInfoProvider;
 
@@ -134,8 +133,7 @@ namespace Bebis {
         }
 
         private bool CanMove() {
-            return !MoveRestrictions.Restricted && 
-                IsGrounded &&
+            return !MoveRestrictions.Restricted &&
                 !_overrideMovement;
         }
 
@@ -165,15 +163,28 @@ namespace Bebis {
 
         private void ProcessMovement() {
             // move the character controller
-            float speed = IsGrounded ? _moveSpeed : _airSpeed;
-            Vector3 moveVector = new Vector3();
+            Vector3 moveVector = CalculateMoveFromInput();
             // if the character can take move inputs
-            if (CanMove()) {
-                moveVector = Move * speed * MoveMagnitude;
-            }
             moveVector += _currentVelocity;
             _characterController.Move(moveVector * Time.deltaTime);
             _overrideMovement = false;
+        }
+
+        private Vector3 CalculateMoveFromInput() {
+            float speed = IsGrounded ? _moveSpeed : _airSpeed;
+            Vector3 moveVector = new Vector3();
+            if (CanMove()) {
+                Vector3 fullMove = Move * speed * MoveMagnitude;
+                if (IsGrounded) {
+                    moveVector = fullMove;
+                } else {
+                    Vector3 nextVelocity = _currentVelocity + (fullMove * Time.deltaTime);
+                    if (nextVelocity.magnitude <= _airSpeed) {
+                        _currentVelocity = nextVelocity;
+                    }
+                }
+            }
+            return moveVector;
         }
 
         private void ProcessRotation() {
@@ -195,20 +206,20 @@ namespace Bebis {
         
         // listen for animation updates when landing
         private void OnAnimationMessageSent(string state) {
-            if(state == LandStartId) {
+            if (state == LandStartId) {
                 MoveRestrictions.AddRestriction("Landing");
                 _currentVelocity = new Vector3(0f, _currentVelocity.y, 0f);
                 _move = Vector3.zero;
-                _isLanding = true;
                 OnLanding?.Invoke();
             } else if(state == LandEndId) {
                 MoveRestrictions.RemoveRestriction("Landing");
-                _isLanding = false;
             }
         }
 
         // upon entering hitstun
         private void OnDamageableHitStun(HitEventInfo hitEventInfo) {
+            MoveRestrictions.RemoveRestriction("TakeDamage");
+            MoveRestrictions.RemoveRestriction("TakeDamage");
             MoveRestrictions.AddRestriction("TakeDamage");
             LookRestrictions.AddRestriction("TakeDamage");
             _move = new Vector3(0f, _move.y, 0f);

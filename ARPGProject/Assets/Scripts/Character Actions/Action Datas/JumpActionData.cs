@@ -39,7 +39,7 @@ namespace Bebis {
         public override void Initiate() {
             base.Initiate();
             _character.MoveController.AddForce(CalculateDirection(_data, _character), true);
-            _character.MoveController.MoveRestrictions.AddRestriction(nameof(JumpActionState));
+            // _character.MoveController.MoveRestrictions.AddRestriction(nameof(JumpActionState));
             _character.MoveController.LookRestrictions.AddRestriction(nameof(JumpActionState));
             _character.AnimationController.UpdateAnimationState(_data.AnimationData);
             _character.AnimationController.OnAnimationStateUpdated += OnAnimationStateUpdated;
@@ -48,7 +48,7 @@ namespace Bebis {
 
         public override void Clear() {
             base.Clear();
-            _character.MoveController.MoveRestrictions.RemoveRestriction(nameof(JumpActionState));
+            // _character.MoveController.MoveRestrictions.RemoveRestriction(nameof(JumpActionState));
             _character.MoveController.LookRestrictions.RemoveRestriction(nameof(JumpActionState));
             _character.AnimationController.OnAnimationStateUpdated -= OnAnimationStateUpdated;
             _character.ActionController.OnCurrentActionUpdated -= OnCurrentActionUpdated;

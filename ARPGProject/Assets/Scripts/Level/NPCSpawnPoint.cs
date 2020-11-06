@@ -7,18 +7,20 @@ namespace Bebis
 {
     public class NPCSpawnPoint : MonoBehaviour
     {
-        [SerializeField] private string _npcPrefabId;
-        [SerializeField] private string _npcUniqueId;
-
         private void Awake() {
             ManagerMaster.LevelDataManager.RegisterNPCSpawnPoint(name, this);
         }
 
-        public void Spawn() {
+        public void Spawn(string npcPrefabId, string overrideUniqueId = "") {
             NPCCharacterInitData initData = new NPCCharacterInitData();
-            initData.UniqueId = _npcUniqueId;
+            if (!string.IsNullOrEmpty(overrideUniqueId)) {
+                initData.UniqueId = overrideUniqueId;
+            } else {
+                initData.UniqueId = NPCCharacter.GenerateUniqueId(npcPrefabId);
+            }
             initData.SpawnLocation = transform.position;
-            ManagerMaster.CharactersManager.SpawnCharacter(_npcPrefabId, initData);
+            initData.SpawnRotation = transform.rotation;
+            ManagerMaster.CharactersManager.SpawnCharacter(npcPrefabId, initData);
         }
     }
 }

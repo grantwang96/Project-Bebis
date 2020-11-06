@@ -31,9 +31,20 @@ namespace Bebis {
 
         public override void Initiate() {
             base.Initiate();
+            PerformDefend();
+        }
+
+        public override void Hold() {
+            base.Hold();
+            PerformDefend();
+        }
+
+        private void PerformDefend() {
             _character.AnimationController.UpdateAnimationState(_data.StartDefendingAnimationData);
-            _character.MoveController.OverrideMovement(Vector3.zero);
-            _character.MoveController.MoveRestrictions.AddRestriction(nameof(DefendActionState));
+            if (!_character.MoveController.MoveRestrictions.ContainsId(nameof(DefendActionState))) {
+                _character.MoveController.OverrideMovement(Vector3.zero);
+                _character.MoveController.MoveRestrictions.AddRestriction(nameof(DefendActionState));
+            }
         }
 
         public override void Release() {

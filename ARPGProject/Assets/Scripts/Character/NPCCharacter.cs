@@ -6,6 +6,8 @@ using Winston;
 namespace Bebis {
     public class NPCCharacter : MonoBehaviour, ICharacter {
 
+        public const int NpcIdLength = 10;
+
         [SerializeField] private NPCDamageable _damageable;
         [SerializeField] private NPCMoveController3D _moveController;
         [SerializeField] private NPCActionController _actionController;
@@ -55,6 +57,10 @@ namespace Bebis {
             }
             UniqueId = initData.UniqueId;
             MoveController.Body.position = initData.SpawnLocation;
+        }
+
+        public static string GenerateUniqueId(string prefix) {
+            return $"{prefix}_{StringGenerator.RandomString(NpcIdLength)}";
         }
 
         private void Awake() {
