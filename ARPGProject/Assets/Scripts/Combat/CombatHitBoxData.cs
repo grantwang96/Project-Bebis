@@ -27,4 +27,15 @@ namespace Bebis {
         public Hitbox Hitbox;
         public Hurtbox Hurtbox;
     }
+
+    public struct HitEventInfoV2
+    {
+        public int Power;
+        public Vector3 KnockBackDirection;
+        public float Force;
+        public bool OverrideForce;
+        public ICharacterV2 Attacker;
+        public HitboxV2 Hitbox;
+        public HurtboxV2 Hurtbox;
+    }
 }

@@ -47,6 +47,14 @@ namespace Bebis
             _currentMoveControllerState.ApplyForce(velocity, overrideForce);
         }
 
+        public void OverrideMovement(Vector3 movement) {
+        
+        }
+
+        public void OverrideRotation(Vector3 direction) {
+            _character.GameObject.transform.forward = direction;
+        }
+
         public void ChangeState(MoveControllerStateId stateId) {
             Vector3 previousExternalForces = _currentMoveControllerState.ExternalForces;
             switch (stateId) {

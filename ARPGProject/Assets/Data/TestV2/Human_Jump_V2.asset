@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: human_jump_v2
   _actionName: Jump
+  _tags: 2
   _cancelable: 0
   _priority: 100
   _bufferable: 0
+  _actionableContexts: 1
   _jumpForce: 8
   _jumpDirection: {x: 0, y: 1, z: 0}
   _animationData:

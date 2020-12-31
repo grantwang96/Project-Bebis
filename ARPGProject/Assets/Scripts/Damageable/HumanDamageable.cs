@@ -5,10 +5,10 @@ using System;
 
 namespace Bebis
 {
-    public class HumanDamageable : IDamageableV2
+    public class HumanDamageable : ICharacterDamageable
     {
-        public int Health { get; private set; }
-        public int MaxHealth { get; private set; }
+        public int Health { get; private set; } = 100;
+        public int MaxHealth { get; private set; } = 100;
         public bool IsDead { get; private set; } = false;
 
         private ICharacterV2 _character;
@@ -17,11 +17,26 @@ namespace Bebis
             _character = character;
         }
 
-        public void ReceiveHit(HitEventInfo hitEventInfo) {
+        public void ReceiveHit(HitEventInfoV2 hitEventInfo) {
+            if(hitEventInfo.Hurtbox == null) {
+                return;
+            }
+            switch (hitEventInfo.Hurtbox.HurtBoxState) {
+                case HurtBoxState.Normal:
+                    OnNormalHit(hitEventInfo);
+                    break;
+                default:
+                    break;
+            }
+            OnReceivedHit?.Invoke(hitEventInfo);
+        }
 
+        private void OnNormalHit(HitEventInfoV2 hitEventInfo) {
+            Health -= hitEventInfo.Power;
+            Debug.Log("Hit");
         }
 
         public event Action<int> OnHealthChanged;
-        public event Action<HitEventInfo> OnReceivedHit;
+        public event Action<HitEventInfoV2> OnReceivedHit;
     }
 }

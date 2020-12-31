@@ -54,7 +54,7 @@ namespace Bebis {
         }
 
         private void UnsubscribeToEvents() {
-            _playerActionInfoProvider.OnActionAttempted -= ActionAttempted;
+            // _playerActionInfoProvider.OnActionAttempted -= ActionAttempted;
         }
 
         private void CreatePlayerHud() {

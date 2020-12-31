@@ -12,7 +12,7 @@ namespace Bebis
         // unit controller reference
         IUnitController UnitController { get; }
         // damageable
-        IDamageableV2 Damageable { get; }
+        ICharacterDamageable Damageable { get; }
         // move controller
         IMoveControllerV2 MoveController { get; }
         // action controller
@@ -23,8 +23,10 @@ namespace Bebis
         HitboxControllerV2 HitboxController { get; }
         // hurtbox controller
         HurtboxControllerV2 HurtboxController { get; }
-        // player character
+        // character stats
+        ICharacterStatManager CharacterStatManager { get; }
         GameObject GameObject { get; }
+        Transform Center { get; }
     }
 
     public interface ICharacterComponent

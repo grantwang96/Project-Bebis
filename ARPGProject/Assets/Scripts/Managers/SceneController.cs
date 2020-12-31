@@ -65,11 +65,11 @@ public class SceneController : ISceneController {
         }
         SceneManager.LoadScene(sceneName);
         OnSceneLoaded?.Invoke(true);
-        Debug.Log($"[{nameof(SceneController)}]: Loaded scene {sceneName}!");
+        // Debug.Log($"[{nameof(SceneController)}]: Loaded scene {sceneName}!");
     }
 
     private void SceneLoaded(Scene scene, LoadSceneMode loadSceneMode) {
-        Debug.Log($"[{nameof(SceneController)}]: Loaded scene {scene.name}!");
+        // Debug.Log($"[{nameof(SceneController)}]: Loaded scene {scene.name}!");
         if(scene.name == _nextScene) {
             _isLoading = false;
             _currentSceneLoadProcess = null;

@@ -14,6 +14,8 @@ namespace Bebis
 
         void AddForce(Vector3 direction, float force, bool overrideForce = false);
         void AddForce(Vector3 force, bool overrideForce = false);
+        void OverrideMovement(Vector3 movement);
+        void OverrideRotation(Vector3 direction);
 
         event Action<bool> OnIsGroundedUpdated;
     }

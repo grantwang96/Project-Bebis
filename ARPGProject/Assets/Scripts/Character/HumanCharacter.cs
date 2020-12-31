@@ -9,7 +9,7 @@ namespace Bebis
         // unit controller reference
         public IUnitController UnitController { get; private set; }
         // damageable
-        public IDamageableV2 Damageable { get; private set; }
+        public ICharacterDamageable Damageable { get; private set; }
         // move controller
         public IMoveControllerV2 MoveController => _moveController;
         // action controller
@@ -20,13 +20,18 @@ namespace Bebis
         public HitboxControllerV2 HitboxController => _hitboxController;
         // hurtbox controller
         public HurtboxControllerV2 HurtboxController => _hurtboxController;
+        // character stat manager
+        public ICharacterStatManager CharacterStatManager => _characterStatManager;
         // Character GameObject
         public GameObject GameObject => gameObject;
+        public Transform Center => _center;
 
+        [SerializeField] private Transform _center;
         [SerializeField] private HumanMoveController _moveController;
         [SerializeField] private CharacterAnimationController _animationController;
         [SerializeField] private HitboxControllerV2 _hitboxController;
         [SerializeField] private HurtboxControllerV2 _hurtboxController;
+        [SerializeField] private NPCCharacterStatManager _characterStatManager;
 
         public void Spawn(IUnitController unitController) {
             UnitController = unitController;
@@ -41,6 +46,8 @@ namespace Bebis
             ActionController.Initialize(this);
             _animationController.Initialize(this);
             _moveController.Initialize(this);
+            _hitboxController.Initialize(this);
+            _hurtboxController.Initialize(this);
         }
     }
 }

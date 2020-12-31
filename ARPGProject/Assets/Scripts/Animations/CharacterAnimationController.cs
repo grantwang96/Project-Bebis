@@ -4,8 +4,7 @@ using UnityEngine;
 
 namespace Bebis
 {
-    public class CharacterAnimationController : GroundedCharacterAnimationController, ICharacterComponent
-    {
+    public class CharacterAnimationController : GroundedCharacterAnimationController, ICharacterComponent {
         private ICharacterV2 _character;
 
         public void Initialize(ICharacterV2 character) {
@@ -17,7 +16,7 @@ namespace Bebis
         }
 
         protected override void ProcessMove() {
-            if (!_enabled) {
+            if (!_enabled || _character == null) {
                 return;
             }
             float moveValue = _character.UnitController.MovementInput.magnitude;

@@ -7,7 +7,7 @@ namespace Bebis
 {
     public class HumanActionController : IActionControllerV2
     {
-        public ICharacterActionStateV2 CurrentState { get; }
+        public ICharacterActionStateV2 CurrentState { get; private set; }
 
         public event Action<ICharacterActionStateV2> OnCurrentStateUpdated;
         public event Action<ICharacterActionStateV2> OnActionStateUpdated;
@@ -25,7 +25,9 @@ namespace Bebis
         }
 
         private void OnActionAttempted(ICharacterActionDataV2 data, CharacterActionContext context) {
+            // check if the requisite action state already exists
             bool hasAction = _actionStates.TryGetValue(data.Id, out ICharacterActionStateV2 actionState);
+            // attempt to perform the action
             CharacterActionResponseV2 response = new CharacterActionResponseV2();
             switch(context) {
                 case CharacterActionContext.Initiate:
@@ -40,20 +42,30 @@ namespace Bebis
                 default:
                     break;
             }
+            // if the action is denied, return and do nothing
             if (!response.Success) {
                 return;
             }
+            // if this is a new action state, register it
             if (!hasAction) {
                 _actionStates.Add(data.Id, response.State);
                 response.State.OnActionStatusUpdated += OnActionStatusUpdated;
             }
+            // update the current action state and notify all listeners
+            CurrentState = response.State;
+            OnCurrentStateUpdated?.Invoke(response.State);
         }
 
         private void OnActionStatusUpdated(ICharacterActionStateV2 state, ActionStatus status) {
-            if(status == ActionStatus.Completed) {
+            OnActionStateUpdated?.Invoke(state);
+            if (status == ActionStatus.Completed) {
                 state.OnActionStatusUpdated -= OnActionStatusUpdated;
                 state.Clear();
                 _actionStates.Remove(state.Data.Id);
+                if(state == CurrentState) {
+                    CurrentState = null;
+                    OnCurrentStateUpdated?.Invoke(CurrentState);
+                }
             }
         }
     }

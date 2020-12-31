@@ -34,8 +34,7 @@ namespace Bebis {
         public string ButtonNorthAction => GetSecondaryAttack();
         public string ButtonWestAction => GetNextNormalAttack();
 
-        private readonly List<string> _groundedNormalAttacks = new List<string>();
-        private int _currentGroundedNormalAttackIndex = 0;
+        private string _groundedNormalAttackId;
         private string _normalAerialAttack;
         private string _secondaryAttack;
         private string _secondaryAerialAttack;
@@ -46,19 +45,26 @@ namespace Bebis {
         }
 
         public void Update(IPlayerSkillsLoadoutV2 loadout, ICharacterV2 playerCharacter) {
+            if(_playerCharacter != null) {
+                _playerCharacter.ActionController.OnActionStateUpdated -= OnActionStateUpdated;
+                _playerCharacter.ActionController.OnCurrentStateUpdated -= OnCurrentStateUpdated;
+            }
             _playerCharacter = playerCharacter;
             _playerCharacter.ActionController.OnActionStateUpdated += OnActionStateUpdated;
-            _currentGroundedNormalAttackIndex = 0;
+            _playerCharacter.ActionController.OnCurrentStateUpdated += OnCurrentStateUpdated;
             ButtonSouthAction = loadout.NormalBtn1Skill?.Id;
             ButtonEastAction = loadout.NormalBtn4Skill?.Id;
             _secondaryAttack = loadout.SecondaryAttackSkill?.Id;
+            _secondaryAerialAttack = loadout.SecondaryAerialAttackSkill?.Id;
+            _groundedNormalAttackId = loadout.NormalAttackSkill?.Id;
+            _normalAerialAttack = loadout.NormalAerialAttackSkill?.Id;
         }
 
         private string GetNextNormalAttack() {
-            if(_currentGroundedNormalAttackIndex > _groundedNormalAttacks.Count) {
-                return "";
+            if (!_playerCharacter.MoveController.IsGrounded) {
+                return _normalAerialAttack;
             }
-            return _groundedNormalAttacks[_currentGroundedNormalAttackIndex];
+            return _groundedNormalAttackId;
         }
 
         private string GetSecondaryAttack() {
@@ -66,17 +72,11 @@ namespace Bebis {
         }
 
         private void OnActionStateUpdated(ICharacterActionStateV2 actionState) {
-            if (actionState.Data.Id.Equals(_groundedNormalAttacks[_currentGroundedNormalAttackIndex])) {
-                if (actionState.Status == ActionStatus.Completed) {
-                    _currentGroundedNormalAttackIndex = 0;
-                }
-                if (actionState.Status == ActionStatus.Started) {
-                    _currentGroundedNormalAttackIndex++;
-                    if (_currentGroundedNormalAttackIndex >= _groundedNormalAttacks.Count) {
-                        _currentGroundedNormalAttackIndex = 0;
-                    }
-                }
-            }
+
+        }
+
+        private void OnCurrentStateUpdated(ICharacterActionStateV2 actionState) {
+
         }
     }
 

@@ -5,12 +5,12 @@ using System;
 
 namespace Bebis {
 
+    [System.Flags]
     public enum CharacterActionContext {
-        Invalid,
-        Initiate,
-        Hold,
-        Release,
-        Cancel
+        Initiate = 1 << 0,
+        Hold = 1 << 1,
+        Release = 1 << 2,
+        Cancel = 1 << 3
     }
 
     [System.Flags]

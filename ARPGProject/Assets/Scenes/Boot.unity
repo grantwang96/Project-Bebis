@@ -304,6 +304,41 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 4d2b786ed7e8f9445acafd62aa26ac51,
         type: 2}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._normalAttackSkill
+      value: 
+      objectReference: {fileID: 11400000, guid: 41e6c95011dbb8242b1ac68e5cfdef52,
+        type: 2}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._normalAttackSkills.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._normalAttackSkills.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 39e205bb63fb01b47bce163b77ddb43c,
+        type: 2}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._normalAttackSkills.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 4226d8b6ccb823740b536259f5b1d1a3,
+        type: 2}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._normalAttackSkills.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 783aeacade5c32743b494d5c2b01831d,
+        type: 2}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._normalAttackSkills.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: 746f4b14b06c534458fce7e224e54a6e,
+        type: 2}
     - target: {fileID: 9086396307050588732, guid: 5fc76decdffb28a46849999e931671d1,
         type: 3}
       propertyPath: m_Name

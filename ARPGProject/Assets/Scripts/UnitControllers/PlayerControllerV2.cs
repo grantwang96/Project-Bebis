@@ -74,9 +74,10 @@ namespace Bebis
         private void OnPlayerSkillsLoadoutV2Set(IPlayerSkillsLoadoutV2 loadout) {
             _playerActionInfoProvider.UpdateLoadout(loadout);
             _registeredActions.Clear();
+            TryAddLoadoutAction(loadout.NormalAttackSkill);
+            TryAddLoadoutAction(loadout.NormalAerialAttackSkill);
             TryAddLoadoutAction(loadout.NormalBtn1Skill);
             TryAddLoadoutAction(loadout.NormalBtn4Skill);
-            TryAddLoadoutAction(loadout.NormalAerialAttackSkill);
             TryAddLoadoutAction(loadout.SecondaryAttackSkill);
             TryAddLoadoutAction(loadout.SecondaryAerialAttackSkill);
             TryAddLoadoutAction(loadout.RightTriggerSkill);
@@ -89,9 +90,7 @@ namespace Bebis
             TryAddLoadoutAction(loadout.SkillSet2Btn2Skill);
             TryAddLoadoutAction(loadout.SkillSet2Btn3Skill);
             TryAddLoadoutAction(loadout.SkillSet2Btn4Skill);
-            for(int i = 0; i < loadout.NormalAttackSkills.Count; i++) {
-                TryAddLoadoutAction(loadout.NormalAttackSkills[i]);
-            }
+            OnRegisteredCharacterActionsUpdated?.Invoke();
         }
 
         private void TryAddLoadoutAction(ICharacterActionDataV2 data) {

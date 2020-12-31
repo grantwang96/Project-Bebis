@@ -7,10 +7,9 @@ namespace Bebis
     [CreateAssetMenu(menuName = "Character Actions V2/Jump")]
     public class JumpActionDataV2 : CharacterActionDataV2
     {
-
         [SerializeField] private float _jumpForce;
         [SerializeField] private Vector3 _jumpDirection;
-        [SerializeField] private AnimationData _animationData;
+        [SerializeField] private AnimationData _animationData; 
 
         public float JumpForce => _jumpForce;
         public Vector3 JumpDirection => _jumpDirection;
@@ -21,12 +20,18 @@ namespace Bebis
                 (state == null || state.Data.Priority < Priority);
         }
 
-        protected override bool CanPerformAction(ICharacterV2 character, ICharacterActionStateV2 foundActionState) {
-            return CanJump(character, character.ActionController.CurrentState);
+        protected override bool CanPerformAction(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
+            bool canPerform = base.CanPerformAction(character, foundActionState, context);
+            return canPerform && CanJump(character, character.ActionController.CurrentState);
         }
 
         protected override ICharacterActionStateV2 CreateActionState(ICharacterV2 character) {
             return new JumpActionStateV2(this, character);
+        }
+
+        protected override ICharacterActionStateV2 HandleActionSuccess(ICharacterV2 character, ICharacterActionStateV2 foundActionState) {
+            foundActionState?.Clear();
+            return CreateActionState(character);
         }
     }
 

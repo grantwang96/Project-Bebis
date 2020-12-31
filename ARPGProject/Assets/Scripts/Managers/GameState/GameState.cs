@@ -15,7 +15,7 @@ namespace Winston {
 
         // set up the state
         protected override void Enter() {
-            Debug.Log($"[{name}]: Entered game state {StateId}!");
+            // Debug.Log($"[{name}]: Entered game state {StateId}!");
             GeneratePooledObjects();
             CreateUIDisplays();
             base.Enter();
@@ -25,7 +25,7 @@ namespace Winston {
             bool readyToEnter = base.IsReadyToEnter();
             // if we require a scene change, load the scene first and wait until it is finished
             if (readyToEnter && !string.IsNullOrEmpty(_sceneName)) {
-                Debug.Log("Load scene: " + _sceneName);
+                // Debug.Log($"[{name}]: Load scene: {_sceneName}");
                 ManagerMaster.SceneController.OnSceneLoaded += OnSceneLoaded;
                 ManagerMaster.SceneController.LoadScene(_sceneName);
                 return false;
@@ -45,7 +45,7 @@ namespace Winston {
         }
 
         protected override void Exit() {
-            Debug.Log($"[{name}]: Exited game state {StateId}!");
+            // Debug.Log($"[{name}]: Exited game state {StateId}!");
             base.Exit();
             RemoveUIDisplays();
             RemovePooledObjects();

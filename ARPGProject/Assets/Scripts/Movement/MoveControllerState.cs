@@ -62,9 +62,10 @@ namespace Bebis
         }
 
         private void ProcessRotation() {
-            if (!_moveController.LookRestrictions.Restricted) {
+            if (!_moveController.LookRestrictions.Restricted && _character.UnitController.RotationInput.magnitude > 0f) {
                 Transform transform = _characterController.transform;
-                transform.forward = Vector3.RotateTowards(transform.forward, _character.UnitController.RotationInput, _moveController.Data.TurnSpeed * Time.deltaTime, 0f);
+                transform.forward = Vector3.RotateTowards(
+                    transform.forward, _character.UnitController.RotationInput, _moveController.Data.TurnSpeed * Time.deltaTime, 0f);
             }
         }
     }
@@ -82,7 +83,7 @@ namespace Bebis
                 _externalForces.x = 0f;
                 _externalForces.z = 0f;
             }
-            Debug.Log($"Entered {nameof(GroundedMoveControllerState)}");
+            // Debug.Log($"Entered {nameof(GroundedMoveControllerState)}");
         }
 
         public override void Execute() {
@@ -112,7 +113,7 @@ namespace Bebis
 
         public override void Enter(Vector3 externalForces) {
             base.Enter(externalForces);
-            Debug.Log($"Entered {nameof(AerialMoveContollerState)}");
+            // Debug.Log($"Entered {nameof(AerialMoveContollerState)}");
         }
 
         public override void Execute() {
