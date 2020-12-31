@@ -45,8 +45,9 @@ namespace Bebis {
         }
 
         protected void Start() {
-            _equipmentManager.OnEquipmentUpdated += OnEquipmentUpdated;
-
+            if(_equipmentManager != null) {
+                _equipmentManager.OnEquipmentUpdated += OnEquipmentUpdated;
+            }
             SetupOverrideController();
         }
 

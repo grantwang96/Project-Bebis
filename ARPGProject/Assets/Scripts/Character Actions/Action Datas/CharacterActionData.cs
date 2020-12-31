@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Resources;
-using TMPro;
 
 namespace Bebis {
 

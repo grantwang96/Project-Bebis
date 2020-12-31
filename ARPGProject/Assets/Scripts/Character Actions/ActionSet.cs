@@ -17,6 +17,99 @@ namespace Bebis {
         void Override(IPlayerSkillsLoadout skillsLoadout);
     }
 
+    public interface IPlayerActionSet
+    {
+        string ButtonSouthAction { get; }
+        string ButtonEastAction { get; }
+        string ButtonNorthAction { get; }
+        string ButtonWestAction { get; }
+
+        void Update(IPlayerSkillsLoadoutV2 loadout, ICharacterV2 playerCharacter);
+    }
+
+    public class PlayerNormalActionSet : IPlayerActionSet
+    {
+        public string ButtonSouthAction { get; private set; }
+        public string ButtonEastAction { get; private set; }
+        public string ButtonNorthAction => GetSecondaryAttack();
+        public string ButtonWestAction => GetNextNormalAttack();
+
+        private readonly List<string> _groundedNormalAttacks = new List<string>();
+        private int _currentGroundedNormalAttackIndex = 0;
+        private string _normalAerialAttack;
+        private string _secondaryAttack;
+        private string _secondaryAerialAttack;
+        private ICharacterV2 _playerCharacter;
+
+        public PlayerNormalActionSet(IPlayerSkillsLoadoutV2 loadout, ICharacterV2 playerCharacter) {
+            Update(loadout, playerCharacter);
+        }
+
+        public void Update(IPlayerSkillsLoadoutV2 loadout, ICharacterV2 playerCharacter) {
+            _playerCharacter = playerCharacter;
+            _playerCharacter.ActionController.OnActionStateUpdated += OnActionStateUpdated;
+            _currentGroundedNormalAttackIndex = 0;
+            ButtonSouthAction = loadout.NormalBtn1Skill?.Id;
+            ButtonEastAction = loadout.NormalBtn4Skill?.Id;
+            _secondaryAttack = loadout.SecondaryAttackSkill?.Id;
+        }
+
+        private string GetNextNormalAttack() {
+            if(_currentGroundedNormalAttackIndex > _groundedNormalAttacks.Count) {
+                return "";
+            }
+            return _groundedNormalAttacks[_currentGroundedNormalAttackIndex];
+        }
+
+        private string GetSecondaryAttack() {
+            return _secondaryAttack;
+        }
+
+        private void OnActionStateUpdated(ICharacterActionStateV2 actionState) {
+            if (actionState.Data.Id.Equals(_groundedNormalAttacks[_currentGroundedNormalAttackIndex])) {
+                if (actionState.Status == ActionStatus.Completed) {
+                    _currentGroundedNormalAttackIndex = 0;
+                }
+                if (actionState.Status == ActionStatus.Started) {
+                    _currentGroundedNormalAttackIndex++;
+                    if (_currentGroundedNormalAttackIndex >= _groundedNormalAttacks.Count) {
+                        _currentGroundedNormalAttackIndex = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    public class PlayerSkillsActionSetV2 : IPlayerActionSet
+    {
+        public string ButtonSouthAction { get; private set; }
+        public string ButtonEastAction { get; private set; }
+        public string ButtonNorthAction { get; private set; }
+        public string ButtonWestAction { get; private set; }
+
+        private ICharacterV2 _playerCharacter;
+        private bool _skillSet1;
+
+        public PlayerSkillsActionSetV2(IPlayerSkillsLoadoutV2 loadout, ICharacterV2 playerCharacter, bool skillSet1) {
+            _skillSet1 = skillSet1;
+            Update(loadout, playerCharacter);
+        }
+
+        public void Update(IPlayerSkillsLoadoutV2 loadout, ICharacterV2 playerCharacter) {
+            if (_skillSet1) {
+                ButtonSouthAction = loadout.SkillSet1Btn1Skill?.Id;
+                ButtonEastAction = loadout.SkillSet1Btn4Skill?.Id;
+                ButtonNorthAction = loadout.SkillSet1Btn3Skill?.Id;
+                ButtonWestAction = loadout.SkillSet1Btn2Skill?.Id;
+            } else {
+                ButtonSouthAction = loadout.SkillSet2Btn1Skill?.Id;
+                ButtonEastAction = loadout.SkillSet2Btn4Skill?.Id;
+                ButtonNorthAction = loadout.SkillSet2Btn3Skill?.Id;
+                ButtonWestAction = loadout.SkillSet2Btn2Skill?.Id;
+            }
+        }
+    }
+
     public class PlayerNormalGameplayActionSet : IPlayerGameplayActionSet {
 
         private PlayerCharacter _player;

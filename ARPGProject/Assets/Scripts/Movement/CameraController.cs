@@ -42,7 +42,8 @@ namespace Bebis {
         }
 
         private void FollowCharacter() {
-            _cameraPivotX.position = _playerCharacter.MoveController.Body.position;
+            // _cameraPivotX.position = _playerCharacter.MoveController.Body.position;
+            _cameraPivotX.position = PlayerControllerV2.Instance.PlayerTransform.position;
         }
 
         private void HandleLookInput(Vector2 lookInput) {
