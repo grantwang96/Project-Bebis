@@ -52,7 +52,7 @@ namespace Bebis
             _movementInput *= _movementInputSpeed;
         }
 
-        private void ProcessMovement() {
+        protected virtual void ProcessMovement() {
             Vector3 totalVelocity = _externalForces;
             if (!_moveController.MovementRestrictions.Restricted) {
                 // TODO: handle movement input when aerial vs. grounded
@@ -61,7 +61,7 @@ namespace Bebis
             _characterController.Move(totalVelocity * Time.deltaTime);
         }
 
-        private void ProcessRotation() {
+        protected virtual void ProcessRotation() {
             if (!_moveController.LookRestrictions.Restricted && _character.UnitController.RotationInput.magnitude > 0f) {
                 Transform transform = _characterController.transform;
                 transform.forward = Vector3.RotateTowards(
@@ -137,13 +137,15 @@ namespace Bebis
             base.ReadMoveInput();
             Vector3 horizontalForces = new Vector3(_externalForces.x, 0f, _externalForces.z);
             Vector3 previewedVelocity = horizontalForces + _movementInput;
-            float externalForcesMagnitude = horizontalForces.magnitude;
             float previewedMagnitude = previewedVelocity.magnitude;
-            bool canAddMoveInput = previewedMagnitude > _moveController.Data.MaxAirSpeed;
-            canAddMoveInput &= previewedMagnitude < externalForcesMagnitude;
+            bool canAddMoveInput = previewedMagnitude <= _moveController.Data.MaxAirSpeed;
             if (!canAddMoveInput) {
                 _movementInput = Vector3.zero;
             }
+        }
+
+        protected override void ProcessRotation() {
+            // disallow rotation inputs while in the air (actions can override character rotation, however)
         }
     }
 }

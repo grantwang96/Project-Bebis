@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82277ee83f2c37049ae9fdc3ef9f8cf4, type: 3}
+  m_Name: Human_Unarmed_Defend
+  m_EditorClassIdentifier: 
+  _id: human_unarmed_defend
+  _actionName: 
+  _tags: 4
+  _allowedTransitionMoves: 506
+  _cancelable: 0
+  _priority: 0
+  _bufferable: 0
+  _actionableContexts: 7
+  _startDefendingAnimationData:
+    _animationName: 
+    _triggers: []
+    _resetTriggers: []
+    _intValues: []
+    _floatValues: []
+    _boolValues:
+    - Key: Defending
+      Value: 1
+  _onReleaseAnimationData:
+    _animationName: 
+    _triggers: []
+    _resetTriggers: []
+    _intValues: []
+    _floatValues: []
+    _boolValues:
+    - Key: Defending
+      Value: 0

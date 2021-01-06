@@ -16,13 +16,11 @@ namespace Bebis
         public AnimationData AnimationData => _animationData;
 
         private bool CanJump(ICharacterV2 character, ICharacterActionStateV2 state) {
-            return character.MoveController.IsGrounded &&
-                (state == null || state.Data.Priority < Priority);
+            return character.MoveController.IsGrounded;
         }
 
         protected override bool CanPerformAction(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
-            bool canPerform = base.CanPerformAction(character, foundActionState, context);
-            return canPerform && CanJump(character, character.ActionController.CurrentState);
+            return base.CanPerformAction(character, foundActionState, context) && CanJump(character, character.ActionController.CurrentState);
         }
 
         protected override ICharacterActionStateV2 CreateActionState(ICharacterV2 character) {
@@ -45,19 +43,19 @@ namespace Bebis
 
         public override void Initiate() {
             base.Initiate();
-            _character.MoveController.AddForce(CalculateDirection(_data, _character), true);
             // _character.MoveController.MoveRestrictions.AddRestriction(nameof(JumpActionState));
-            _character.MoveController.LookRestrictions.AddRestriction(nameof(JumpActionStateV2));
+            _character.MoveController.LookRestrictions.AddRestriction(_data.Id);
             _character.AnimationController.UpdateAnimationState(_data.AnimationData);
             _character.AnimationController.OnAnimationStateUpdated += OnAnimationStateUpdated;
             _character.ActionController.OnCurrentStateUpdated += OnCurrentStateUpdated;
             _character.MoveController.OnIsGroundedUpdated += OnCharacterHitGround;
+            _character.MoveController.AddForce(CalculateDirection(_data, _character), true);
         }
 
         public override void Clear() {
             base.Clear();
             // _character.MoveController.MoveRestrictions.RemoveRestriction(nameof(JumpActionState));
-            _character.MoveController.LookRestrictions.RemoveRestriction(nameof(JumpActionStateV2));
+            _character.MoveController.LookRestrictions.RemoveRestriction(_data.Id);
             _character.AnimationController.OnAnimationStateUpdated -= OnAnimationStateUpdated;
             _character.ActionController.OnCurrentStateUpdated -= OnCurrentStateUpdated;
             _character.MoveController.OnIsGroundedUpdated -= OnCharacterHitGround;

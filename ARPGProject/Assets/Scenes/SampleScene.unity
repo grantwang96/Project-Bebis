@@ -222,6 +222,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: prefab.HumanCharacterV2
       objectReference: {fileID: 0}
+    - target: {fileID: 8625317080732732864, guid: be24659963a1aeb4b96834d8770215a5,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be24659963a1aeb4b96834d8770215a5, type: 3}
 --- !u!114 &98338281 stripped
@@ -376,7 +381,7 @@ MonoBehaviour:
     _skillSet2Btn4Skill: {fileID: 0}
   _hackPlayerSkillsLoadoutsV2:
     _normalBtn1Skill: {fileID: 0}
-    _normalAttackSkills: []
+    _normalAttackSkill: {fileID: 0}
     _normalAerialAttackSkill: {fileID: 0}
     _secondaryAttackSkill: {fileID: 0}
     _secondaryAerialAttackSkill: {fileID: 0}
@@ -1978,7 +1983,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: ae6b58834915fff458d568ac0da5483c,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -893573880736502080, guid: ae6b58834915fff458d568ac0da5483c,
         type: 3}

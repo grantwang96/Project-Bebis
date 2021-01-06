@@ -8,28 +8,14 @@ namespace Bebis
     public class AttackActionDataV2 : CharacterActionDataV2
     {
         [SerializeField] private AttackData _attackData;
-        [SerializeField] private CharacterActionTag _allowedTransitionMoves;
         public AttackData AttackData => _attackData;
 
         protected override ICharacterActionStateV2 CreateActionState(ICharacterV2 character) {
             return new AttackActionStateV2(this, character);
         }
 
-        protected override bool CanPerformAction(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
-            ICharacterActionStateV2 currentAction = character.ActionController.CurrentState;
-            bool canPerform = base.CanPerformAction(character, foundActionState, context);
-            if (currentAction != null) {
-                canPerform &= currentAction.Status.HasFlag(ActionStatus.CanTransition) || Priority >= currentAction.Data.Priority;
-                canPerform &= (_allowedTransitionMoves & currentAction.Data.Tags) != 0;
-            }
-            return canPerform;
-        }
-
         protected override ICharacterActionStateV2 HandleActionSuccess(ICharacterV2 character, ICharacterActionStateV2 foundActionState) {
-            if(foundActionState != null && foundActionState.Data == this) {
-                return foundActionState;
-            }
-            foundActionState?.Clear();
+            foundActionState?.Interrupt();
             return CreateActionState(character);
         }
     }
@@ -39,25 +25,36 @@ namespace Bebis
         private AttackActionDataV2 _data;
         private readonly Dictionary<string, CombatHitBoxData> _combatHitBoxData = new Dictionary<string, CombatHitBoxData>();
         private AnimationData _animationData;
-
+        private readonly List<IDamageableV2> _hitDamageables = new List<IDamageableV2>();
         private HitEventInfoV2 _hitEventInfo;
 
         public AttackActionStateV2(AttackActionDataV2 data, ICharacterV2 character) : base(data, character) {
             // initialize data
             _data = data;
-            Status = ActionStatus.Started;
+            // add listeners
+            _character.MoveController.OnIsGroundedUpdated += OnIsGroundedUpdated;
+            _character.AnimationController.OnAnimationStateUpdated += OnAnimationStateUpdated;
+            _character.ActionController.OnCurrentStateUpdated += OnCurrentActionUpdated;
+            // add movement restrictions
+            _character.MoveController.MovementRestrictions.AddRestriction(_data.Id);
+            _character.MoveController.LookRestrictions.AddRestriction(_data.Id);
         }
+
         public override void Initiate() {
             base.Initiate();
             PerformAttack(_data.AttackData);
+            UpdateActionStatus(ActionStatus.Started);
         }
 
         public override void Clear() {
             base.Clear();
+            // remove listeners
             _character.AnimationController.OnAnimationStateUpdated -= OnAnimationStateUpdated;
             _character.ActionController.OnCurrentStateUpdated -= OnCurrentActionUpdated;
-            _character.MoveController.MovementRestrictions.RemoveRestriction(nameof(AttackActionStateV2));
-            _character.MoveController.LookRestrictions.RemoveRestriction(nameof(AttackActionStateV2));
+            _character.MoveController.OnIsGroundedUpdated -= OnIsGroundedUpdated;
+            // remove movement restrictions
+            _character.MoveController.MovementRestrictions.RemoveRestriction(_data.Id);
+            _character.MoveController.LookRestrictions.RemoveRestriction(_data.Id);
         }
 
         private void PerformAttack(AttackData attackData) {
@@ -66,19 +63,13 @@ namespace Bebis
             SetHitboxInfos(attackData.HitboxDatas);
 
             // correct the character's intended attack direction
-            Vector3 intendedLook = _character.GameObject.transform.forward;
+            Vector3 intendedLook = _character.UnitController.RotationInput;
             if (intendedLook.magnitude > 0f) {
                 _character.MoveController.OverrideRotation(intendedLook);
             }
             PerformActionStartSubActions(attackData.OnActionStartSubActionsV2);
-
-            // add movement restrictions
-            _character.MoveController.MovementRestrictions.AddRestriction(nameof(AttackActionStateV2));
-            _character.MoveController.LookRestrictions.AddRestriction(nameof(AttackActionStateV2));
             // update animations
             _character.AnimationController.UpdateAnimationState(_animationData);
-            _character.AnimationController.OnAnimationStateUpdated += OnAnimationStateUpdated;
-            _character.ActionController.OnCurrentStateUpdated += OnCurrentActionUpdated;
         }
 
         // update the hitboxes on the weapon
@@ -107,6 +98,7 @@ namespace Bebis
                 CustomLogger.Warn(nameof(AttackActionData3D), $"Could not retrieve hitbox data for hitbox {hitBox.name}");
                 return;
             }
+            SetHitEventInfo(hitBoxData);
             // create and set the hit event info
             // find out what type of thing we hit
             HurtboxV2 hurtBox = collider.GetComponent<HurtboxV2>();
@@ -126,7 +118,6 @@ namespace Bebis
             if (hurtBox.Character == _character) {
                 return;
             }
-            SetHitEventInfo(hitBoxData);
             hurtBox.SendHitEvent(_character, hitBox, OnCharacterHit);
         }
 
@@ -153,13 +144,18 @@ namespace Bebis
 
         // upon hitting a damageable object
         private void OnDamageableHit(IDamageableV2 damageable) {
+            if (_hitDamageables.Contains(damageable)) {
+                return;
+            }
             damageable.ReceiveHit(_hitEventInfo);
+            _hitDamageables.Add(damageable);
         }
 
         private void OnCurrentActionUpdated(ICharacterActionStateV2 state) {
             // mark this completed if another action has taken over
             if (_character.ActionController.CurrentState != this) {
                 UpdateActionStatus(ActionStatus.Completed);
+                Clear();
             }
         }
 
@@ -182,6 +178,12 @@ namespace Bebis
 
         private void OnActionInProgress() {
             // reset the attack state (this is a multi-hit)
+            _hitDamageables.Clear();
+        }
+
+        private void OnIsGroundedUpdated(bool isGrounded) {
+            // if the character's grounded state changes, cancel this attack action
+            UpdateActionStatus(ActionStatus.Completed);
         }
 
         // calculate total damage

@@ -8,26 +8,17 @@ namespace Bebis
     public class NormalAttackActionData : CharacterActionDataV2
     {
         [SerializeField] private List<AttackData> _attackData = new List<AttackData>();
-        [SerializeField] private CharacterActionTag _allowedTransitionMoves;
         public IReadOnlyList<AttackData> AttackDatas => _attackData;
-        public CharacterActionTag AllowedTransitionMoves => _allowedTransitionMoves;
 
         protected override ICharacterActionStateV2 CreateActionState(ICharacterV2 character) {
             return new NormalAttackActionState(this, character);
-        }
-
-        protected override bool CanPerformAction(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
-            ICharacterActionStateV2 currentAction = character.ActionController.CurrentState;
-            bool canPerform = currentAction?.CanInterrupt(context, this) ?? true;
-            canPerform &= foundActionState?.CanPerform(context, this) ?? true;
-            return canPerform;
         }
 
         protected override ICharacterActionStateV2 HandleActionSuccess(ICharacterV2 character, ICharacterActionStateV2 foundActionState) {
             if (foundActionState != null && foundActionState.Data == this) {
                 return foundActionState;
             }
-            foundActionState?.Clear();
+            foundActionState?.Interrupt();
             return CreateActionState(character);
         }
     }
@@ -45,21 +36,10 @@ namespace Bebis
             _data = data;
             Status = ActionStatus.Started;
             // add movement restrictions
-            _character.MoveController.MovementRestrictions.AddRestriction(nameof(AttackActionStateV2));
-            _character.MoveController.LookRestrictions.AddRestriction(nameof(AttackActionStateV2));
+            _character.MoveController.MovementRestrictions.AddRestriction(_data.Id);
+            _character.MoveController.LookRestrictions.AddRestriction(_data.Id);
             _character.AnimationController.OnAnimationStateUpdated += OnAnimationStateUpdated;
             _character.ActionController.OnCurrentStateUpdated += OnCurrentActionUpdated;
-        }
-
-        public override bool CanInterrupt(CharacterActionContext context, ICharacterActionDataV2 data) {
-            bool canInterrupt = (_data.AllowedTransitionMoves & data.Tags) != 0;
-            return canInterrupt;
-        }
-
-        public override bool CanPerform(CharacterActionContext context, ICharacterActionDataV2 data) {
-            bool canPerform = Status == ActionStatus.CanTransition;
-            canPerform &= (_data.ActionableContexts & context) != 0;
-            return canPerform;
         }
 
         public override void Initiate() {
@@ -74,8 +54,8 @@ namespace Bebis
             base.Clear();
             _character.AnimationController.OnAnimationStateUpdated -= OnAnimationStateUpdated;
             _character.ActionController.OnCurrentStateUpdated -= OnCurrentActionUpdated;
-            _character.MoveController.MovementRestrictions.RemoveRestriction(nameof(AttackActionStateV2));
-            _character.MoveController.LookRestrictions.RemoveRestriction(nameof(AttackActionStateV2));
+            _character.MoveController.MovementRestrictions.RemoveRestrictionAll(_data.Id);
+            _character.MoveController.LookRestrictions.RemoveRestrictionAll(_data.Id);
         }
 
         private void PerformAttack(AttackData attackData) {
@@ -84,7 +64,7 @@ namespace Bebis
             SetHitboxInfos(attackData.HitboxDatas);
 
             // correct the character's intended attack direction
-            Vector3 intendedLook = _character.GameObject.transform.forward;
+            Vector3 intendedLook = _character.UnitController.RotationInput;
             if (intendedLook.magnitude > 0f) {
                 _character.MoveController.OverrideRotation(intendedLook);
             }

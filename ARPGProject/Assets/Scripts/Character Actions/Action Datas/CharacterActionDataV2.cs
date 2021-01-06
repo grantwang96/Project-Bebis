@@ -5,6 +5,9 @@ using System;
 
 namespace Bebis
 {
+    /// <summary>
+    /// Tags that generally describes the move
+    /// </summary>
     [System.Flags]
     public enum CharacterActionTag
     {
@@ -19,22 +22,31 @@ namespace Bebis
         CommandGrab = 1 << 8
     }
 
+    /// <summary>
+    /// interface for working with a character action as data
+    /// </summary>
     public interface ICharacterActionDataV2
     {
-        string Id { get; }
+        string Id { get; } // the specific id for this action data
         int Priority { get; }
         CharacterActionTag Tags { get; }
+        CharacterActionTag AllowedTransitionMoves { get; }
+        CharacterActionContext ActionableContexts { get; }
 
         CharacterActionResponseV2 Initiate(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context);
         CharacterActionResponseV2 Hold(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context);
         CharacterActionResponseV2 Release(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context);
     }
 
+    /// <summary>
+    /// Base scriptable object for character actions
+    /// </summary>
     public abstract class CharacterActionDataV2 : ScriptableObject, ICharacterActionDataV2
     {
         [SerializeField] private string _id;
         [SerializeField] private string _actionName;
         [SerializeField] private CharacterActionTag _tags;
+        [SerializeField] private CharacterActionTag _allowedTransitionMoves;
 
         [SerializeField] protected bool _cancelable;
         [SerializeField] protected int _priority;
@@ -48,6 +60,7 @@ namespace Bebis
         public bool Bufferable => _bufferable;
         public CharacterActionContext ActionableContexts => _actionableContexts;
         public CharacterActionTag Tags => _tags;
+        public CharacterActionTag AllowedTransitionMoves => _allowedTransitionMoves;
 
         public virtual CharacterActionResponseV2 Initiate(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
             CharacterActionResponseV2 response = new CharacterActionResponseV2();
@@ -92,7 +105,10 @@ namespace Bebis
             if (!_actionableContexts.HasFlag(context)) {
                 return false;
             }
-            return true;
+            ICharacterActionStateV2 currentAction = character.ActionController.CurrentState;
+            bool canPerform = currentAction?.CanInterrupt(context, this) ?? true;
+            canPerform &= foundActionState?.CanPerform(context, this) ?? true;
+            return canPerform;
         }
 
         protected CharacterActionResponseV2 FailedActionResponse(ICharacterV2 character) {
@@ -117,6 +133,7 @@ namespace Bebis
         event Action<ICharacterActionStateV2, ActionStatus> OnActionStatusUpdated;
 
         void Clear();
+        void Interrupt();
     }
 
     public class CharacterActionStateV2 : ICharacterActionStateV2
@@ -134,19 +151,26 @@ namespace Bebis
         }
 
         public virtual bool CanInterrupt(CharacterActionContext context, ICharacterActionDataV2 data) {
-            return true;
+            return CanTransition() && (Data.AllowedTransitionMoves & data.Tags) != 0;
         }
 
         public virtual bool CanPerform(CharacterActionContext context, ICharacterActionDataV2 data) {
-            return true;
+            return CanTransition() && (Data.ActionableContexts & context) != 0;
         }
 
         public virtual void Initiate() { }
         public virtual void Hold() { }
         public virtual void Release() { }
+        public virtual void Interrupt() {
+            Clear();
+        }
 
         public virtual void Clear() {
             UpdateActionStatus(ActionStatus.Completed);
+        }
+
+        protected virtual bool CanTransition() {
+            return Status == ActionStatus.CanTransition || Status == ActionStatus.Completed;
         }
 
         protected void UpdateActionStatus(ActionStatus status) {

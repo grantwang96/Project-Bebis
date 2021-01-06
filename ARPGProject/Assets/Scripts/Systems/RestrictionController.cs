@@ -14,11 +14,14 @@ namespace Bebis
 
         private readonly Dictionary<string, int> _restrictionsMap = new Dictionary<string, int>();
         [SerializeField] private int _totalRestrictions;
+        // for debugging: this is super not efficient
+        // [SerializeField] private List<string> _restrictionStrings = new List<string>();
 
         public void AddRestriction(string id) {
             if (!_restrictionsMap.ContainsKey(id)) {
                 _restrictionsMap.Add(id, 0);
             }
+            // _restrictionStrings.Add(id);
             _restrictionsMap[id]++;
             _totalRestrictions++;
             OnRestrictionUpdated?.Invoke();
@@ -32,6 +35,7 @@ namespace Bebis
             if(_restrictionsMap[id] <= 0) {
                 _restrictionsMap.Remove(id);
             }
+            // _restrictionStrings.Remove(id);
             _totalRestrictions--;
             if (_totalRestrictions < 0) {
                 _totalRestrictions = 0;
@@ -49,6 +53,11 @@ namespace Bebis
             if(_totalRestrictions < 0) {
                 _totalRestrictions = 0;
             }
+            /*
+            for(int i = 0; i < count; i++) {
+                _restrictionStrings.Remove(id);
+            }
+            */
             OnRestrictionUpdated?.Invoke();
         }
 
@@ -59,6 +68,7 @@ namespace Bebis
         public void Clear() {
             _restrictionsMap.Clear();
             _totalRestrictions = 0;
+            // _restrictionStrings.Clear();
         }
     }
 }

@@ -306,9 +306,39 @@ PrefabInstance:
         type: 2}
     - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
         type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._leftTriggerSkill
+      value: 
+      objectReference: {fileID: 11400000, guid: f1f3d234efb015d4cbcb774177207a2b,
+        type: 2}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
       propertyPath: _hackPlayerSkillsLoadoutsV2._normalAttackSkill
       value: 
       objectReference: {fileID: 11400000, guid: 41e6c95011dbb8242b1ac68e5cfdef52,
+        type: 2}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._skillSet2Btn1Skill
+      value: 
+      objectReference: {fileID: 11400000, guid: 12b9eb0609629a64dbe462ed7e76f887,
+        type: 2}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._secondaryAttackSkill
+      value: 
+      objectReference: {fileID: 11400000, guid: 34e772791cd873e4fb5c439c93c7aecb,
+        type: 2}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._normalAerialAttackSkill
+      value: 
+      objectReference: {fileID: 11400000, guid: 25c6496650635be40be5d1f9341381fd,
+        type: 2}
+    - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
+        type: 3}
+      propertyPath: _hackPlayerSkillsLoadoutsV2._secondaryAerialAttackSkill
+      value: 
+      objectReference: {fileID: 11400000, guid: 2a9408fb6cc2cca4fb1b312ae51b7eda,
         type: 2}
     - target: {fileID: 4378353458532771496, guid: 5fc76decdffb28a46849999e931671d1,
         type: 3}

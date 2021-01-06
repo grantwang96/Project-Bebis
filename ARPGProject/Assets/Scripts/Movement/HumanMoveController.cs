@@ -20,8 +20,6 @@ namespace Bebis
         [SerializeField] private RestrictionController _lookRestrictions;
 
         private ICharacterV2 _character;
-        private Vector3 _lookInput;
-        private Vector3 _lookDirection;
 
         private MoveControllerState _currentMoveControllerState;
         private GroundedMoveControllerState _groundedState;
@@ -48,7 +46,7 @@ namespace Bebis
         }
 
         public void OverrideMovement(Vector3 movement) {
-        
+            
         }
 
         public void OverrideRotation(Vector3 direction) {
