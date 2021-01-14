@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 654e1625ad8853c45b8eab546066871f, type: 3}
+  m_Name: TestAITree
+  m_EditorClassIdentifier: 
+  _aiStateRoot:
+    _aiStateName: Root
+    _aiStateDetails: 
+    _childrenData:
+    - _aiStateName: ListenForHit
+      _aiStateDetails: 
+      _childrenData:
+      - _aiStateName: WaitForDuration
+        _aiStateDetails: Idle
+        _childrenData: []
+        _transitionDatas:
+        - Key: OnWaitCompleted
+          Value: Root/ListenForHit/PlayAnimation_TestKick
+        _floatDatas: []
+        _intDatas: []
+        _boolDatas: []
+        _stringDatas: []
+        _animationDatas: []
+      - _aiStateName: PlayAnimation
+        _aiStateDetails: TestKick
+        _childrenData: []
+        _transitionDatas:
+        - Key: OnAnimationCompleted
+          Value: Root/ListenForHit/WaitForDuration_Idle
+        _floatDatas: []
+        _intDatas: []
+        _boolDatas: []
+        _stringDatas: []
+        _animationDatas:
+        - Key: 0
+          Value:
+            _animationName: TestKick
+            _triggers: []
+            _resetTriggers: []
+            _intValues: []
+            _floatValues: []
+            _boolValues: []
+      _transitionDatas:
+      - Key: OnHit
+        Value: Root/PlayAnimation_Wave
+      _floatDatas: []
+      _intDatas: []
+      _boolDatas: []
+      _stringDatas: []
+      _animationDatas: []
+    - _aiStateName: PlayAnimation
+      _aiStateDetails: Wave
+      _childrenData: []
+      _transitionDatas: []
+      _floatDatas: []
+      _intDatas: []
+      _boolDatas: []
+      _stringDatas: []
+      _animationDatas:
+      - Key: 0
+        Value:
+          _animationName: Wave
+          _triggers: []
+          _resetTriggers: []
+          _intValues: []
+          _floatValues: []
+          _boolValues: []
+    _transitionDatas: []
+    _floatDatas: []
+    _intDatas: []
+    _boolDatas: []
+    _stringDatas: []
+    _animationDatas: []

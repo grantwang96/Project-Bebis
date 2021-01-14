@@ -30,12 +30,12 @@ namespace Bebis
         private void TryAutoCorrectForTarget(AutoTargetInitDataV2 initData) {
             ICharacterV2 target = null;
             ICharacterV2 character = initData.Character;
-            /*
-            if (character.TargetManager.CurrentTarget != null &&
-                TargetWithinFieldOfView(character, character.TargetManager.CurrentTarget, out float yeet) &&
-                TargetVisible(character, character.TargetManager.CurrentTarget)) {
-                target = character.TargetManager.CurrentTarget;
-            }*/
+            // attempt to target the designated target
+            if (character.UnitController.TargetManager.CurrentTarget != null &&
+                TargetWithinFieldOfView(character, character.UnitController.TargetManager.CurrentTarget, out float yeet) &&
+                TargetVisible(character, character.UnitController.TargetManager.CurrentTarget)) {
+                target = character.UnitController.TargetManager.CurrentTarget;
+            }
             // if there is no target or not in range
             if (target == null) {
                 float bestAngle = -1f;
@@ -55,7 +55,7 @@ namespace Bebis
                         if (target == null || angle < bestAngle) {
                             bestAngle = angle;
                             target = otherCharacter;
-                            TryOverrideCurrentTarget(character, target);
+                           //  TryOverrideCurrentTarget(character, target);
                         }
                     }
                 }
@@ -91,7 +91,7 @@ namespace Bebis
                 _scanLayers,
                 QueryTriggerInteraction.Ignore)) {
                 Collider collider = info.collider;
-                ICharacter hitCharacter = collider.GetComponent<ICharacter>();
+                ICharacterV2 hitCharacter = collider.GetComponent<ICharacterV2>();
                 if (hitCharacter == target) {
                     return true;
                 }

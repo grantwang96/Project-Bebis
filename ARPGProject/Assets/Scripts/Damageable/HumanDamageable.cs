@@ -19,6 +19,7 @@ namespace Bebis
 
         public void ReceiveHit(HitEventInfoV2 hitEventInfo) {
             if(hitEventInfo.Hurtbox == null) {
+                Debug.LogWarning("Hit hurt box was null!");
                 return;
             }
             switch (hitEventInfo.Hurtbox.HurtBoxState) {
@@ -33,7 +34,6 @@ namespace Bebis
 
         private void OnNormalHit(HitEventInfoV2 hitEventInfo) {
             Health -= hitEventInfo.Power;
-            Debug.Log("Hit");
         }
 
         public event Action<int> OnHealthChanged;

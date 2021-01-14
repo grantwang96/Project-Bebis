@@ -38,4 +38,25 @@ namespace Bebis {
         CanTransition,
         Completed
     }
+
+    public enum AIStateAnimationKey
+    {
+        OnEnter,
+        OnExit,
+        OnUpdate
+    }
+
+    [System.Serializable]
+    public class SerializedStringAnimationData
+    {
+        public string Key;
+        public AnimationData Value;
+    }
+
+    [System.Serializable]
+    public class SerializedAIKeyAnimationData
+    {
+        public AIStateAnimationKey Key;
+        public AnimationData Value;
+    }
 }

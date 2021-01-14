@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.InputSystem;
 
 namespace Bebis
 {
@@ -13,6 +14,8 @@ namespace Bebis
 
         public static PlayerControllerV2 Instance { get; private set; }
 
+        public ITargetManagerV2 TargetManager => _playerTargetManager;
+        public ICharacterData CharacterData { get; } // TODO: point this to 
         public Vector3 MovementInput { get; private set; }
         public Vector3 RotationInput { get; private set; }
         public Transform PlayerTransform => _playerCharacter.GameObject.transform;
@@ -22,6 +25,7 @@ namespace Bebis
 
         private ICharacterV2 _playerCharacter;
         private PlayerActionInfoProviderV2 _playerActionInfoProvider;
+        private PlayerTargetManagerV2 _playerTargetManager;
         private readonly Dictionary<string, ICharacterActionDataV2> _registeredActions = new Dictionary<string, ICharacterActionDataV2>();
 
         public PlayerControllerV2() {
@@ -32,6 +36,8 @@ namespace Bebis
             _playerCharacter = character;
             _playerActionInfoProvider = new PlayerActionInfoProviderV2(_playerCharacter);
             _playerActionInfoProvider.OnActionAttempted += OnActionInputted;
+            _playerTargetManager = new PlayerTargetManagerV2();
+            _playerTargetManager.Initialize(_playerCharacter);
             PlayerCharacterManager.Instance.OnPlayerSkillsLoadoutV2Set += OnPlayerSkillsLoadoutV2Set;
             OnPlayerSkillsLoadoutV2Set(PlayerCharacterManager.Instance.SkillsLoadoutV2);
             MonoBehaviourMaster.Instance.OnUpdate += OnUpdate;

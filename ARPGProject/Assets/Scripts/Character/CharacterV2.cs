@@ -27,6 +27,8 @@ namespace Bebis
         ICharacterStatManager CharacterStatManager { get; }
         GameObject GameObject { get; }
         Transform Center { get; }
+
+        void Initialize(IUnitController unitController);
     }
 
     public interface ICharacterComponent

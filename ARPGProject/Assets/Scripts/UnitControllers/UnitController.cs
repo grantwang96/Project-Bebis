@@ -7,6 +7,9 @@ namespace Bebis
 {
     public interface IUnitController : ICharacterComponent
     {
+        ITargetManagerV2 TargetManager { get; }
+        ICharacterData CharacterData { get; }
+
         Vector3 MovementInput { get; }
         Vector3 RotationInput { get; }
 

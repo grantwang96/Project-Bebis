@@ -31,6 +31,7 @@ namespace Bebis {
     public struct HitEventInfoV2
     {
         public int Power;
+        public string Info;
         public Vector3 KnockBackDirection;
         public float Force;
         public bool OverrideForce;

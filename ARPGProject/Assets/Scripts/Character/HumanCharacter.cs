@@ -22,6 +22,7 @@ namespace Bebis
         public HurtboxControllerV2 HurtboxController => _hurtboxController;
         // character stat manager
         public ICharacterStatManager CharacterStatManager => _characterStatManager;
+        public ICharacterData CharacterData { get; private set; }
         // Character GameObject
         public GameObject GameObject => gameObject;
         public Transform Center => _center;
@@ -33,7 +34,7 @@ namespace Bebis
         [SerializeField] private HurtboxControllerV2 _hurtboxController;
         [SerializeField] private NPCCharacterStatManager _characterStatManager;
 
-        public void Spawn(IUnitController unitController) {
+        public void Initialize(IUnitController unitController) {
             UnitController = unitController;
             if (Damageable == null) {
                 Damageable = new HumanDamageable();

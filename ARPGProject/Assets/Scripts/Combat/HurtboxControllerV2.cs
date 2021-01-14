@@ -52,15 +52,12 @@ namespace Bebis
             _registeredHitboxes.Add(interaction.Hitbox);
             // TODO: take into account hitbox state
             _receivedHit = true;
-            // if there is already a registered hit, override it
-            if (_onInteractionSuccess != null) {
-                _onInteractionFailed?.Invoke(_character);
-            }
             _onInteractionSuccess = interaction.OnInteractionSuccess;
             _onInteractionFailed = interaction.OnInteractionFail;
         }
 
         private void ProcessHit() {
+            _onInteractionSuccess?.Invoke(_character);
             _receivedHit = false;
             _onInteractionSuccess = null;
             _onInteractionFailed = null;

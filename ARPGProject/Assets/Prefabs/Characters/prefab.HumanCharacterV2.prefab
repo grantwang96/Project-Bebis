@@ -738,13 +738,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 1.8
+  m_Radius: 0.35
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!114 &329507390441411797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1124,6 +1124,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
         type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
+        type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -1228,6 +1233,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Hitbox_RightHand_Sphere_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
         type: 3}
@@ -1338,6 +1348,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
         type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
+        type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -1442,6 +1457,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Hitbox_LeftElbow_Sphere_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
         type: 3}
@@ -1552,6 +1572,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
         type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
+        type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -1656,6 +1681,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Hitbox_LeftKnee_Sphere_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
         type: 3}
@@ -1858,6 +1888,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
         type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
+        type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -2054,6 +2089,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Hitbox_RightElbow_Sphere_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3864430745994208705, guid: 6d0f69d4fad11cb47a5b4fe440e1372b,
         type: 3}

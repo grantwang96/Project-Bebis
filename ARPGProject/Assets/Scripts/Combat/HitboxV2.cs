@@ -13,6 +13,10 @@ namespace Bebis
             _info = info;
         }
 
+        public void Clear() {
+            _info = null;
+        }
+
         private void OnTriggerEnter(Collider collider) {
             _info?.HitboxTriggered(this, collider);
         }

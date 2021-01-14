@@ -22,3 +22,10 @@ public class SerializedStringFloat {
     public string Key;
     public float Value;
 }
+
+[System.Serializable]
+public class SerializedStringString
+{
+    public string Key;
+    public string Value;
+}

@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3d84a4e747039e42a8ce691ecfc3d4a, type: 3}
+  m_Name: TestCharacterData
+  m_EditorClassIdentifier: 
+  _characterStats:
+    Strength: 1
+    Agility: 1
+    Fortitude: 1
+    Intelligence: 1
+    Wisdom: 1
+    Charm: 1
+  _baseWalkSpeed: 3
+  _baseRunSpeed: 5
+  _weight: 0
+  _aiStateData:
+    _aiStateName: Root
+    _aiStateDetails: 
+    _childrenData:
+    - _aiStateName: ListenForHit
+      _aiStateDetails: 
+      _childrenData:
+      - _aiStateName: WaitForDuration
+        _aiStateDetails: Idle
+        _childrenData: []
+        _transitionDatas:
+        - Key: OnWaitCompleted
+          Value: Root/ListenForHit/PlayAnimation_TestKick
+        _floatDatas:
+        - Key: MinimumWaitTime
+          Value: 3
+        - Key: MaximumWaitTime
+          Value: 5
+        _intDatas: []
+        _boolDatas: []
+        _stringDatas: []
+        _animationDatas: []
+      - _aiStateName: PlayAnimation
+        _aiStateDetails: TestKick
+        _childrenData: []
+        _transitionDatas:
+        - Key: OnAnimationCompleted
+          Value: Root/ListenForHit/WaitForDuration_Idle
+        _floatDatas: []
+        _intDatas: []
+        _boolDatas: []
+        _stringDatas: []
+        _animationDatas:
+        - Key: 0
+          Value:
+            _animationName: TestKick
+            _triggers: []
+            _resetTriggers: []
+            _intValues: []
+            _floatValues: []
+            _boolValues: []
+      - _aiStateName: PlayAnimation
+        _aiStateDetails: Wave
+        _childrenData: []
+        _transitionDatas:
+        - Key: OnAnimationCompleted
+          Value: Root/ListenForHit/WaitForDuration_Idle
+        _floatDatas: []
+        _intDatas: []
+        _boolDatas: []
+        _stringDatas: []
+        _animationDatas:
+        - Key: 0
+          Value:
+            _animationName: Wave
+            _triggers: []
+            _resetTriggers: []
+            _intValues: []
+            _floatValues: []
+            _boolValues: []
+      _transitionDatas:
+      - Key: OnHit
+        Value: Root/ListenForHit/PlayAnimation_Wave
+      _floatDatas: []
+      _intDatas: []
+      _boolDatas: []
+      _stringDatas: []
+      _animationDatas: []
+    _transitionDatas: []
+    _floatDatas: []
+    _intDatas: []
+    _boolDatas: []
+    _stringDatas: []
+    _animationDatas: []
+  _startingAIStateId: Root/ListenForHit/WaitForDuration_Idle
