@@ -15,5 +15,6 @@ namespace Bebis
 
         event Action<int> OnHealthChanged;
         event Action<HitEventInfoV2> OnReceivedHit;
+        event Action<IDamageableV2> OnDefeated;
     }
 }

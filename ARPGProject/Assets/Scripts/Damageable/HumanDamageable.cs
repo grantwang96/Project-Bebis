@@ -11,10 +11,15 @@ namespace Bebis
         public int MaxHealth { get; private set; } = 100;
         public bool IsDead { get; private set; } = false;
 
+        public event Action<int> OnHealthChanged;
+        public event Action<HitEventInfoV2> OnReceivedHit;
+        public event Action<IDamageableV2> OnDefeated;
+
         private ICharacterV2 _character;
 
         public void Initialize(ICharacterV2 character) {
             _character = character;
+            IsDead = false;
         }
 
         public void ReceiveHit(HitEventInfoV2 hitEventInfo) {
@@ -34,9 +39,10 @@ namespace Bebis
 
         private void OnNormalHit(HitEventInfoV2 hitEventInfo) {
             Health -= hitEventInfo.Power;
+            if(Health <= 0) {
+                IsDead = true;
+                OnDefeated?.Invoke(this);
+            }
         }
-
-        public event Action<int> OnHealthChanged;
-        public event Action<HitEventInfoV2> OnReceivedHit;
     }
 }

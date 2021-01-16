@@ -15,8 +15,8 @@ namespace Bebis
             _character = character;
         }
 
-        public void GenerateAIStateTree(AIStateData aiStateData, string startingState) {
-            AIStateTreeBuilder.Build(_character, this, aiStateData);
+        public void GenerateAIStateTree(INPCUnitController npcUnitController, AIStateData aiStateData, string startingState) {
+            AIStateTreeBuilder.Build(_character, npcUnitController, this, aiStateData);
             _startingState = startingState;
         }
 

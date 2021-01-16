@@ -7,7 +7,7 @@ namespace Bebis
     /// <summary>
     /// Interface for all characters in the game
     /// </summary>
-    public interface ICharacterV2
+    public interface ICharacterV2 : IDetectable
     {
         // unit controller reference
         IUnitController UnitController { get; }
@@ -27,6 +27,7 @@ namespace Bebis
         ICharacterStatManager CharacterStatManager { get; }
         GameObject GameObject { get; }
         Transform Center { get; }
+        Transform Head { get; }
 
         void Initialize(IUnitController unitController);
     }

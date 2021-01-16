@@ -5,13 +5,24 @@ using UnityEngine;
 
 namespace Bebis
 {
+    public interface INPCUnitController : IUnitController
+    {
+        IDetectableManager DetectableManager { get; }
+        IDetectableScanner NPCVision { get; }
+
+        void SetMovementInput(Vector3 input);
+        void SetRotationInput(Vector3 input);
+    }
+
     /// <summary>
     /// Controller for NPC characters
     /// </summary>
-    public class NPCUnitController : IUnitController
+    public class NPCUnitController : INPCUnitController
     {
         public ITargetManagerV2 TargetManager => _targetManager;
         public ICharacterData CharacterData => _characterData;
+        public IDetectableManager DetectableManager => _detectableManager;
+        public IDetectableScanner NPCVision => _npcVision;
 
         public Vector3 MovementInput { get; private set; }
         public Vector3 RotationInput { get; private set; }
@@ -26,12 +37,15 @@ namespace Bebis
         // target manager here
         private NPCTargetManagerV2 _targetManager;
         // detection system here
-        private NPCDetectableManager _detectionManager;
+        private NPCDetectableManager _detectableManager;
+        // vision component here
+        private NPCVisionV2 _npcVision;
 
         public NPCUnitController() {
             _aiStateMachine = new AIStateMachineV2();
             _targetManager = new NPCTargetManagerV2();
-            _detectionManager = new NPCDetectableManager();
+            _detectableManager = new NPCDetectableManager();
+            _npcVision = new NPCVisionV2();
         }
 
         /// <summary>
@@ -47,11 +61,20 @@ namespace Bebis
             _character = character;
 
             _aiStateMachine.Initialize(_character);
-            _aiStateMachine.GenerateAIStateTree(_characterData.AIStateTreeData, _characterData.StartingAIStateId);
+            _aiStateMachine.GenerateAIStateTree(this, _characterData.AIStateTreeData, _characterData.StartingAIStateId);
             _aiStateMachine.StartStateMachine();
 
             _targetManager.Initialize(_character);
-            _detectionManager.Initialize(_character);
+            _detectableManager.Initialize(_character);
+            _npcVision.Initialize(_character);
+        }
+
+        public void SetMovementInput(Vector3 input) {
+            MovementInput = input;
+        }
+
+        public void SetRotationInput(Vector3 input) {
+            RotationInput = input;
         }
     }
 }

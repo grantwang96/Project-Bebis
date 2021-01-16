@@ -26,8 +26,12 @@ namespace Bebis
         // Character GameObject
         public GameObject GameObject => gameObject;
         public Transform Center => _center;
+        public Transform Head => _head;
+        public DetectableTags DetectableTags { get; private set; }
+        Transform IDetectable.Transform => _center;
 
         [SerializeField] private Transform _center;
+        [SerializeField] private Transform _head;
         [SerializeField] private HumanMoveController _moveController;
         [SerializeField] private CharacterAnimationController _animationController;
         [SerializeField] private HitboxControllerV2 _hitboxController;
@@ -38,6 +42,7 @@ namespace Bebis
             UnitController = unitController;
             if (Damageable == null) {
                 Damageable = new HumanDamageable();
+                Damageable.OnDefeated += OnDefeated;
             }
             if (ActionController == null) {
                 ActionController = new HumanActionController();
@@ -49,6 +54,15 @@ namespace Bebis
             _moveController.Initialize(this);
             _hitboxController.Initialize(this);
             _hurtboxController.Initialize(this);
+
+            // initialize detectable tags
+            DetectableTags = DetectableTags.Character;
+        }
+
+        private void OnDefeated(IDamageableV2 damageable) {
+            Debug.Log($"{name} has been defeated!");
+            // update detectable tags to add that this is a crime scene
+            DetectableTags &= DetectableTags.CrimeScene;
         }
     }
 }

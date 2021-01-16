@@ -6,28 +6,28 @@ namespace Bebis
 {
     public static class AIStateTreeBuilder
     {
-        public static void Build(ICharacterV2 character, AIStateMachineV2 stateMachine, AIStateData rootAIStateData) {
-            IAIState rootState = ParseFromStateData(character, stateMachine, rootAIStateData);
+        public static void Build(ICharacterV2 character, INPCUnitController npcUnitController, AIStateMachineV2 stateMachine, AIStateData rootAIStateData) {
+            IAIState rootState = ParseFromStateData(character, npcUnitController, stateMachine, rootAIStateData);
             List<IAIState> allStates = new List<IAIState>();
             allStates.Add(rootState);
-            CreateTree(character, stateMachine, rootState, rootAIStateData, allStates);
+            CreateTree(character, npcUnitController, stateMachine, rootState, rootAIStateData, allStates);
             InitializeAIStates(allStates);
         }
 
         // recursive tree building function
-        private static void CreateTree(ICharacterV2 character, AIStateMachineV2 stateMachine, IAIState parentState, AIStateData stateData, List<IAIState> allStates) {
+        private static void CreateTree(ICharacterV2 character, INPCUnitController npcUnitController, AIStateMachineV2 stateMachine, IAIState parentState, AIStateData stateData, List<IAIState> allStates) {
             // build out all children data for the state tree
             for(int i = 0; i < stateData.ChildrenData.Count; i++) {
                 // attempt to create the ai state from the data
                 AIStateData childData = stateData.ChildrenData[i];
-                IAIState childState = ParseFromStateData(character, stateMachine, childData, parentState);
+                IAIState childState = ParseFromStateData(character, npcUnitController, stateMachine, childData, parentState);
                 if(childState == null) {
                     Debug.LogWarning($"[{nameof(AIStateTreeBuilder)}]: Could not build AI state for child data: {childData.AIStateName}!");
                     continue;
                 }
                 allStates.Add(childState);
                 // create the ai state children for this child ai state
-                CreateTree(character, stateMachine, childState, childData, allStates);
+                CreateTree(character, npcUnitController, stateMachine, childState, childData, allStates);
             }
         }
 
@@ -39,7 +39,7 @@ namespace Bebis
         }
 
         // mega parser to generate an AI state
-        private static IAIState ParseFromStateData(ICharacterV2 character, AIStateMachineV2 stateMachine, AIStateData stateData, IAIState parentState = null) {
+        private static IAIState ParseFromStateData(ICharacterV2 character, INPCUnitController npcUnitController, AIStateMachineV2 stateMachine, AIStateData stateData, IAIState parentState = null) {
             switch (stateData.AIStateName) {
                 case RootAIState.Name:
                     return new RootAIState(character, stateMachine, stateData);
