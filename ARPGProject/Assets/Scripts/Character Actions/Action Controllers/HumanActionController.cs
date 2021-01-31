@@ -22,50 +22,47 @@ namespace Bebis
 
         private void SubscribeToEvents() {
             _character.UnitController.OnActionAttempted += OnActionAttempted;
+            _character.UnitController.OnRegisteredCharacterActionsUpdated += OnRegisteredCharacterActionsUpdated;
+        }
+
+        private void OnRegisteredCharacterActionsUpdated(IReadOnlyList<ICharacterActionDataV2> datas) {
+            // clean up the current set of actions
+            foreach(var kvp in _actionStates) {
+                kvp.Value.OnActionStatusUpdated -= OnActionStatusUpdated;
+                kvp.Value.Clear();
+            }
+            _actionStates.Clear();
+            // generate a new set of actions
+            for(int i = 0; i < datas.Count; i++) {
+                ICharacterActionStateV2 newState = datas[i].GenerateCharacterActionState(_character);
+                newState.OnActionStatusUpdated += OnActionStatusUpdated;
+                _actionStates.Add(datas[i].Id, newState);
+                
+            }
         }
 
         private void OnActionAttempted(ICharacterActionDataV2 data, CharacterActionContext context) {
-            // check if the requisite action state already exists
-            bool hasAction = _actionStates.TryGetValue(data.Id, out ICharacterActionStateV2 actionState);
-            // attempt to perform the action
-            CharacterActionResponseV2 response = new CharacterActionResponseV2();
-            switch(context) {
-                case CharacterActionContext.Initiate:
-                    response = data.Initiate(_character, actionState, context);
-                    break;
-                case CharacterActionContext.Hold:
-                    response = data.Hold(_character, actionState, context);
-                    break;
-                case CharacterActionContext.Release:
-                    response = data.Release(_character, actionState, context);
-                    break;
-                default:
-                    break;
-            }
-            // if the action is denied, return and do nothing
-            if (!response.Success) {
+            // try to retrieve the action state from the registry
+            if(!_actionStates.TryGetValue(data.Id, out ICharacterActionStateV2 state)) {
                 return;
             }
-            // if this is a new action state, register it
-            if (!hasAction) {
-                _actionStates.Add(data.Id, response.State);
-                response.State.OnActionStatusUpdated += OnActionStatusUpdated;
+            // attempt to perform the action
+            bool success = state.TryPerformAction(context);
+            // if successful, set the action as the current action state and notify all listeners
+            if (success) {
+                CurrentState = state;
+                OnCurrentStateUpdated?.Invoke(state);
             }
-            // update the current action state and notify all listeners
-            CurrentState = response.State;
-            OnCurrentStateUpdated?.Invoke(response.State);
         }
 
         private void OnActionStatusUpdated(ICharacterActionStateV2 state, ActionStatus status) {
             OnActionStateUpdated?.Invoke(state);
             if (status == ActionStatus.Completed) {
-                state.OnActionStatusUpdated -= OnActionStatusUpdated;
-                state.Clear();
-                _actionStates.Remove(state.Data.Id);
                 if(state == CurrentState) {
                     CurrentState = null;
                     OnCurrentStateUpdated?.Invoke(CurrentState);
                 }
+                state.Clear();
             }
         }
     }

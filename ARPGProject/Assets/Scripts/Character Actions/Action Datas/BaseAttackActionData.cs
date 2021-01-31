@@ -6,10 +6,7 @@ namespace Bebis
 {
     public abstract class BaseAttackActionData : CharacterActionDataV2
     {
-        protected override ICharacterActionStateV2 HandleActionSuccess(ICharacterV2 character, ICharacterActionStateV2 foundActionState) {
-            foundActionState?.Interrupt();
-            return CreateActionState(character);
-        }
+
     }
 
     public abstract class BaseAttackActionState : CharacterActionStateV2
@@ -19,23 +16,50 @@ namespace Bebis
         protected HitEventInfoV2 _hitEventInfo;
 
         public BaseAttackActionState(BaseAttackActionData data, ICharacterV2 character) : base(data, character) {
+        }
+
+        public override void Clear() {
+            base.Clear();
+            OnFinishedAttack();
+            Status = ActionStatus.Ready;
+            // remove references to hitboxes
+            // ClearHitboxInfos();
+        }
+
+        protected override void UpdateActionStatus(ActionStatus status) {
+            base.UpdateActionStatus(status);
+            if (status == ActionStatus.Completed) {
+                OnFinishedAttack();
+            }
+        }
+
+        protected virtual void OnFinishedAttack() {
+            UnsubscribeToEvents();
+            UnsetRestrictions();
+            _hitDamageables.Clear();
+        }
+
+        protected void SubscribeToEvents() {
             // add listeners
             _character.MoveController.OnIsGroundedUpdated += OnIsGroundedUpdated;
             _character.AnimationController.OnAnimationStateUpdated += OnAnimationStateUpdated;
             _character.ActionController.OnCurrentStateUpdated += OnCurrentActionUpdated;
+        }
+
+        protected void UnsubscribeToEvents() {
+            // remove listeners
+            _character.AnimationController.OnAnimationStateUpdated -= OnAnimationStateUpdated;
+            _character.ActionController.OnCurrentStateUpdated -= OnCurrentActionUpdated;
+            _character.MoveController.OnIsGroundedUpdated -= OnIsGroundedUpdated;
+        }
+
+        protected void SetRestrictions() {
             // add movement restrictions
             _character.MoveController.MovementRestrictions.AddRestriction(Data.Id);
             _character.MoveController.LookRestrictions.AddRestriction(Data.Id);
         }
 
-        public override void Clear() {
-            base.Clear();
-            // remove references to hitboxes
-            ClearHitboxInfos();
-            // remove listeners
-            _character.AnimationController.OnAnimationStateUpdated -= OnAnimationStateUpdated;
-            _character.ActionController.OnCurrentStateUpdated -= OnCurrentActionUpdated;
-            _character.MoveController.OnIsGroundedUpdated -= OnIsGroundedUpdated;
+        protected void UnsetRestrictions() {
             // remove movement restrictions
             _character.MoveController.MovementRestrictions.RemoveRestriction(Data.Id);
             _character.MoveController.LookRestrictions.RemoveRestriction(Data.Id);
@@ -53,6 +77,7 @@ namespace Bebis
             PerformActionStartSubActions(attackData.OnActionStartSubActionsV2);
             // update animations
             _character.AnimationController.UpdateAnimationState(attackData.AnimationData);
+            UpdateActionStatus(ActionStatus.Started);
         }
 
         // update the hitboxes on the weapon
@@ -72,7 +97,6 @@ namespace Bebis
             foreach (string key in _combatHitBoxData.Keys) {
                 _character.HitboxController.Clear(key);
             }
-            // Debug.Log("Clearing hit box data");
             _combatHitBoxData.Clear();
         }
 
@@ -150,7 +174,6 @@ namespace Bebis
             // mark this completed if another action has taken over
             if (_character.ActionController.CurrentState != this) {
                 UpdateActionStatus(ActionStatus.Completed);
-                Clear();
             }
         }
 
@@ -160,21 +183,25 @@ namespace Bebis
                     UpdateActionStatus(ActionStatus.Started);
                     break;
                 case AnimationState.InProgress:
-                    OnActionInProgress();
-                    UpdateActionStatus(ActionStatus.InProgress);
+                    OnAnimationInProgress();
                     break;
                 case AnimationState.CanTransition:
                     UpdateActionStatus(ActionStatus.CanTransition);
                     break;
                 case AnimationState.Completed:
-                    UpdateActionStatus(ActionStatus.Completed);
+                    OnAnimationCompleted();
                     break;
             }
         }
 
-        protected void OnActionInProgress() {
+        protected virtual void OnAnimationInProgress() {
             // reset the attack state (this is a multi-hit)
             _hitDamageables.Clear();
+            UpdateActionStatus(ActionStatus.InProgress);
+        }
+
+        protected virtual void OnAnimationCompleted() {
+            UpdateActionStatus(ActionStatus.Completed);
         }
 
         protected void OnIsGroundedUpdated(bool isGrounded) {

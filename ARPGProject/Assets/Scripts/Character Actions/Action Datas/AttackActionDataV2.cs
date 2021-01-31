@@ -13,11 +13,6 @@ namespace Bebis
         protected override ICharacterActionStateV2 CreateActionState(ICharacterV2 character) {
             return new AttackActionStateV2(this, character);
         }
-
-        protected override ICharacterActionStateV2 HandleActionSuccess(ICharacterV2 character, ICharacterActionStateV2 foundActionState) {
-            foundActionState?.Interrupt();
-            return CreateActionState(character);
-        }
     }
 
     public class AttackActionStateV2 : BaseAttackActionState
@@ -29,10 +24,13 @@ namespace Bebis
             _data = data;
         }
 
-        public override void Initiate() {
-            base.Initiate();
+        protected override void OnPerformAction(CharacterActionContext context) {
+            base.OnPerformAction(context);
+            UnsetRestrictions();
+            UnsubscribeToEvents();
+            SubscribeToEvents();
+            SetRestrictions();
             PerformAttack(_data.AttackData);
-            UpdateActionStatus(ActionStatus.Started);
         }
     }
 }

@@ -14,6 +14,6 @@ namespace Bebis
         Vector3 RotationInput { get; }
 
         event Action<ICharacterActionDataV2, CharacterActionContext> OnActionAttempted;
-        event Action OnRegisteredCharacterActionsUpdated;
+        event Action<IReadOnlyList<ICharacterActionDataV2>> OnRegisteredCharacterActionsUpdated;
     }
 }

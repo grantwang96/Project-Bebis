@@ -18,11 +18,11 @@ namespace Bebis {
     }
 
     public enum ActionStatus {
-        Started = 1,
-        InProgress = 1 << 1,
-        CanTransition = 2 << 1,
-        Completed = 3 << 1,
-        Ready = 4 << 1,
-        CanBufferInput = 5 << 1
+        Ready,
+        Started,
+        InProgress,
+        CanTransition,
+        Completed,
+        CanBufferInput
     }
 }

@@ -6,6 +6,7 @@ namespace Bebis
 {
     public static class AIStateTreeBuilder
     {
+        /*
         public static void Build(ICharacterV2 character, INPCUnitController npcUnitController, AIStateMachineV2 stateMachine, AIStateData rootAIStateData) {
             IAIState rootState = ParseFromStateData(character, npcUnitController, stateMachine, rootAIStateData);
             List<IAIState> allStates = new List<IAIState>();
@@ -40,6 +41,7 @@ namespace Bebis
 
         // mega parser to generate an AI state
         private static IAIState ParseFromStateData(ICharacterV2 character, INPCUnitController npcUnitController, AIStateMachineV2 stateMachine, AIStateData stateData, IAIState parentState = null) {
+            /*
             switch (stateData.AIStateName) {
                 case RootAIState.Name:
                     return new RootAIState(character, stateMachine, stateData);
@@ -52,6 +54,8 @@ namespace Bebis
                 default:
                     return null;
             }
+            return null;
         }
+        */
     }
 }

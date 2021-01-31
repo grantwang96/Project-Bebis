@@ -6,7 +6,7 @@ namespace Bebis
 {
     public interface IDetectableScanner : ICharacterComponent
     {
-        IReadOnlyList<IDetectable> ScanForDetectables(float radius);
+        IReadOnlyList<IDetectable> ScanForDetectables(DetectableTags tagsToScanFor);
         bool ScanForDetectable(IDetectable detectable);
     }
 }

@@ -21,12 +21,14 @@ namespace Bebis
         public Transform PlayerTransform => _playerCharacter.GameObject.transform;
 
         public event Action<ICharacterActionDataV2, CharacterActionContext> OnActionAttempted;
-        public event Action OnRegisteredCharacterActionsUpdated;
+        public event Action<IReadOnlyList<ICharacterActionDataV2>> OnRegisteredCharacterActionsUpdated;
 
         private ICharacterV2 _playerCharacter;
         private PlayerActionInfoProviderV2 _playerActionInfoProvider;
         private PlayerTargetManagerV2 _playerTargetManager;
+
         private readonly Dictionary<string, ICharacterActionDataV2> _registeredActions = new Dictionary<string, ICharacterActionDataV2>();
+        private readonly List<ICharacterActionDataV2> _registeredActionsList = new List<ICharacterActionDataV2>();
 
         public PlayerControllerV2() {
             Instance = this;
@@ -79,6 +81,7 @@ namespace Bebis
 
         private void OnPlayerSkillsLoadoutV2Set(IPlayerSkillsLoadoutV2 loadout) {
             _playerActionInfoProvider.UpdateLoadout(loadout);
+            _registeredActionsList.Clear();
             _registeredActions.Clear();
             TryAddLoadoutAction(loadout.NormalAttackSkill);
             TryAddLoadoutAction(loadout.NormalAerialAttackSkill);
@@ -96,7 +99,7 @@ namespace Bebis
             TryAddLoadoutAction(loadout.SkillSet2Btn2Skill);
             TryAddLoadoutAction(loadout.SkillSet2Btn3Skill);
             TryAddLoadoutAction(loadout.SkillSet2Btn4Skill);
-            OnRegisteredCharacterActionsUpdated?.Invoke();
+            OnRegisteredCharacterActionsUpdated?.Invoke(_registeredActionsList);
         }
 
         private void TryAddLoadoutAction(ICharacterActionDataV2 data) {
@@ -104,6 +107,7 @@ namespace Bebis
                 return;
             }
             _registeredActions.Add(data.Id, data);
+            _registeredActionsList.Add(data);
         }
     }
 }

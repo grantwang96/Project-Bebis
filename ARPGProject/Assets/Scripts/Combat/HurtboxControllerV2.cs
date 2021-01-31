@@ -8,7 +8,6 @@ namespace Bebis
     public class HurtboxControllerV2 : MonoBehaviour, ICharacterComponent
     {
         public IReadOnlyDictionary<string, HurtboxV2> Hurtboxes => _hurtBoxes;
-        public IReadOnlyList<HitboxV2> RegisteredHitboxes => _registeredHitboxes;
 
         public event Action<HitEventInfoV2> OnHit;
 
@@ -18,7 +17,6 @@ namespace Bebis
         protected readonly Dictionary<string, HurtboxV2> _hurtBoxes = new Dictionary<string, HurtboxV2>();
 
         protected bool _receivedHit;
-        protected readonly List<HitboxV2> _registeredHitboxes = new List<HitboxV2>();
         protected Action<ICharacterV2> _onInteractionSuccess;
         protected Action<ICharacterV2> _onInteractionFailed;
 
@@ -45,11 +43,6 @@ namespace Bebis
         }
 
         protected virtual void OnHurtboxInteraction(HurtboxInteractionV2 interaction) {
-            // ignore hitbox if it was defended against
-            if (_registeredHitboxes.Contains(interaction.Hitbox)) {
-                return;
-            }
-            _registeredHitboxes.Add(interaction.Hitbox);
             // TODO: take into account hitbox state
             _receivedHit = true;
             _onInteractionSuccess = interaction.OnInteractionSuccess;
@@ -57,11 +50,11 @@ namespace Bebis
         }
 
         private void ProcessHit() {
+            // Debug.LogError("Received hit event!");
             _onInteractionSuccess?.Invoke(_character);
             _receivedHit = false;
             _onInteractionSuccess = null;
             _onInteractionFailed = null;
-            _registeredHitboxes.Clear();
         }
     }
 }

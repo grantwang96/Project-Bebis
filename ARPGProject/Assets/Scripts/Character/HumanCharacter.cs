@@ -47,13 +47,13 @@ namespace Bebis
             if (ActionController == null) {
                 ActionController = new HumanActionController();
             }
-            UnitController.Initialize(this);
             Damageable.Initialize(this);
             ActionController.Initialize(this);
             _animationController.Initialize(this);
             _moveController.Initialize(this);
             _hitboxController.Initialize(this);
             _hurtboxController.Initialize(this);
+            UnitController.Initialize(this);
 
             // initialize detectable tags
             DetectableTags = DetectableTags.Character;

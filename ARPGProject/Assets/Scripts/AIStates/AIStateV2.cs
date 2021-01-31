@@ -9,56 +9,53 @@ namespace Bebis
     {
         string Id { get; }
         bool Active { get; }
+        bool isSetup { get; }
         event Action<IAIState> OnReadyToTransition;
 
-        void Initialize();
+        void Initialize(ICharacterV2 character);
+        void Setup();
         void TryEnter();
         void TryExit(IAIState nextState);
         bool IsStateOnPath(IAIState state);
     }
 
-    public abstract class AIStateV2 : IAIState
+    public abstract class AIStateV2 : MonoBehaviour, IAIState
     {
         public string Id { get; protected set; }
         public bool Active { get; protected set; }
+        public bool isSetup { get; protected set; }
 
         public event Action<IAIState> OnReadyToTransition;
 
         protected ICharacterV2 _character;
-        protected AIStateMachineV2 _stateMachine;
-        protected AIStateData _stateData;
+        [SerializeField] protected AIStateMachineV2 _stateMachine;
+        // protected AIStateData _stateData;
         protected IAIState _parentState;
-        protected string _stateName;
 
-        public AIStateV2(ICharacterV2 character, AIStateMachineV2 stateMachine, AIStateData stateData, IAIState parentState = null) {
+        // initialize is where AI states handle setting up their individual datas and state transitions
+        public virtual void Initialize(ICharacterV2 character) {
             _character = character;
-            _stateMachine = stateMachine;
-            _stateData = stateData;
-            _parentState = parentState;
+            if (transform.parent != null) {
+                _parentState = transform.parent.GetComponent<IAIState>();
+            }
+            Id = name;
+        }
+
+        public virtual void Setup() {
+            // setup the parent state first
+            if(_parentState != null && !_parentState.isSetup) {
+                _parentState.Setup();
+            }
             SetId();
             _stateMachine?.RegisterAIState(this);
         }
 
-        // initialize is where AI states handle setting up their individual datas and state transitions
-        public virtual void Initialize() {
-
-        }
-
         protected void SetId() {
-            SetStateName();
             if (_parentState != null) {
-                Id = $"{_parentState.Id}/{_stateName}";
+                Id = $"{_parentState.Id}/{name}";
             } else {
-                Id = _stateName;
+                Id = name;
             }
-        }
-
-        private void SetStateName() {
-            if (string.IsNullOrEmpty(_stateData.AIStateDetails)) {
-                _stateName = _stateData.AIStateName;
-                return;
-            }
-            _stateName = $"{_stateData.AIStateName}_{_stateData.AIStateDetails}";
         }
 
         public virtual void TryEnter() {

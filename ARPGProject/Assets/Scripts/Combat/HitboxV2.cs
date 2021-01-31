@@ -18,6 +18,10 @@ namespace Bebis
         }
 
         private void OnTriggerEnter(Collider collider) {
+            if (_info == null) {
+                Debug.LogError($"{name}: Hit Info was null!");
+                return;
+            }
             _info?.HitboxTriggered(this, collider);
         }
     }

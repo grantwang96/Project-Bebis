@@ -16,21 +16,6 @@ namespace Bebis
         protected override ICharacterActionStateV2 CreateActionState(ICharacterV2 character) {
             return new DefendActionStateV2(this, character);
         }
-
-        protected override bool CanPerformAction(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
-            if (!_actionableContexts.HasFlag(context)) {
-                return false;
-            }
-            ICharacterActionStateV2 currentState = character.ActionController.CurrentState;
-            return currentState == null || currentState.Data == this;
-        }
-
-        protected override ICharacterActionStateV2 HandleActionSuccess(ICharacterV2 character, ICharacterActionStateV2 foundActionState) {
-            if(foundActionState != null) {
-                return foundActionState;
-            }
-            return CreateActionState(character);
-        }
     }
 
     public class DefendActionStateV2 : CharacterActionStateV2
@@ -46,24 +31,8 @@ namespace Bebis
             return (Data.AllowedTransitionMoves & data.Tags) != 0;
         }
 
-        public override bool CanPerform(CharacterActionContext context, ICharacterActionDataV2 data) {
+        public override bool CanPerform(CharacterActionContext context) {
             return true;
-        }
-
-        public override void Initiate() {
-            base.Initiate();
-            PerformDefend();
-        }
-
-        public override void Hold() {
-            base.Hold();
-            PerformDefend();
-        }
-
-        public override void Release() {
-            base.Release();
-            StopDefend();
-            UpdateActionStatus(ActionStatus.Completed);
         }
 
         public override void Clear() {

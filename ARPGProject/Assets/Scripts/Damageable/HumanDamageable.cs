@@ -7,8 +7,8 @@ namespace Bebis
 {
     public class HumanDamageable : ICharacterDamageable
     {
-        public int Health { get; private set; } = 100;
-        public int MaxHealth { get; private set; } = 100;
+        public int Health { get; private set; } = 1000;
+        public int MaxHealth { get; private set; } = 1000;
         public bool IsDead { get; private set; } = false;
 
         public event Action<int> OnHealthChanged;
@@ -27,6 +27,9 @@ namespace Bebis
                 Debug.LogWarning("Hit hurt box was null!");
                 return;
             }
+            if (IsDead) {
+                return;
+            }
             switch (hitEventInfo.Hurtbox.HurtBoxState) {
                 case HurtBoxState.Normal:
                     OnNormalHit(hitEventInfo);
@@ -34,6 +37,7 @@ namespace Bebis
                 default:
                     break;
             }
+            // Debug.LogError("Damageable received hit event!");
             OnReceivedHit?.Invoke(hitEventInfo);
         }
 

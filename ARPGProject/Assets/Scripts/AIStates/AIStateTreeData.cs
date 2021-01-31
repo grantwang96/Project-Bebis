@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Bebis
 {
+    /*
     [CreateAssetMenu(menuName = "AI Tree")]
     public class AIStateTreeData : ScriptableObject
     {
@@ -36,4 +37,5 @@ namespace Bebis
         public List<SerializedStringString> StringDatas => _stringDatas;
         public List<SerializedAIKeyAnimationData> AnimationDatas => _animationDatas;
     }
+    */
 }

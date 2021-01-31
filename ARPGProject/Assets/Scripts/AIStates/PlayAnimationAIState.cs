@@ -9,56 +9,35 @@ namespace Bebis
         public const string Name = "PlayAnimation";
         private const string OnAnimationCompletedId = "OnAnimationCompleted";
 
-        private IAIState _onAnimationCompleted;
-        private readonly Dictionary<AIStateAnimationKey, AnimationData> _animationDatas = new Dictionary<AIStateAnimationKey, AnimationData>();
+        [SerializeField] private AIStateV2 _onAnimationCompleted;
+        [SerializeField] private AnimationData _onEnterAnimationData;
+        [SerializeField] private AnimationData _onExitAnimationData;
+        // private readonly Dictionary<AIStateAnimationKey, AnimationData> _animationDatas = new Dictionary<AIStateAnimationKey, AnimationData>();
 
-        public PlayAnimationAIState(ICharacterV2 character, AIStateMachineV2 stateMachine, AIStateData stateData, IAIState parentState = null) :
-            base(character, stateMachine, stateData, parentState) {
-
+        public override void TryEnter() {
+            // re-enter even if this is the current state
+            // Debug.LogError("Try entering animation state " + Id);
+            OnEnter();
         }
 
-        public override void Initialize() {
-            base.Initialize();
-            TryGetOnAnimationCompletedState();
-            BuildAnimationDatas();
+        public override void TryExit(IAIState nextState) {
+            // exit even if the next state is this state
+            if (_parentState != null) {
+                _parentState.TryExit(nextState);
+            }
+            OnExit();
         }
 
         protected override void OnEnter() {
             base.OnEnter();
-            if (_animationDatas.ContainsKey(AIStateAnimationKey.OnEnter)) {
-                _character.AnimationController.UpdateAnimationState(_animationDatas[AIStateAnimationKey.OnEnter]);
-                _character.AnimationController.OnAnimationStateUpdated += OnAnimationStateUpdated;
-            }
+            _character.AnimationController.UpdateAnimationState(_onEnterAnimationData);
+            _character.AnimationController.OnAnimationStateUpdated += OnAnimationStateUpdated;
         }
 
         protected override void OnExit() {
             base.OnExit();
             _character.AnimationController.OnAnimationStateUpdated -= OnAnimationStateUpdated;
-            if (_animationDatas.ContainsKey(AIStateAnimationKey.OnExit)) {
-                _character.AnimationController.UpdateAnimationState(_animationDatas[AIStateAnimationKey.OnExit]);
-            }
-        }
-
-        private void TryGetOnAnimationCompletedState() {
-            // attempt to find the corresponding transition id
-            int index = _stateData.TransitionDatas.FindIndex(x => x.Key.Equals(OnAnimationCompletedId));
-            if (index == -1) {
-                Debug.LogError($"[{Id}]: Could not retrieve \'{OnAnimationCompletedId}\' transition id from state data {_stateName}");
-                return;
-            }
-            // attempt to retrieve the corresponding state for "On Animation Completed"
-            if (!_stateMachine.TryGetAIState(_stateData.TransitionDatas[index].Value, out _onAnimationCompleted)) {
-                Debug.LogError($"[{Id}]: Could not retreive state with Id {_stateData.TransitionDatas[index].Value} from state machine!");
-            }
-        }
-
-        private void BuildAnimationDatas() {
-            for(int i = 0; i < _stateData.AnimationDatas.Count; i++) {
-                if (_animationDatas.ContainsKey(_stateData.AnimationDatas[i].Key)) {
-                    continue;
-                }
-                _animationDatas.Add(_stateData.AnimationDatas[i].Key, _stateData.AnimationDatas[i].Value);
-            }
+            _character.AnimationController.UpdateAnimationState(_onExitAnimationData);
         }
 
         private void OnAnimationStateUpdated(AnimationState animationState) {

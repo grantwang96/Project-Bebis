@@ -8,7 +8,6 @@ namespace Bebis
     public interface INPCUnitController : IUnitController
     {
         IDetectableManager DetectableManager { get; }
-        IDetectableScanner NPCVision { get; }
 
         void SetMovementInput(Vector3 input);
         void SetRotationInput(Vector3 input);
@@ -17,35 +16,34 @@ namespace Bebis
     /// <summary>
     /// Controller for NPC characters
     /// </summary>
-    public class NPCUnitController : INPCUnitController
+    public class NPCUnitController : MonoBehaviour, INPCUnitController
     {
         public ITargetManagerV2 TargetManager => _targetManager;
         public ICharacterData CharacterData => _characterData;
         public IDetectableManager DetectableManager => _detectableManager;
-        public IDetectableScanner NPCVision => _npcVision;
 
         public Vector3 MovementInput { get; private set; }
         public Vector3 RotationInput { get; private set; }
 
         public event Action<ICharacterActionDataV2, CharacterActionContext> OnActionAttempted;
-        public event Action OnRegisteredCharacterActionsUpdated;
+        public event Action<IReadOnlyList<ICharacterActionDataV2>> OnRegisteredCharacterActionsUpdated;
+
+        // character data
+        [SerializeField] private NPCCharacterData _characterData;
+        // ai state machine here
+        [SerializeField] private AIStateMachineV2 _aiStateMachine;
+        // vision component here
+        [SerializeField] private NPCVisionV2 _npcVision;
 
         private ICharacterV2 _character;
-        private NPCCharacterData _characterData;
-        // ai state machine here
-        private AIStateMachineV2 _aiStateMachine;
         // target manager here
         private NPCTargetManagerV2 _targetManager;
         // detection system here
         private NPCDetectableManager _detectableManager;
-        // vision component here
-        private NPCVisionV2 _npcVision;
 
         public NPCUnitController() {
-            _aiStateMachine = new AIStateMachineV2();
             _targetManager = new NPCTargetManagerV2();
             _detectableManager = new NPCDetectableManager();
-            _npcVision = new NPCVisionV2();
         }
 
         /// <summary>
@@ -61,7 +59,6 @@ namespace Bebis
             _character = character;
 
             _aiStateMachine.Initialize(_character);
-            _aiStateMachine.GenerateAIStateTree(this, _characterData.AIStateTreeData, _characterData.StartingAIStateId);
             _aiStateMachine.StartStateMachine();
 
             _targetManager.Initialize(_character);

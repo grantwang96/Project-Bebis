@@ -4,27 +4,27 @@ using UnityEngine;
 
 namespace Bebis
 {
-    public class AIStateMachineV2 : ICharacterComponent
+    public class AIStateMachineV2 : MonoBehaviour, ICharacterComponent
     {
+        [SerializeField] private AIStateV2 _startingState;
+        [SerializeField] private List<AIStateV2> _aiStatesList = new List<AIStateV2>();
+
         private ICharacterV2 _character;
-        private string _startingState;
         private readonly Dictionary<string, IAIState> _allStates = new Dictionary<string, IAIState>();
         private IAIState _currentState;
 
         public void Initialize(ICharacterV2 character) {
             _character = character;
-        }
-
-        public void GenerateAIStateTree(INPCUnitController npcUnitController, AIStateData aiStateData, string startingState) {
-            AIStateTreeBuilder.Build(_character, npcUnitController, this, aiStateData);
-            _startingState = startingState;
+            for(int i = 0; i < _aiStatesList.Count; i++) {
+                _aiStatesList[i].Initialize(_character);
+            }
+            for(int i = 0; i < _aiStatesList.Count; i++) {
+                _aiStatesList[i].Setup();
+            }
         }
 
         public void StartStateMachine() {
-            if (!TryGetAIState(_startingState, out _currentState)) {
-                Debug.LogError($"[{_character.GameObject.name}]: Could not retrieve starting AI State with id \'{_startingState}\'");
-                return;
-            }
+            _currentState = _startingState;
             _currentState.OnReadyToTransition += OnReadyToChangeState;
             _currentState.TryEnter();
         }

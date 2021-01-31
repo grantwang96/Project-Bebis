@@ -15,21 +15,8 @@ namespace Bebis
         public Vector3 JumpDirection => _jumpDirection;
         public AnimationData AnimationData => _animationData;
 
-        private bool CanJump(ICharacterV2 character, ICharacterActionStateV2 state) {
-            return character.MoveController.IsGrounded;
-        }
-
-        protected override bool CanPerformAction(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
-            return base.CanPerformAction(character, foundActionState, context) && CanJump(character, character.ActionController.CurrentState);
-        }
-
         protected override ICharacterActionStateV2 CreateActionState(ICharacterV2 character) {
             return new JumpActionStateV2(this, character);
-        }
-
-        protected override ICharacterActionStateV2 HandleActionSuccess(ICharacterV2 character, ICharacterActionStateV2 foundActionState) {
-            foundActionState?.Clear();
-            return CreateActionState(character);
         }
     }
 
@@ -41,8 +28,13 @@ namespace Bebis
             _data = data;
         }
 
-        public override void Initiate() {
-            base.Initiate();
+        public override bool CanPerform(CharacterActionContext context) {
+            bool canPerform = base.CanPerform(context);
+            return canPerform && _character.MoveController.IsGrounded;
+        }
+
+        protected override void OnPerformAction(CharacterActionContext context) {
+            base.OnPerformAction(context);
             // _character.MoveController.MoveRestrictions.AddRestriction(nameof(JumpActionState));
             _character.MoveController.LookRestrictions.AddRestriction(_data.Id);
             _character.AnimationController.UpdateAnimationState(_data.AnimationData);
@@ -59,6 +51,7 @@ namespace Bebis
             _character.AnimationController.OnAnimationStateUpdated -= OnAnimationStateUpdated;
             _character.ActionController.OnCurrentStateUpdated -= OnCurrentStateUpdated;
             _character.MoveController.OnIsGroundedUpdated -= OnCharacterHitGround;
+            Status = ActionStatus.Ready;
         }
 
         private void OnCurrentStateUpdated(ICharacterActionStateV2 newState) {

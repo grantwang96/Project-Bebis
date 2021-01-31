@@ -26,7 +26,7 @@ namespace Bebis
             MonoBehaviourMaster.Instance.OnFixedUpdate += OnFixedUpdate;
         }
 
-        public void RegisterOrUpdateDetectable(IDetectable detectable, float detectionValue = 0f) {
+        public void RegisterOrUpdateDetectable(IDetectable detectable, float detectionRate, float detectionValue = 0f) {
             // if we don't have this detectable object
             if (!_detectedObjects.ContainsKey(detectable)) {
                 _detectedObjects.Add(detectable, new DetectableEntry() {
@@ -38,7 +38,7 @@ namespace Bebis
             if(detectionValue > 0f) {
                 _detectedObjects[detectable].CurrentDetectionValue = detectionValue;
             } else {
-                _detectedObjects[detectable].CurrentDetectionValue += Time.deltaTime;
+                _detectedObjects[detectable].CurrentDetectionValue += Time.deltaTime * detectionRate;
             }
             // mark this object detected this frame
             _detectedObjects[detectable].DetectedThisFrame = true;
@@ -79,6 +79,7 @@ namespace Bebis
             }
             // if this object has hit the detection threshold
             if (entry.CurrentDetectionValue >= DetectedThreshold) {
+                Debug.Log("Detected object {}!");
                 OnDetectedObject?.Invoke(entry.Detectable);
             }
         }

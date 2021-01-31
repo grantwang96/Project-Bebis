@@ -25,7 +25,7 @@ namespace Bebis {
                 return;
             }
             if (!string.IsNullOrEmpty(data.AnimationName)) {
-                _animator.Play(data.AnimationName);
+                _animator.Play(data.AnimationName, -1, 0f);
             }
             for (int i = 0; i < data.Triggers.Length; i++) {
                 _animator.SetTrigger(data.Triggers[i]);

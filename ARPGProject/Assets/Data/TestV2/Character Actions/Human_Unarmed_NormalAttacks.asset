@@ -15,10 +15,11 @@ MonoBehaviour:
   _id: human_unarmed_normalattacks
   _actionName: Jabs
   _tags: 8
+  _allowedTransitionMoves: 88
   _cancelable: 0
   _priority: 0
   _bufferable: 0
-  _actionableContexts: 1
+  _actionableContexts: 3
   _attackData:
   - _animationData:
       _animationName: 
@@ -155,4 +156,3 @@ MonoBehaviour:
         _overrideForce: 1
     _onActionStartSubActions: []
     _onActionStartSubActionsV2: []
-  _allowedTransitionMoves: 88

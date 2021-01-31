@@ -33,9 +33,7 @@ namespace Bebis
         CharacterActionTag AllowedTransitionMoves { get; }
         CharacterActionContext ActionableContexts { get; }
 
-        CharacterActionResponseV2 Initiate(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context);
-        CharacterActionResponseV2 Hold(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context);
-        CharacterActionResponseV2 Release(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context);
+        ICharacterActionStateV2 GenerateCharacterActionState(ICharacterV2 character);
     }
 
     /// <summary>
@@ -62,60 +60,9 @@ namespace Bebis
         public CharacterActionTag Tags => _tags;
         public CharacterActionTag AllowedTransitionMoves => _allowedTransitionMoves;
 
-        public virtual CharacterActionResponseV2 Initiate(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
-            CharacterActionResponseV2 response = new CharacterActionResponseV2();
-            // exit early if there is a current action and it has priority
-            if (!CanPerformAction(character, foundActionState, context)) {
-                return FailedActionResponse(character);
-            }
-            // create a successful action use response
-            response.Success = true;
-            response.State = HandleActionSuccess(character, foundActionState);
-            response.State.Initiate();
-            return response;
+        public virtual ICharacterActionStateV2 GenerateCharacterActionState(ICharacterV2 character) {
+            return CreateActionState(character);
         }
-
-        public virtual CharacterActionResponseV2 Hold(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
-            CharacterActionResponseV2 response = new CharacterActionResponseV2();
-            // exit early if there is a current action and it has priority
-            if (!CanPerformAction(character, foundActionState, context)) {
-                return FailedActionResponse(character);
-            }
-            // create a successful action use response
-            response.Success = true;
-            response.State = HandleActionSuccess(character, foundActionState);
-            response.State.Hold();
-            return response;
-        }
-
-        public virtual CharacterActionResponseV2 Release(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
-            CharacterActionResponseV2 response = new CharacterActionResponseV2();
-            // exit early if there is a current action and it has priority
-            if (!CanPerformAction(character, foundActionState, context)) {
-                return FailedActionResponse(character);
-            }
-            // create a successful action use response
-            response.Success = true;
-            response.State = HandleActionSuccess(character, foundActionState);
-            response.State.Release();
-            return response;
-        }
-
-        protected virtual bool CanPerformAction(ICharacterV2 character, ICharacterActionStateV2 foundActionState, CharacterActionContext context) {
-            if (!_actionableContexts.HasFlag(context)) {
-                return false;
-            }
-            ICharacterActionStateV2 currentAction = character.ActionController.CurrentState;
-            bool canPerform = currentAction?.CanInterrupt(context, this) ?? true;
-            canPerform &= foundActionState?.CanPerform(context, this) ?? true;
-            return canPerform;
-        }
-
-        protected CharacterActionResponseV2 FailedActionResponse(ICharacterV2 character) {
-            return new CharacterActionResponseV2(false, false, character.ActionController.CurrentState);
-        }
-
-        protected abstract ICharacterActionStateV2 HandleActionSuccess(ICharacterV2 character, ICharacterActionStateV2 foundActionState);
 
         protected abstract ICharacterActionStateV2 CreateActionState(ICharacterV2 character);
     }
@@ -125,10 +72,8 @@ namespace Bebis
         ICharacterActionDataV2 Data { get; }
         ActionStatus Status { get; }
         bool CanInterrupt(CharacterActionContext context, ICharacterActionDataV2 data);
-        bool CanPerform(CharacterActionContext context, ICharacterActionDataV2 data);
-        void Initiate();
-        void Hold();
-        void Release();
+        bool CanPerform(CharacterActionContext context);
+        bool TryPerformAction(CharacterActionContext context);
 
         event Action<ICharacterActionStateV2, ActionStatus> OnActionStatusUpdated;
 
@@ -151,29 +96,39 @@ namespace Bebis
         }
 
         public virtual bool CanInterrupt(CharacterActionContext context, ICharacterActionDataV2 data) {
-            return CanTransition() && (Data.AllowedTransitionMoves & data.Tags) != 0;
+            return (Status == ActionStatus.Ready || CanTransition()) && (Data.AllowedTransitionMoves & data.Tags) != 0;
         }
 
-        public virtual bool CanPerform(CharacterActionContext context, ICharacterActionDataV2 data) {
-            return CanTransition() && (Data.ActionableContexts & context) != 0;
+        public virtual bool CanPerform(CharacterActionContext context) {
+            return (Status == ActionStatus.Ready || CanTransition()) && (Data.ActionableContexts & context) != 0;
         }
 
-        public virtual void Initiate() { }
-        public virtual void Hold() { }
-        public virtual void Release() { }
+        public virtual bool TryPerformAction(CharacterActionContext context) {
+            if (_character.ActionController.CurrentState?.CanInterrupt(context, Data) ?? true &&
+                CanPerform(context)) {
+                OnPerformAction(context);
+                return true;
+            }
+            return false;
+        }
+
+        protected virtual void OnPerformAction(CharacterActionContext context) {
+            Debug.Log($"[{_character.GameObject.name}]: Performing action {Data.Id}...");
+        }
+
         public virtual void Interrupt() {
             Clear();
         }
 
         public virtual void Clear() {
-            UpdateActionStatus(ActionStatus.Completed);
+            Status = ActionStatus.Ready;
         }
 
         protected virtual bool CanTransition() {
             return Status == ActionStatus.CanTransition || Status == ActionStatus.Completed;
         }
 
-        protected void UpdateActionStatus(ActionStatus status) {
+        protected virtual void UpdateActionStatus(ActionStatus status) {
             Status = status;
             OnActionStatusUpdated?.Invoke(this, status);
         }
